@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <script src="plotly-latest.min.js"></script>  
+    <script src="PapaParse-4.1.2/papaparse.min.js"></script>
+</head>
+
+<body>
+  
+    <div id="myDiv1" style="width: 100%; height: 800px;">
+    <script>
+    function loadData(filname) {
+        Papa.parse(filname, {
+            download: true,
+            complete: processPeriodData
+        });
+    }
+        
+        
+    function processPeriodData(results) {
+        var traces = []
+                
+        //var months = results.data[0].slice(2)
+        //var days   = results.data[1].slice(2)
+        //var hours  = results.data[2].slice(2)
+        var labels = results.data[3].slice(2)
+        
+        offer=""
+        for (var i=4; i < results.data.length; i++) {
+            if (results.data[i][0] != "" && results.data[i][0] != offer) {
+                offer = results.data[i][0];
+            }
+            if (results.data[i][1].indexOf(" total ")>0 ) continue;
+            var trace  = {
+                x : labels,
+                y : results.data[i].slice(2),
+                mode: "lines",
+                line: {
+                    width: 1
+                },
+                name: offer + " "+ results.data[i][1]
+            };
+            traces.push(trace);
+        }
+        var layout = {
+            title: "USD, USD/TFlops",
+            showlegend: false,
+            xaxis: {
+            },
+            yaxis: {
+            }
+        };
+        Plotly.newPlot('myDiv1', traces, layout);
+    }
+        
+        
+    function processStaticData(allRows) {
+        console.log(allRows);
+        var x = [], y = [];
+        rows = allRows.length
+        //rows = 7
+        provider = ""
+        for (var i=0; i<rows; i++) {
+            row = allRows[i];
+            console.log(i+" Provider:"+row['Provider']+" Offer:"+row['Offer']+" Y.Price:"+row['Year price'])
+            if (provider !=  row['Provider'] && row['Provider'] !="") {
+                provider = row['Provider']
+            }
+            if (row['Year price'] == "") continue;
+            x.push(provider +" "+row['Offer'] );
+            y.push( row['Year price'] );
+        }
+        console.log( 'X',x, 'Y',y);
+        makePlotly( x, y );
+    }
+
+    loadData("cost-period.csv");
+  </script>
+</body>
+</html>
