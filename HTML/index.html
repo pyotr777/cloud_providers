@@ -208,8 +208,8 @@
             for(var i=0; i < data.points.length; i++) {
                 console.log(data.points[i].x);
                 displaySlice(data.points[i].pointNumber);
-                pts = '['+data.points[i].pointNumber +'] x = '+data.points[i].x +'\ny = '+
-                    data.points[i].y.toPrecision(4) + '\n\n';
+                //pts = '['+data.points[i].pointNumber +'] x = '+data.points[i].x +'\ny = '+
+                //    data.points[i].y.toPrecision(4) + '\n\n';
             }
             console.log(data);
             //alert('Closest point clicked:\n\n'+pts);
@@ -220,18 +220,32 @@
     function displaySlice(n) {
         console.log("Clicked "+n);
         console.log("X: "+ dates[0][n] + " / " + dates[1][n]);
-        var layout = {};
-        var bar_traces =[];
+        var layout = {barmode: 'group'};
+        var y_cpu = [];
+        var y_gpu = [];
+        var x = [];
 
         for (j=0; j < offers.length; j++) {
-            var trace = {
-                x: offers[j].name,
-                y: quotes[j][0], // absolute Cost
-                type: 'bar'
-            };
-            bar_traces.push(trace);
+            y_cpu.push(quotes[j][1][n]);
+            y_gpu.push(quotes[j][2][n]);
+            x.push(offers[j].name);
+        }
+
+        var trace_cpu = {
+            x: x,
+            y: y_cpu,
+            name: "USD/CPU TFolps",
+            type: "bar"
         };
-        Plotly.newPlot('slice', bar_traces, layout);
+
+        var trace_gpu = {
+            x: x,
+            y: y_gpu,
+            name: "USD/GPU TFolps",
+            type: "bar"
+        };
+
+        Plotly.newPlot('slice', [trace_cpu, trace_gpu], layout);
     }
 
     </script>
