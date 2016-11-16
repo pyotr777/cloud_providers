@@ -11,17 +11,19 @@
     <div id="myDiv1" style="width: 100%; height: 600px;"></div>
     <div id="slice"></div>
     <script>
-    function loadData(filname) {
-        Papa.parse(filname, {
+    function loadData(filename) {
+        console.log("Loading " + filename)
+        /*Papa.parse(filename, {
             download: true,
             complete: processStaticData
-        });
+        });*/
     }
 
     var offers=[];
 
     function processStaticData(results) {
         console.log("Rows: "+results.data.length);
+        return;
         //console.log(results);
         //global offers;
         rows = results.data.length
@@ -173,7 +175,8 @@
     var quotes=[];
 
     // Plot all offers costs for given period.
-    function plotPeriod(period) {
+    // value should be "all", "abs", "cpu" or "gpu".
+    function plotPeriod(period, value) {
         var traces = [];
         dates = prepDates(period, "abs");
         for (j=0; j < offers.length; j++) {
@@ -181,9 +184,8 @@
             quote = getQuote(offers[j], period);
             var trace = {
                 mode: 'lines',
-                line: {
-                    width: 1
-                },
+                type: 'scatter',
+                linewidth: 1,
                 name: offers[j].name,
                 x: dates[0],
                 text: dates[1],
