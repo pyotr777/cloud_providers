@@ -26,7 +26,7 @@
         <div class="button" id="gpu3" onclick="continue_proc(filterProvider,'cirrascale');">Cirrascale</div>
         <div class="button" id="gpu4" onclick="continue_proc(filterProvider,'sakura');">Sakura</div>
     </div>
-    <div id="slice"></div>
+    <div id="slice" style="width: 100%; height: 600px;"></div>
     <script>
     function loadData(filname) {
         Papa.parse(filname, {
@@ -48,7 +48,7 @@
         for (var i=1; i<rows; i++) {
             row = results.data[i];
             //console.log(row);
-            console.log(i+" Provider:"+row[0]+" Offer:"+row[1]+" H.Price:"+row['2'])
+            //console.log(i+" Provider:"+row[0]+" Offer:"+row[1]+" H.Price:"+row['2'])
             if (provider !=  row[0] && row[0] !="") {
                 provider = row[0]
             }
@@ -96,9 +96,9 @@
     // Filter by provider
     function filterProvider(prov) {
         offers = [];
-        console.log("Filter " + prov.toLowerCase());
+        //console.log("Filter " + prov.toLowerCase());
         for (j=0; j < offers_all.length; j++) {
-            console.log(offers_all[j].provider.toLowerCase());
+            //console.log(offers_all[j].provider.toLowerCase());
             if (offers_all[j].provider.toLowerCase() == prov.toLowerCase()) {
                 offers.push(offers_all[j]);
             }
@@ -216,6 +216,7 @@
     var layout = {
         title: 'Cost per period (USD)',
         hovermode:'closest',
+        showticklabels: false,
         xaxis: {
             //hoverformat: '%m/%d %H',
             rangeselector: selectorOptions
@@ -231,9 +232,8 @@
     // Plot all offers costs for given period.
     function plotPeriod(period) {
         var traces = [];
-        dates = prepDates(period, "abs");
+        dates = prepDates(period);
         for (j=0; j < offers.length; j++) {
-        //for (j=0; j < 2; j++) {
             quote = getQuote(offers[j], period);
             var trace = {
                 mode: 'lines',
@@ -255,20 +255,23 @@
 
     function continue_proc(filter, arg) {
         filter(arg);
-        console.log("Has "+ offers.length+" offers.")
-        plotPeriod(24*365);
+        quotes=[];
+        console.log("Have "+ offers.length+" offers.")
+        //console.log("Have "+ quotes.length+" quotes.")
+        plotPeriod(24*30.5*12);  // Period for top plot
+        console.log("Have "+ quotes.length+" quotes.")
         var myPlot = document.getElementById('myDiv1');
 
         myPlot.on('plotly_click', function(data) {
-            console.log(data);
+            //console.log(data);
             var pts = '';
             for(var i=0; i < data.points.length; i++) {
-                console.log(data.points[i].x);
+                //console.log(data.points[i].x);
                 displaySlice(data.points[i].pointNumber);
                 //pts = '['+data.points[i].pointNumber +'] x = '+data.points[i].x +'\ny = '+
                 //    data.points[i].y.toPrecision(4) + '\n\n';
             }
-            console.log(data);
+            //console.log(data);
             //alert('Closest point clicked:\n\n'+pts);
         });
 
@@ -278,16 +281,24 @@
 
 
     function displaySlice(n) {
-        console.log("Clicked "+n);
-        console.log("X: "+ dates[0][n] + " / " + dates[1][n]);
-        var layout = {
-            title: "Cost per 1 TFlops for " + dates[1][n],
-            barmode: 'group'
+        console.log("Clicked "+n+ " X: "+ dates[0][n] + " / " + dates[1][n]);
+        var layout_bar = {
+            title: "1 TFlops cost per " + dates[1][n],
+            barmode: 'group',
+            hovermode:'closest',
+            yaxis: {
+                title: 'Cost per CPU 1 TFlops (USD/TFlops)'
+            },
+            yaxis2: {
+                title: 'Cost per GPU 1 TFlops (USD/TFlops)',
+                overlaying: 'y',
+                side: 'right'
+            }
         };
         var y_cpu = [];
         var y_gpu = [];
         var x = [];
-
+        console.log("displaySlice has " + offers.length+" offers.")
         for (j=0; j < offers.length; j++) {
             y_cpu.push(quotes[j][1][n]);
             y_gpu.push(quotes[j][2][n]);
@@ -297,18 +308,23 @@
         var trace_cpu = {
             x: x,
             y: y_cpu,
-            name: "USD/CPU TFolps",
+            name: "USD/CPU TFlops",
+            offset: -0.4,
+            width: 0.35,
             type: "bar"
         };
 
         var trace_gpu = {
             x: x,
             y: y_gpu,
-            name: "USD/GPU TFolps",
-            type: "bar"
+            name: "USD/GPU TFlops",
+            type: "bar",
+            offset: 0,
+            width: 0.35,
+            yaxis: 'y2'
         };
 
-        Plotly.newPlot('slice', [trace_cpu, trace_gpu], layout);
+        Plotly.newPlot('slice', [trace_cpu, trace_gpu], layout_bar);
     }
 
     </script>
