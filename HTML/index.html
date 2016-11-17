@@ -4,11 +4,28 @@
     <meta charset="utf-8"/>
     <script src="plotly-latest.min.js"></script>
     <script src="PapaParse-4.1.2/papaparse.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
     <div id="myDiv1" style="width: 100%; height: 600px;"></div>
+    <div class="buttons">
+        Filter by GPU:
+        <div class="button" id="all" onclick="continue_proc(filterAll,'');">All</div>
+        <div class="button" id="gpu1" onclick="continue_proc(filterByGPU,'1-2');">GPU 1-2</div>
+        <div class="button" id="gpu2" onclick="continue_proc(filterByGPU,'3-4');">GPU 3-4</div>
+        <div class="button" id="gpu3" onclick="continue_proc(filterByGPU,'5-8');">GPU 5-8</div>
+        <div class="button" id="gpu4" onclick="continue_proc(filterByGPU,'9-16');">GPU 9-16</div>
+    </div>
+    <div class="buttons">
+        Filter by provider:
+        <div class="button" id="all" onclick="continue_proc(filterAll,'');">All</div>
+        <div class="button" id="amazon" onclick="continue_proc(filterProvider,'amazon');">Amazon</div>
+        <div class="button" id="gpu2" onclick="continue_proc(filterProvider,'softlayer');">Softlayer</div>
+        <div class="button" id="gpu3" onclick="continue_proc(filterProvider,'cirrascale');">Cirrascale</div>
+        <div class="button" id="gpu4" onclick="continue_proc(filterProvider,'sakura');">Sakura</div>
+    </div>
     <div id="slice"></div>
     <script>
     function loadData(filname) {
@@ -18,6 +35,7 @@
         });
     }
 
+    var offers_all=[];
     var offers=[];
 
     function processStaticData(results) {
@@ -35,18 +53,56 @@
                 provider = row[0]
             }
             var offer = {
-                name: provider +" "+row[1],
-                hourly: row[2],
-                weekly: row[3],
-                monthly:row[4],
-                yearly: row[5],
-                cpu_p:  row[6],
-                gpu_p:  row[7],
-                gpus:   row[8]
+                provider: provider,
+                name: row[1],
+                shortname: row[2],
+                hourly: row[3],
+                weekly: row[4],
+                monthly:row[5],
+                yearly: row[6],
+                cpu_p:  row[7],
+                gpu_p:  row[8],
+                gpus:   row[9]
             }
-            offers.push(offer);
+            offers_all.push(offer);
         }
-        continue_proc();
+        continue_proc(filterAll, "");
+    }
+
+    // "Filters" offers: save filtered list in "offers" global variable.
+    function filterAll(arg) {
+        offers = [];
+        for (j=0; j < offers_all.length; j++) {
+            offers.push(offers_all[j]);
+        }
+    }
+
+    // Filters offers: save filtered list in "offers" global variable.
+    // Filter out offers with GPUs in range given by group argument with format string "min-miax".
+    function filterByGPU(group) {
+        offers = [];
+        min = 0;
+        max = 0;
+        splits = group.split("-");
+        min = parseInt(splits[0]);
+        max = parseInt(splits[1]);
+        for (j=0; j < offers_all.length; j++) {
+            if (offers_all[j].gpus >= min && offers_all[j].gpus <= max) {
+                offers.push(offers_all[j]);
+            }
+        }
+    }
+
+    // Filter by provider
+    function filterProvider(prov) {
+        offers = [];
+        console.log("Filter " + prov.toLowerCase());
+        for (j=0; j < offers_all.length; j++) {
+            console.log(offers_all[j].provider.toLowerCase());
+            if (offers_all[j].provider.toLowerCase() == prov.toLowerCase()) {
+                offers.push(offers_all[j]);
+            }
+        }
     }
 
     // Return array of Cost, Cost/CPU FLops, Cost/GPU FLops for given number of hours (period).
@@ -109,7 +165,9 @@
         if ( days > 0) {
             s = s + days + " days ";
         }
-        s = s + hours + "hours";
+        if ( hours > 0) {
+            s = s + hours + " hours";
+        }
         return s;
     }
 
@@ -156,18 +214,16 @@
     };
 
     var layout = {
-        title: 'Time series with range slider and selectors',
+        title: 'Cost per period (USD)',
         hovermode:'closest',
         xaxis: {
             //hoverformat: '%m/%d %H',
-            rangeselector: selectorOptions,
-            rangeslider: {}
+            rangeselector: selectorOptions
         },
         yaxis: {
 
         }
     };
-
 
     var dates =[];
     var quotes=[];
@@ -184,7 +240,7 @@
                 line: {
                     width: 1
                 },
-                name: offers[j].name,
+                name: offers[j].shortname,
                 x: dates[0],
                 text: dates[1],
                 y: quote[0] // 0 - Absolute cost
@@ -197,7 +253,8 @@
 
     loadData("cost-performance.csv");
 
-    function continue_proc() {
+    function continue_proc(filter, arg) {
+        filter(arg);
         console.log("Has "+ offers.length+" offers.")
         plotPeriod(24*365);
         var myPlot = document.getElementById('myDiv1');
@@ -214,13 +271,19 @@
             console.log(data);
             //alert('Closest point clicked:\n\n'+pts);
         });
+
+        // Display data for 1 month
+        displaySlice(24 * 30.5);
     }
 
 
     function displaySlice(n) {
         console.log("Clicked "+n);
         console.log("X: "+ dates[0][n] + " / " + dates[1][n]);
-        var layout = {barmode: 'group'};
+        var layout = {
+            title: "Cost per 1 TFlops for " + dates[1][n],
+            barmode: 'group'
+        };
         var y_cpu = [];
         var y_gpu = [];
         var x = [];
@@ -228,7 +291,7 @@
         for (j=0; j < offers.length; j++) {
             y_cpu.push(quotes[j][1][n]);
             y_gpu.push(quotes[j][2][n]);
-            x.push(offers[j].name);
+            x.push(offers[j].shortname);
         }
 
         var trace_cpu = {
