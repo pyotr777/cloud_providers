@@ -11,7 +11,7 @@
 
     <div id="myDiv1" style="width: 100%; height: 600px;"></div>
     <div class="buttons">
-        Filter by GPU:
+        Filter by GPU number:
         <div class="button" id="all" onclick="continue_proc(filterAll,'');">All</div>
         <div class="button" id="gpu1" onclick="continue_proc(filterByGPU,'1-2');">GPU 1-2</div>
         <div class="button" id="gpu2" onclick="continue_proc(filterByGPU,'3-4');">GPU 3-4</div>
@@ -27,6 +27,16 @@
         <div class="button" id="gpu4" onclick="continue_proc(filterProvider,'sakura');">Sakura</div>
     </div>
     <div id="slice" style="width: 100%; height: 600px;"></div>
+
+    <div class="buttons">
+        Display for period:
+        <div class="button" id="day" onclick="displaySlice(24 );">1 day</div>
+        <div class="button" id="week" onclick="displaySlice(24 * 7);">1 week</div>
+        <div class="button" id="month" onclick="displaySlice(24 * 30.5);">1 month</div>
+        <div class="button" id="6months" onclick="displaySlice(24 * 30.5 * 6);">6 months</div>
+        <div class="button" id="12months" onclick="displaySlice(24 * 365);">1 year</div>
+    </div>
+
     <script>
     function loadData(filname) {
         Papa.parse(filname, {
@@ -174,65 +184,47 @@
     // Return array of dates from 0 to given period of hours
     // with 1 hour step. Second returned variable – array of human readable labels.
     function prepDates(end) {
+        var har = [];
         var x = [];
         var text=[];
         start_date = 0;
         for (h = 0; h <= end; h++) {
             x_ = new Date(h * 1000 * 3600);
             x.push(x_);
+            har.push(h);
             disp_time = hoursToHuman(h)
             text.push(disp_time);
             //console.log(x_ + "\t" + y_)
         }
-        return [x, text];
+        return [har, text];
     }
-
-    var selectorOptions = {
-        buttons: [{
-            step: 'month',
-            stepmode: 'backward',
-            count: 1,
-            label: 'month'
-        }, {
-            step: 'day',
-            stepmode: 'backward',
-            count: 7,
-            label: 'week'
-        }, {
-            step: 'day',
-            stepmode: 'backward',
-            count: 1,
-            label: 'day'
-        },{
-            step: 'hour',
-            stepmode: 'backward',
-            count: 6,
-            label: '6 hours'
-        }, {
-            step: 'all',
-        }],
-    };
-
-    var layout = {
-        title: 'Cost per period (USD)',
-        hovermode:'closest',
-        showticklabels: false,
-        xaxis: {
-            //hoverformat: '%m/%d %H',
-            rangeselector: selectorOptions
-        },
-        yaxis: {
-
-        }
-    };
 
     var dates =[];
     var quotes=[];
 
     // Plot all offers costs for given period.
     function plotPeriod(period) {
+        var tickvals = [];
+        var ticktext = [];
         var traces = [];
+
         dates = prepDates(period);
+
+        var layout = {
+            title: 'Cost per period (USD)',
+            hovermode:'closest',
+            showticklabels: false,
+            xaxis: {
+                tickvals: [0,   24*7,     24*30.5,   24*30.5*2,   24*30.5*3,  24*30.5*4,  24*30.5*5,  24*30.5*6,  24*30.5*7,  24*30.5*8,  24*30.5*9,  24*30.5*10,  24*30.5*11,  24*30.5*12 ],
+                ticktext: ["0", "1 week", "1 month", "2 months", "3 months", "4 months", "5 months", "6 months", "7 months", "8 months", "9 months", "10 months", "11 months", "12 months"]
+            },
+            yaxis: {
+                tickprefix: "$",
+                hoverformat: '.2f',
+                exponentformat: "none"
+            }
+        };
+
         for (j=0; j < offers.length; j++) {
             quote = getQuote(offers[j], period);
             var trace = {
@@ -241,6 +233,7 @@
                     width: 1
                 },
                 name: offers[j].shortname,
+                hoverinfo:"y+name+text",
                 x: dates[0],
                 text: dates[1],
                 y: quote[0] // 0 - Absolute cost
@@ -266,13 +259,8 @@
             //console.log(data);
             var pts = '';
             for(var i=0; i < data.points.length; i++) {
-                //console.log(data.points[i].x);
                 displaySlice(data.points[i].pointNumber);
-                //pts = '['+data.points[i].pointNumber +'] x = '+data.points[i].x +'\ny = '+
-                //    data.points[i].y.toPrecision(4) + '\n\n';
             }
-            //console.log(data);
-            //alert('Closest point clicked:\n\n'+pts);
         });
 
         // Display data for 1 month
@@ -286,13 +274,28 @@
             title: "1 TFlops cost per " + dates[1][n],
             barmode: 'group',
             hovermode:'closest',
+            xaxis: {
+                fixedrange: true
+            },
             yaxis: {
-                title: 'Cost per CPU 1 TFlops (USD/TFlops)'
+                title: 'Cost per CPU 1 TFlops (USD/TFlops)',
+                tickprefix: "$",
+                hoverformat: '.2f',
+                exponentformat: "none",
+                separatethousands: true,
+                gridcolor: "#d9f0ff",
+                linecolor: "#d9f0ff"
             },
             yaxis2: {
                 title: 'Cost per GPU 1 TFlops (USD/TFlops)',
                 overlaying: 'y',
-                side: 'right'
+                side: 'right',
+                tickprefix: "$",
+                hoverformat: '.2f',
+                exponentformat: "none",
+                separatethousands: true,
+                gridcolor: "#ffe6d6",
+                linecolor: "#ffe6d6"
             }
         };
         var y_cpu = [];
