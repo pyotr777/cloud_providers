@@ -115,37 +115,43 @@
         }
     }
 
+
+
     // Return array of Cost, Cost/CPU FLops, Cost/GPU FLops for given number of hours (period).
     // Period must be in hours.
-    function getQuote(offer, period) {
+    function getQuote(offer, step, period, dates) {
         var costs = [], costs_cpu=[], costs_gpu=[];
         if (offer.hourly != "" ) {
-            for (i=0; i <= period; i++) {
+            for (var i=0; i <= period; i+=step) {
                 cost = i * offer.hourly;
                 costs.push(cost);
                 costs_cpu.push(cost/offer.cpu_p);
                 costs_gpu.push(cost/offer.gpu_p);
             }
         } else if (offer.weekly != "" ) {
-            for (i=0; i <= period; i++) {
-                period_w = Math.ceil(i / (24 * 7));
+            for (var i=0; i <= period; i+=step) {
+                // Use i+1 because 7th day end should be the start of 2nd week
+                period_w = Math.ceil((i + 1) / (24 * 7));
                 cost = period_w * offer.weekly;
                 costs.push(cost);
                 costs_cpu.push(cost/offer.cpu_p);
                 costs_gpu.push(cost/offer.gpu_p);
             }
         } else if (offer.monthly != "" ) {
-            for (i=0; i <= period; i++) {
-                period_m = Math.ceil(i / (24 * 30.5));
-                //console.log("Count "+period+ " hours as " + period_m + " months.")
+            for (var h=0; h <= period; h+=step) {
+                var i = Math.floor(h/step);
+                console.log("M.Offer. h= "+h+" i="+i+" months="+dates[1][i].months + "years="+dates[1][i].years);
+                var period_m = dates[1][i].years * 12 + dates[1][i].months+1;
                 cost = period_m * offer.monthly;
                 costs.push(cost);
                 costs_cpu.push(cost/offer.cpu_p);
                 costs_gpu.push(cost/offer.gpu_p);
             }
         } else if (offer.yearly != "" ) {
-            for (i=0; i <= period; i++) {
-                period_y = Math.ceil(i / (24 * 365));
+            for (var h=0; h <= period; h+=step) {
+                var i = Math.floor(h/step);
+                console.log("Y.Offer. h= "+h+" i="+i+" months="+dates[1][i].months + "years="+dates[1][i].years);
+                period_y = dates[1][i].years+1;
                 cost = period_y * offer.yearly;
                 costs.push(cost);
                 costs_cpu.push(cost/offer.cpu_p);
@@ -155,16 +161,43 @@
         return [ costs, costs_cpu, costs_gpu];
     }
 
+    var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
+    var accumulated_months_days = [];
+
     // Convert time in hours to human readable format
+    // Return object {years, months, days, text}
     function hoursToHuman(h) {
+        var init_h = h;
         var hours_day   = 24;
-        var hours_month = 24 * 30.5;
-        var hours_year  = 24 * 365;
+        //var hours_month = 24 * 30.5;
+        var hours_year  = 24 * accumulated_months_days[11];
+
 
         var years  = Math.floor(h / hours_year);
-        var months = Math.floor((h % hours_year) / hours_month);
-        var days   = Math.floor(((h % hours_year) % hours_month) / hours_day);
-        var hours  = ((h % hours_year) % hours_month) % hours_day;
+        h = h - (years * hours_year);
+
+        // Months
+        // Have numbers of days in months, so need to know how many full days we have.
+        var days = Math.floor(h / hours_day);
+        var m = 0;
+        for (; m < 12; m++ ) {
+            if (days < accumulated_months_days[m]) {
+                break;
+            }
+        }
+        var months = m;
+        console.log("Calculating months. days="+days+" m="+m+ " months="+months+ " years="+years);
+
+        if (months > 0) {
+            h = h - accumulated_months_days[months-1] * hours_day;
+        }
+
+        // Days
+        days   = Math.floor(h / hours_day);
+        h = h - days * hours_day;
+
+        // Hours
+        var hours  = h;
         s = "";
         if ( years > 0) {
             s = s + years + " years ";
@@ -175,40 +208,50 @@
         if ( days > 0) {
             s = s + days + " days ";
         }
-        if ( hours > 0) {
+        if ( hours > 0 || s.length < 2) {
             s = s + hours + " hours";
         }
-        return s;
+        console.log("Count "+init_h+ " hours as "+ s );
+        return [{
+            years: years,
+            months: months,
+            days: days,
+            hours: hours
+            }, s ];
     }
 
     // Return array of dates from 0 to given period of hours
-    // with 1 hour step. Second returned variable – array of human readable labels.
-    function prepDates(end) {
-        var har = [];
-        var x = [];
-        var text=[];
+    // with 1 hour step. Second returned variable – array of years, months, days and hours and human readable labels.
+    function prepDates(end, step) {
+        var h_arr = [];
+        var human =[];
+        var text  =[];
         start_date = 0;
-        for (h = 0; h <= end; h++) {
-            x_ = new Date(h * 1000 * 3600);
-            x.push(x_);
-            har.push(h);
-            disp_time = hoursToHuman(h)
-            text.push(disp_time);
-            //console.log(x_ + "\t" + y_)
+        for (h = 0; h <= end; h+=step) {
+            h_arr.push(h);
+            human_time = hoursToHuman(h)
+            human.push(human_time[0]);
+            text.push(human_time[1]);
         }
-        return [har, text];
+        return [h_arr, human, text];
     }
 
     var dates =[];
     var quotes=[];
 
     // Plot all offers costs for given period.
-    function plotPeriod(period) {
+    function plotPeriod(period, step) {
         var tickvals = [];
         var ticktext = [];
         var traces = [];
 
-        dates = prepDates(period);
+        dates = prepDates(period, step);
+        console.log(dates);
+        // dates[0] - array of hours: 0,1,2,...,period
+        // dates[1] - array of objects
+        // dates[2] - array of human-readable text format dates
+        console.log("Period is " + period+" (" + dates[0][dates[0].length-1] + ") hours");
+        console.log("which is " + dates[2][dates[1].length-1]);
 
         var layout = {
             title: 'Cost per period (USD)',
@@ -226,7 +269,7 @@
         };
 
         for (j=0; j < offers.length; j++) {
-            quote = getQuote(offers[j], period);
+            quote = getQuote(offers[j], step, period, dates);
             var trace = {
                 mode: 'lines',
                 line: {
@@ -235,7 +278,7 @@
                 name: offers[j].shortname,
                 hoverinfo:"y+name+text",
                 x: dates[0],
-                text: dates[1],
+                text: dates[2],
                 y: quote[0] // 0 - Absolute cost
             };
             traces.push(trace);
@@ -247,11 +290,23 @@
     loadData("cost-performance.csv");
 
     function continue_proc(filter, arg) {
+
+        var step = 12; // 12-hour step
+
+        if (accumulated_months_days.length < 1) {
+            console.log("Calculate accumulated months days");
+            accumulated_days = 0;
+            for (var m = 0; m < 12; m++) {
+                accumulated_days += days_in_month[m];
+                accumulated_months_days.push(accumulated_days);
+            }
+            console.log(accumulated_months_days);
+        }
         filter(arg);
         quotes=[];
         console.log("Have "+ offers.length+" offers.")
         //console.log("Have "+ quotes.length+" quotes.")
-        plotPeriod(24*30.5*12);  // Period for top plot
+        plotPeriod(24*accumulated_months_days[11], step);  // Period for top plot
         console.log("Have "+ quotes.length+" quotes.")
         var myPlot = document.getElementById('myDiv1');
 
@@ -264,14 +319,14 @@
         });
 
         // Display data for 1 month
-        displaySlice(24 * 30.5);
+        displaySlice(Math.floor(24 * accumulated_months_days[0] / step));
     }
 
 
     function displaySlice(n) {
-        console.log("Clicked "+n+ " X: "+ dates[0][n] + " / " + dates[1][n]);
+        console.log("Clicked "+n+ " X: "+ dates[0][n] + " / " + dates[2][n]);
         var layout_bar = {
-            title: "1 TFlops cost per " + dates[1][n],
+            title: "1 TFlops cost per " + dates[2][n],
             barmode: 'group',
             hovermode:'closest',
             xaxis: {
