@@ -290,6 +290,7 @@
             title: 'Cost per period (USD)',
             hovermode:'closest',
             showticklabels: false,
+            showlegend: false,
             xaxis: {
                 tickvals: [0,   Math.floor(24*7),
                     Math.floor(24*accumulated_months_days[0]),
@@ -401,6 +402,11 @@
             title: "1 TFlops cost per " + dates[2][n],
             barmode: 'group',
             hovermode:'closest',
+            legend: {
+                y: 1.05,
+                orientation: "h",
+                bgcolor: 'rgba(255, 255, 255, 0.5)',
+            },
             xaxis: {
                 fixedrange: true
             },
@@ -503,6 +509,11 @@
             title: "CPU and GPU performance (TFlops)",
             barmode: 'group',
             hovermode:'closest',
+            legend: {
+                y: 1.05,
+                orientation: "h",
+                bgcolor: 'rgba(255, 255, 255, 0.5)',
+            },
             xaxis: {
                 fixedrange: true
             },
@@ -511,7 +522,10 @@
                 hoverformat: '.1f',
                 exponentformat: "none",
                 separatethousands: true,
-                gridwidth: 1
+                gridwidth: 1,
+                gridcolor: cpu_color.light,
+                gridwidth: 1,
+                linecolor: cpu_color.light
             },
             yaxis2: {
                 title: 'GPU performance (TFlops)',
