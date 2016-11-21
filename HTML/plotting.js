@@ -32,8 +32,17 @@ function processStaticData(results) {
             yearly:    row[8],
             cpu_p:     row[9],
             gpu_p:     row[10],
-            gpus:      row[11],
-            gpu_model: row[12]
+            gpu_model: row[11],
+            gpus:      row[12],
+            cpu_model: row[13],
+            cpus:      row[14],
+            memory:    row[15],
+            hdd1:      row[16],
+            hdd1_vol:  row[17],
+            hdd2:      row[18],
+            hdd2_vol:  row[19],
+            net:       row[20],
+            notes:     row[21]
         }
         offers_all.push(offer);
     }
@@ -90,8 +99,9 @@ function getQuote(offer, step, period, dates) {
         }
     } else if (offer.weekly != "" ) {
         for (var i=0; i <= period; i+=step) {
-            // Use i+1 because 7th day end should be the start of 2nd week
-            period_w = Math.ceil((i + 1) / (24 * 7));
+            // Shift billing moments to one position later (use "i" instead of "i+1"),
+            // so that 1 week (presize moment) counts for 1 week costs, not 2 weeks.
+            period_w = Math.ceil((i) / (24 * 7));
             cost = period_w * offer.weekly;
             costs.push(cost);
             costs_cpu.push(cost/offer.cpu_p);
@@ -99,9 +109,15 @@ function getQuote(offer, step, period, dates) {
         }
     } else if (offer.monthly != "" ) {
         for (var h=0; h <= period; h+=step) {
-            var i = Math.floor(h/step);
-            //console.log("M.Offer. h= "+h+" i="+i+" months="+dates[1][i].months + "years="+dates[1][i].years);
-            var period_m = dates[1][i].years * 12 + dates[1][i].months+1;
+            // Shift billing moments to one position later,
+            // so that 1 month (presize moment) counts for 1 month costs, not 2 months.
+            var i = Math.floor(h/step) - 1;
+            var period_m = 0;
+            if ( i < 0 ) {
+                i = 0;
+            } else {
+             period_m = dates[1][i].years * 12 + dates[1][i].months+1;
+            }
             cost = period_m * offer.monthly;
             costs.push(cost);
             costs_cpu.push(cost/offer.cpu_p);
@@ -109,9 +125,14 @@ function getQuote(offer, step, period, dates) {
         }
     } else if (offer.yearly != "" ) {
         for (var h=0; h <= period; h+=step) {
-            var i = Math.floor(h/step);
-            //console.log("Y.Offer. h= "+h+" i="+i+" months="+dates[1][i].months + "years="+dates[1][i].years);
-            period_y = dates[1][i].years+1;
+            // Shift billing moments to one position later
+            var i = Math.floor(h/step) - 1;
+            var period_y = 0;
+            if ( i < 0 ) {
+                i = 0;
+            } else {
+                period_y = dates[1][i].years+1;
+            }
             cost = period_y * offer.yearly;
             costs.push(cost);
             costs_cpu.push(cost/offer.cpu_p);
@@ -253,7 +274,7 @@ function plotPeriod(period, step) {
         },
         xaxis: {
             tickangle: 45,
-            tickvals: [0,   Math.floor(24*7),
+            tickvals: [0,   Math.floor(24), Math.floor(24*7),
                 Math.floor(24*accumulated_months_days[0]),
                 Math.floor(24*accumulated_months_days[1]),
                 Math.floor(24*accumulated_months_days[2]),
@@ -266,7 +287,7 @@ function plotPeriod(period, step) {
                 Math.floor(24*accumulated_months_days[9]),
                 Math.floor(24*accumulated_months_days[10]),
                 Math.floor(24*accumulated_months_days[11]) ],
-            ticktext: ["0", "1 week", "1 month", "2 months", "3 months", "4 months", "5 months", "6 months", "7 months", "8 months", "9 months", "10 months", "11 months", "12 months"]
+            ticktext: ["0", "1 day", "1 week", "1 month", "2 months", "3 months", "4 months", "5 months", "6 months", "7 months", "8 months", "9 months", "10 months", "11 months", "12 months"]
         },
         yaxis: {
             tickprefix: "$",
@@ -301,7 +322,7 @@ function plotPeriod(period, step) {
 }
 
 loadData("cost-performance.csv");
-var step = 12; // 12-hour step
+var step = 6; // hours step
 
 function continue_proc(filter, arg) {
     if (accumulated_months_days.length < 1) {
@@ -598,12 +619,14 @@ function plotTable() {
         }
         body += '</td> \
         <td>'+offers[j].gpu_model+'</td><td>'+offers[j].gpus+'</td>\
-        <td>-</td><td>-</td>\
-        <td>-</td><td></td><td></td><td></td><td></td>\
-        <td>-</td>\
+        <td>'+offers[j].cpu_model+'</td><td>'+offers[j].cpus+'</td>\
+        <td>'+offers[j].memory+'</td>\
+        <td>'+offers[j].hdd1+'</td><td>'+offers[j].hdd1_vol+'</td>\
+        <td>'+offers[j].hdd2+'</td><td>'+offers[j].hdd2_vol+'</td>\
+        <td>'+offers[j].net+'</td>\
         <td>'+offers[j].hourly+'</td>\
         <td>'+offers[j].monthly+'</td>\
-        <td></td></tr>';
+        <td>'+offers[j].notes+'</td></tr>';
     }
 
     var tail = '</tbody></table>';
