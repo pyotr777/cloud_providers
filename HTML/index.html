@@ -6,46 +6,50 @@
     <script src="PapaParse-4.1.2/papaparse.min.js"></script>
     <script src="plotting.js"></script>
     <link rel="stylesheet" href="style.css">
+
+    </script>
 </head>
 
 <body>
+    <div class="grouptitle"><p>Filtering</p>
+        <div class="buttons">
+            <div class="groupname">GPU number</div>
+            <div class="button" id="all" onclick="continue_proc(filterAll,'');">All</div>
+            <div class="button" id="gpu1" onclick="continue_proc(filterByGPU,'0-1');">GPU 1</div>
+            <div class="button" id="gpu2" onclick="continue_proc(filterByGPU,'2-3');">GPU 2-3</div>
+            <div class="button" id="gpu3" onclick="continue_proc(filterByGPU,'4-7');">GPU 4-7</div>
+            <div class="button" id="gpu4" onclick="continue_proc(filterByGPU,'8-15');">GPU 8-15</div>
+            <div class="button" id="gpu4" onclick="continue_proc(filterByGPU,'16-');">GPU 16-</div>
+        </div>
+        <div class="buttons">
+            <div class="groupname">Provider</div>
+            <div class="button" onclick="continue_proc(filterAll,'');">All</div>
+            <div class="button" onclick="continue_proc(filterProvider,'amazon');">Amazon</div>
+            <div class="button" onclick="continue_proc(filterProvider,'softlayer');">Softlayer</div>
+            <div class="button"  onclick="continue_proc(filterProvider,'nimbix');">Nimbix</div>
+            <div class="button" onclick="continue_proc(filterProvider,'cirrascale');">Cirrascale</div>
+            <div class="button" onclick="continue_proc(filterProvider,'sakura');">Sakura</div>
+        </div>
 
-    <div id="slice_performance" style="width: 100%; height: 420px;"></div>
+
+        <div id="slice_performance" style="width: 100%; height: 420px;"></div>
 
 
+        <div id="costs_period" style="width: 100%; height: 400px;"></div>
+
+        <div class="buttons">
+            <div class="groupname">Display for period</div>
+            <div class="button" id="day" onclick="displayTime('1 day');">1 day</div>
+            <div class="button" id="week" onclick="displayTime('7 days');">1 week</div>
+            <div class="button" id="month" onclick="displayTime('1 month');">1 month</div>
+            <div class="button" id="6months" onclick="displayTime('6 months');">6 months</div>
+            <div class="button" id="12months" onclick="displayTime('1 year');">1 year</div>
+        </div>
 
 
-    <div class="buttons">
-        <div class="groupname">Filter by GPU number:</div>
-        <div class="button" id="all" onclick="continue_proc(filterAll,'');">All</div>
-        <div class="button" id="gpu1" onclick="continue_proc(filterByGPU,'1-2');">GPU 1-2</div>
-        <div class="button" id="gpu2" onclick="continue_proc(filterByGPU,'3-4');">GPU 3-4</div>
-        <div class="button" id="gpu3" onclick="continue_proc(filterByGPU,'5-8');">GPU 5-8</div>
-        <div class="button" id="gpu4" onclick="continue_proc(filterByGPU,'9-16');">GPU 9-16</div>
+        <div id="slice_cost" style="width: 100%; height: 500px;"></div>
+        <div id="slice_cost_perf" style="width: 100%; height: 500px;"></div>
     </div>
-    <div class="buttons">
-        <div class="groupname">Filter by provider:</div>
-        <div class="button" id="all" onclick="continue_proc(filterAll,'');">All</div>
-        <div class="button" id="amazon" onclick="continue_proc(filterProvider,'amazon');">Amazon</div>
-        <div class="button" id="gpu2" onclick="continue_proc(filterProvider,'softlayer');">Softlayer</div>
-        <div class="button" id="gpu3" onclick="continue_proc(filterProvider,'cirrascale');">Cirrascale</div>
-        <div class="button" id="gpu4" onclick="continue_proc(filterProvider,'sakura');">Sakura</div>
-    </div>
-    <div id="costs_period" style="width: 100%; height: 400px;"></div>
-
-    <div class="buttons">
-        <div class="groupname">Display for period:</div>
-        <div class="button" id="day" onclick="displayTime('1 day');">1 day</div>
-        <div class="button" id="week" onclick="displayTime('7 days');">1 week</div>
-        <div class="button" id="month" onclick="displayTime('1 month');">1 month</div>
-        <div class="button" id="6months" onclick="displayTime('6 months');">6 months</div>
-        <div class="button" id="12months" onclick="displayTime('1 year');">1 year</div>
-    </div>
-
-
-    <div id="slice_cost" style="width: 100%; height: 500px;"></div>
-    <div id="slice_cost_perf" style="width: 100%; height: 500px;"></div>
-
 
     <div id="table_div" style="width: 100%; height: 500px;"></div>
 

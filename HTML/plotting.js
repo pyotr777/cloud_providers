@@ -1,4 +1,11 @@
 
+function ready() {
+    loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
+    //loadData("cost-performance.csv");
+}
+
+document.addEventListener("DOMContentLoaded", ready);
+
 function loadData(filname) {
     Papa.parse(filname, {
         download: true,
@@ -65,7 +72,12 @@ function filterByGPU(group) {
     max = 0;
     splits = group.split("-");
     min = parseInt(splits[0]);
-    max = parseInt(splits[1]);
+    if (splits.length >= 2  && splits[1] != "") {
+        max = parseInt(splits[1]);
+    } else {
+        max = 1000000;
+    }
+    console.log("Filtering by "+min+" - " + max+ ", "+splits.length+":"+splits);
     for (j=0; j < offers_all.length; j++) {
         if (offers_all[j].gpus >= min && offers_all[j].gpus <= max) {
             offers.push(offers_all[j]);
@@ -274,7 +286,7 @@ function plotPeriod(period, step) {
         },
         xaxis: {
             tickangle: 45,
-            tickvals: [0,   Math.floor(24), Math.floor(24*7),
+            tickvals: [0, Math.floor(24*7),
                 Math.floor(24*accumulated_months_days[0]),
                 Math.floor(24*accumulated_months_days[1]),
                 Math.floor(24*accumulated_months_days[2]),
@@ -287,7 +299,7 @@ function plotPeriod(period, step) {
                 Math.floor(24*accumulated_months_days[9]),
                 Math.floor(24*accumulated_months_days[10]),
                 Math.floor(24*accumulated_months_days[11]) ],
-            ticktext: ["0", "1 day", "1 week", "1 month", "2 months", "3 months", "4 months", "5 months", "6 months", "7 months", "8 months", "9 months", "10 months", "11 months", "12 months"]
+            ticktext: ["0", "1 week", "1 month", "2 months", "3 months", "4 months", "5 months", "6 months", "7 months", "8 months", "9 months", "10 months", "11 months", "12 months"]
         },
         yaxis: {
             tickprefix: "$",
@@ -321,7 +333,6 @@ function plotPeriod(period, step) {
     Plotly.newPlot("costs_period", traces, layout);
 }
 
-loadData("cost-performance.csv");
 var step = 6; // hours step
 
 function continue_proc(filter, arg) {
@@ -596,21 +607,25 @@ function displayAbsoluteValues() {
 
 function plotTable() {
     var head = '<table class="wide_table"><caption><span class="tableTitle"> \
-    IaaS providers for HPC with GPU</span></caption> \
+    Cloud computing offers with GPU.</span></caption> \
     <thead><tr><th rowspan="2">Provider</th> \
     <th rowspan="2">Offer</th><th colspan="2">GPU</th><th colspan="2">CPU</th> \
     <th>Memory</th><th colspan="4">HDD</th> \
-    <th>Network</th><th colspan="2">Pricing (USD)</th> \
-    <th rowspan="2">Notes</th></tr> \
+    <th>Network</th>\
+    <th colspan="4">Pricing (USD)</th> \
+    <th rowspan="2" class="notes_header">Notes</th></tr> \
     <tr><th>model</th><th>quantity</th> \
     <th>model</th><th>quantity</th> \
     <th>RAM (GB)</th> \
     <th>primary type</th><th>vol. (GB)</th><th>secondary type</th><th>vol. (GB)</th> \
     <th>Internet (GB/s)</th> \
-    <th>per hour</th><th>per month</th> \
+    <th>per hour</th><th>per week</th><th>per month</th><th>per year</th> \
     </tr></thead><tbody>';
     var body="";
     for (var j=0; j < offers.length; j++) {
+        if (offers[j].weekly != "") {
+            continue;
+        }
         body += '<tr><td><a href="'+offers[j].provider_link+'" target="_blank">'+offers[j].provider+'</a></td><td>';
         if (offers[j].name_link != "") {
             body += '<a href="'+offers[j].name_link+'" target="_blank">'+offers[j].name+'</a>';
@@ -625,8 +640,10 @@ function plotTable() {
         <td>'+offers[j].hdd2+'</td><td>'+offers[j].hdd2_vol+'</td>\
         <td>'+offers[j].net+'</td>\
         <td>'+offers[j].hourly+'</td>\
+        <td>'+offers[j].weekly+'</td>\
         <td>'+offers[j].monthly+'</td>\
-        <td>'+offers[j].notes+'</td></tr>';
+        <td>'+offers[j].yearly+'</td>\
+        <td class="notes">'+offers[j].notes+'</td></tr>';
     }
 
     var tail = '</tbody></table>';

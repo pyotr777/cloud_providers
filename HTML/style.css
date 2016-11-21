@@ -9,15 +9,37 @@ body {
     webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
-    background: #fafafa;
-    padding:2px 25px;
+    background: #eee;
+    padding:2px 12px;    
     margin-bottom:5px;
+    display: flex;
+    align-items: center;
+}
+
+.grouptitle {
+    webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    margin-top:15px;
+    padding: 5px;
+}
+.grouptitle p {
+    margin: 0;
+    padding: 0;
+    position:relative;
+    height: 0;
+    overflow: visible;
+    top: -25px;
+    margin-left: 12px;
+    font: 10pt "Helvetica", "Arial", sans-serif;
 }
 
 .groupname {
     display:inline-block;
-    width: 160px;
-    font: 12pt "Helvetica", "Arial", sans-serif; 
+    width: 110px;
+    font: 10pt "Helvetica", "Arial", sans-serif;
+    margin: 0;
 }
 
 .button {
@@ -35,8 +57,9 @@ body {
 	padding:4px 10px;
 	text-decoration:none;
 	text-shadow:0px 1px 0px #5b6178;
-    margin: 0 2px 0 8px;
+    margin: auto 2px auto 8px;
     width: 55px;
+    vertical-align: middle;
 }
 .button:hover {
 	background-color:#019ad2;
@@ -47,8 +70,41 @@ body {
 }
 
 table {
-    font:  10pt "Helvetica", "Arial", sans-serif;    
+    font-size:  10pt;
+    font-family: "Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif;
+    border-spacing: 0px;
 }
-table td, table th {
-    border: 1px solid #eee;
+
+
+table td {
+    background-color: #fff;
+    padding: 2px !important;
+}
+
+th.notes_header {
+    width: 200px !important;
+}
+
+td.notes {
+    font-size: 80%;
+    width: 200px;
+    font-family: "Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif;
+}
+
+#table_div {
+    margin-top: 15px;    
+}
+
+.tableTitle {
+    font:  12pt "Helvetica", "Arial", sans-serif;
+    letter-spacing: 0.5pt;
+    color: #444;
+}
+
+table caption {
+    margin: 14pt;
+}
+
+div.entry-content {    
+    max-width:790px !important;
 }
