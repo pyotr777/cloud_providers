@@ -278,7 +278,7 @@ function plotPeriod(period, step) {
     var layout = {
         title: 'Cost per period (USD)',
         hovermode:'closest',
-        showticklabels: false,
+        showticklabels: true,
         showlegend: false,
         margin: {
             t: 40,
@@ -322,6 +322,7 @@ function plotPeriod(period, step) {
                 width: 1.1
             },
             name: offers[j].shortname,
+            longname: offers[j].provider+" "+offers[j].name,
             hoverinfo:"y+text",
             x: dates[0],
             text: text,
@@ -333,7 +334,7 @@ function plotPeriod(period, step) {
     Plotly.newPlot("costs_period", traces, layout);
 }
 
-var step = 6; // hours step
+var step = 12; // hours step
 
 function continue_proc(filter, arg) {
     if (accumulated_months_days.length < 1) {
@@ -356,8 +357,41 @@ function continue_proc(filter, arg) {
         //console.log(data);
         var pts = '';
         for(var i=0; i < data.points.length; i++) {
+            console.log("Clicked: ");
+            console.log(data.points[i]);
             displaySlice(data.points[i].pointNumber);
+            var point = data.points[i];
+            newAnnotation = {
+                x: point.xaxis.d2l(point.x),
+                y: point.yaxis.d2l(point.y),
+                arrowhead: 7,
+                ax: 0,
+                ay: -50,
+                bgcolor: point.data.line.color,
+                arrowwidth: 1.2,
+                arrowcolor: '#303030',
+                font: {size:12},
+                bordercolor: '#707070',
+                borderwidth: 2,
+                borderpad: 4,
+                text: '<b>' + dates[2][point.pointNumber]+'</b><br>'+point.data.longname+
+                '<br>['+point.data.name +']'
+            }
         }
+        newIndex = (myPlot.layout.annotations || []).length;
+        console.log("newindex is "+newIndex);
+
+         // delete instead if clicked twice
+        if(newIndex) {
+            var foundCopy = false;
+            myPlot.layout.annotations.forEach(function(ann, sameIndex) {
+                console.log("annotations foreach with");
+                console.log(ann);
+                console.log(sameIndex);
+                Plotly.relayout('costs_period', 'annotations[' + sameIndex + ']', 'remove');
+            });
+         }
+         Plotly.relayout('costs_period', 'annotations[' + newIndex + ']', newAnnotation);
     });
 
     // Display data for 1 month
@@ -606,20 +640,19 @@ function displayAbsoluteValues() {
 }
 
 function plotTable() {
-    var head = '<table class="wide_table"><caption><span class="tableTitle"> \
-    Cloud computing offers with GPU.</span></caption> \
+    var head = '<table class="wide_table">\
     <thead><tr><th rowspan="2">Provider</th> \
-    <th rowspan="2">Offer</th><th colspan="2">GPU</th><th colspan="2">CPU</th> \
-    <th>Memory</th><th colspan="4">HDD</th> \
+    <th rowspan="2">Offer</th><th colspan="2" class="double">GPU</th><th colspan="2" class="double">CPU</th> \
+    <th>Memory</th><th colspan="4" class="quadruple">HDD</th> \
     <th>Network</th>\
-    <th colspan="4">Pricing (USD)</th> \
-    <th rowspan="2" class="notes_header">Notes</th></tr> \
+    <th colspan="4" class="quadruple">Pricing (USD) per</th> \
+    <th rowspan="2" class="notes_cell quadruple">Notes</th></tr> \
     <tr><th>model</th><th>quantity</th> \
     <th>model</th><th>quantity</th> \
     <th>RAM (GB)</th> \
-    <th>primary type</th><th>vol. (GB)</th><th>secondary type</th><th>vol. (GB)</th> \
+    <th>primary</th><th>vol. (GB)</th><th>secondary</th><th>vol. (GB)</th> \
     <th>Internet (GB/s)</th> \
-    <th>per hour</th><th>per week</th><th>per month</th><th>per year</th> \
+    <th>hour</th><th>week</th><th>month</th><th>year</th> \
     </tr></thead><tbody>';
     var body="";
     for (var j=0; j < offers.length; j++) {
@@ -643,7 +676,7 @@ function plotTable() {
         <td>'+offers[j].weekly+'</td>\
         <td>'+offers[j].monthly+'</td>\
         <td>'+offers[j].yearly+'</td>\
-        <td class="notes">'+offers[j].notes+'</td></tr>';
+        <td class="notes_cell">'+offers[j].notes+'</td></tr>';
     }
 
     var tail = '</tbody></table>';

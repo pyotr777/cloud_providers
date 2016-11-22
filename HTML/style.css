@@ -58,7 +58,7 @@ body {
 	text-decoration:none;
 	text-shadow:0px 1px 0px #5b6178;
     margin: auto 2px auto 8px;
-    width: 55px;
+    width: 62px;
     vertical-align: middle;
 }
 .button:hover {
@@ -69,40 +69,56 @@ body {
 	top:1px;
 }
 
+
 table {
     font-size:  10pt;
     font-family: "Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif;
     border-spacing: 0px;
+    table-layout: fixed;
 }
 
-
 table td {
-    background-color: #fff;
     padding: 2px !important;
 }
 
-th.notes_header {
-    width: 200px !important;
+.notes_cell {
+    font-size: 80%;    
 }
 
-td.notes {
-    font-size: 80%;
-    width: 200px;
-    font-family: "Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif;
-}
-
-#table_div {
-    margin-top: 15px;    
-}
 
 .tableTitle {
-    font:  12pt "Helvetica", "Arial", sans-serif;
+    font:  12pt Lato, "Helvetica", "Arial", sans-serif;
     letter-spacing: 0.5pt;
     color: #444;
 }
 
-table caption {
-    margin: 14pt;
+table.wide_table {
+	font-size: 70%;
+	table-layout: fixed;
+	border: 1px solid #ccc;
+	box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+}
+table.wide_table th {
+	width: 60px;	
+}
+
+table.wide_table th.double {
+	width: 120px;	
+}
+
+table.wide_table th.triple {
+	width: 180px;	
+}
+
+table.wide_table th.quadruple {
+	width: 240px;	
+}
+
+
+
+
+#table_div {
+    overflow: scroll;
 }
 
 div.entry-content {    
