@@ -11,7 +11,12 @@
 </head>
 
 <body>
-    <div class="grouptitle"><p>Filtering</p>
+    <p>In this post I compiled some data about Cloud providers GPU offerings: CPU and GPU performance, costs. etc. Beware that performance data is a rough estimate, and actual perfomance may vary grately between applications. </p>
+    <p>Using the graphs below you can compare estimate CPU and GPU performance, comapre costs and cost/performance values for a particular period. To select the period click on the "Cost per period" graph or use one of the buttons below it. You can also filter offerings by GPU numbers and providers.</p>
+    <p>You can find details for all offerings in the table at the bottom of this post. The data will be updated on (I hope) a regular basis.</p>
+    <p>Last update 2016/11/22.</p>
+    <div id="slice_performance" style="width: 100%; height: 420px;"></div>
+    <div class="grouptitle"><p>Filter all graphs by</p>
         <div class="buttons">
             <div class="groupname">GPU number</div>
             <div class="button" id="all" onclick="continue_proc(filterAll,'');">All</div>
@@ -24,36 +29,45 @@
         <div class="buttons">
             <div class="groupname">Provider</div>
             <div class="button" onclick="continue_proc(filterAll,'');">All</div>
-            <div class="button" onclick="continue_proc(filterProvider,'amazon');">Amazon</div>
-            <div class="button" onclick="continue_proc(filterProvider,'softlayer');">Softlayer</div>
-            <div class="button"  onclick="continue_proc(filterProvider,'nimbix');">Nimbix</div>
-            <div class="button" onclick="continue_proc(filterProvider,'cirrascale');">Cirrascale</div>
-            <div class="button" onclick="continue_proc(filterProvider,'sakura');">Sakura</div>
+            <div class="button" onclick="continue_proc(filterProvider,'amazon');" title="Amazon" onmouseover="ButtonOver(this)" onmouseout="ButtonOver(this)">AZ</div>
+            <div class="button" onclick="continue_proc(filterProvider,'softlayer');" title="Softlayer" onmouseover="ButtonOver(this)" onmouseout="ButtonOver(this)">SL</div>
+            <div class="button"  onclick="continue_proc(filterProvider,'nimbix');" title="Nimbix" onmouseover="ButtonOver(this)" onmouseout="ButtonOver(this)">NM</div>
+            <div class="button" onclick="continue_proc(filterProvider,'cirrascale');" title="Cirrascale" onmouseover="ButtonOver(this)" onmouseout="ButtonOver(this)">CR</div>
+            <div class="button" onclick="continue_proc(filterProvider,'sakura');" title="Sakura" onmouseover="ButtonOver(this)" onmouseout="ButtonOver(this)">SK</div>
         </div>
-
-
-        <div id="slice_performance" style="width: 100%; height: 420px;"></div>
-
-
-        <div id="costs_period" style="width: 100%; height: 400px;"></div>
-
-        <div class="buttons">
-            <div class="groupname">Display for period</div>
-            <div class="button" id="day" onclick="displayTime('1 day');">1 day</div>
-            <div class="button" id="week" onclick="displayTime('7 days');">1 week</div>
-            <div class="button" id="month" onclick="displayTime('1 month');">1 month</div>
-            <div class="button" id="6months" onclick="displayTime('6 months');">6 months</div>
-            <div class="button" id="12months" onclick="displayTime('1 year');">1 year</div>
-        </div>
-
-
-        <div id="slice_cost" style="width: 100%; height: 500px;"></div>
-        <div id="slice_cost_perf" style="width: 100%; height: 500px;"></div>
     </div>
 
-    <h2 class="tableTitle">Cloud computing offers with GPU</h2>
-    <div id="table_div" style="height: 500px;"></div>
+    <div id="costs_period" style="width: 100%; height: 400px;"></div>
 
+    <div class="buttons">
+        <div class="groupname">Display for period</div>
+        <div class="button" id="day" onclick="displayTime('1 day');">1 day</div>
+        <div class="button" id="week" onclick="displayTime('7 days');">1 week</div>
+        <div class="button" id="month" onclick="displayTime('1 month');">1 month</div>
+        <div class="button" id="6months" onclick="displayTime('6 months');">6 months</div>
+        <div class="button" id="12months" onclick="displayTime('1 year');">1 year</div>
+    </div>
+
+
+    <div id="slice_cost" style="width: 100%; height: 500px;"></div>
+    <div id="slice_cost_perf" style="width: 100%; height: 500px;"></div>
+
+
+    <h2 class="tableTitle">Cloud computing offers with GPU</h2>
+    <div id="table_div"></div>
+
+
+<div class="notes">
+
+
+Links:
+<a href="https://www.microway.com/knowledge-center-articles/detailed-specifications-intel-xeon-e5-2600v3-haswell-ep-processors/" target="_blank">www.microway.com/knowledge-center-articles/detailed-specifications-intel-xeon-e5-2600v3-haswell-ep-processors</a>
+<a href="https://www.microway.com/knowledge-center-articles/detailed-specifications-of-the-intel-xeon-e5-2600v4-broadwell-ep-processors/" target="_blank">www.microway.com/knowledge-center-articles/detailed-specifications-of-the-intel-xeon-e5-2600v4-broadwell-ep-processors</a>
+<a href="https://en.wikipedia.org/wiki/List_of_Nvidia_graphics_processing_units" target="_blank">wikipedia.org/wiki/List_of_Nvidia_graphics_processing_units</a>
+<a href="http://excel.fit.vutbr.cz/submissions/2016/056/56.pdf" target="_blank">excel.fit.vutbr.cz/submissions/2016/056/56.pdf</a>
+
+
+</div>
 
 
 </body>

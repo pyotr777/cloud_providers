@@ -272,9 +272,9 @@ function plotPeriod(period, step) {
     // dates[0] - array of hours: 0,1,2,...,period
     // dates[1] - array of objects
     // dates[2] - array of human-readable text format dates
-    console.log("Period is " + period+" (" + dates[0][dates[0].length-1] + ") hours");
-    console.log("which is " + dates[2][dates[1].length-1]);
-    console.log("Test: is it 1 month? " + Math.floor(24*accumulated_months_days[0] /step));
+    //console.log("Period is " + period+" (" + dates[0][dates[0].length-1] + ") hours");
+    //console.log("which is " + dates[2][dates[1].length-1]);
+    //console.log("Test: is it 1 month? " + Math.floor(24*accumulated_months_days[0] /step));
     var layout = {
         title: 'Cost per period (USD)',
         hovermode:'closest',
@@ -357,8 +357,8 @@ function continue_proc(filter, arg) {
         //console.log(data);
         var pts = '';
         for(var i=0; i < data.points.length; i++) {
-            console.log("Clicked: ");
-            console.log(data.points[i]);
+            //console.log("Clicked: ");
+            //console.log(data.points[i]);
             displaySlice(data.points[i].pointNumber);
             var point = data.points[i];
             newAnnotation = {
@@ -379,15 +379,15 @@ function continue_proc(filter, arg) {
             }
         }
         newIndex = (myPlot.layout.annotations || []).length;
-        console.log("newindex is "+newIndex);
+        //console.log("newindex is "+newIndex);
 
          // delete instead if clicked twice
         if(newIndex) {
             var foundCopy = false;
             myPlot.layout.annotations.forEach(function(ann, sameIndex) {
-                console.log("annotations foreach with");
-                console.log(ann);
-                console.log(sameIndex);
+                //console.log("annotations foreach with");
+                //console.log(ann);
+                //console.log(sameIndex);
                 Plotly.relayout('costs_period', 'annotations[' + sameIndex + ']', 'remove');
             });
          }
@@ -683,3 +683,13 @@ function plotTable() {
 
     document.getElementById("table_div").innerHTML = head + body + tail;
 }
+
+function ButtonOver(button) {
+    if (button.title == "") {
+        return;
+    }
+    var tmp = button.innerHTML;
+    button.innerHTML = button.title;
+    button.title = tmp;
+}
+
