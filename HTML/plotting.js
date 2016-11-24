@@ -2,6 +2,8 @@
 function ready() {
     loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
     //loadData("cost-performance.csv");
+    $("select").select2();
+    $("select").select2({  theme: "classic" });
 }
 
 document.addEventListener("DOMContentLoaded", ready);
@@ -92,6 +94,24 @@ function filterProvider(prov) {
     for (j=0; j < offers_all.length; j++) {
         //console.log(offers_all[j].provider.toLowerCase());
         if (offers_all[j].provider.toLowerCase() == prov.toLowerCase()) {
+            offers.push(offers_all[j]);
+        }
+    }
+}
+
+function filterProviders(optionslist) {
+    if (optionslist.length == 0) {
+        filterAll("");
+        return;
+    }
+    providerlist = [];
+    for (var i=0 ; i < optionslist.length; i++ ) {
+        providerlist.push(optionslist[i].value);
+    }
+    offers = [];
+    for (j=0; j < offers_all.length; j++) {
+        if ($.inArray(offers_all[j].provider.toLowerCase(), providerlist) != -1) {
+            //console.log("Accept "+ offers_all[j].provider);
             offers.push(offers_all[j]);
         }
     }

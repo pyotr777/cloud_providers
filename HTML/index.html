@@ -5,9 +5,11 @@
     <script src="plotly-latest.min.js"></script>
     <script src="PapaParse-4.1.2/papaparse.min.js"></script>
     <script src="plotting.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cabin+Condensed" />
-    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 </head>
 
 <body>
@@ -27,14 +29,16 @@
             <div class="button" id="gpu4" onclick="continue_proc(filterByGPU,'16-');">GPU 16+</div>
         </div>
         <div class="buttons">
-            <div class="groupname">Provider</div>
-            <div class="button" onclick="continue_proc(filterAll,'');">All</div>
-            <div class="button" onclick="continue_proc(filterProvider,'amazon');" title="Amazon" onmouseover="ButtonOver(this)" onmouseout="ButtonOver(this)">AZ</div>
-            <div class="button" onclick="continue_proc(filterProvider,'softlayer');" title="Softlayer" onmouseover="ButtonOver(this)" onmouseout="ButtonOver(this)">SL</div>
-            <div class="button"  onclick="continue_proc(filterProvider,'nimbix');" title="Nimbix" onmouseover="ButtonOver(this)" onmouseout="ButtonOver(this)">NM</div>
-            <div class="button" onclick="continue_proc(filterProvider,'cirrascale');" title="Cirrascale" onmouseover="ButtonOver(this)" onmouseout="ButtonOver(this)">CR</div>
-            <div class="button" onclick="continue_proc(filterProvider,'sakura');" title="Sakura" onmouseover="ButtonOver(this)" onmouseout="ButtonOver(this)">SK</div>
+            <label class="groupname" for="providers-select">Providers</label>
+            <select  class="providers-select js-states form-control" multiple="multiple" id="providers-select" onchange="continue_proc(filterProviders,this.selectedOptions)">
+                <option value="amazon">Amazon</option>
+                <option value="softlayer">Softlayer</option>
+                <option value="nimbix">Nimbix</option>
+                <option value="cirrascale">Cirrascale</option>
+                <option value="sakura">Sakura</option>
+            </select>
         </div>
+
     </div>
 
     <div id="costs_period" style="width: 100%; height: 400px;"></div>
