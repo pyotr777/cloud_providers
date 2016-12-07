@@ -1,7 +1,7 @@
 
 function ready() {
-    //loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
-    loadData("cost-performance.csv");
+    loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
+    //loadData("cost-performance.csv");
     $("select").select2();
     $("select").select2({  theme: "classic" });
 }
