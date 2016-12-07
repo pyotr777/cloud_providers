@@ -324,7 +324,7 @@ function plotPeriod(period, step) {
         },
         yaxis: {
             tickprefix: "$",
-            hoverformat: '.2f',
+            hoverformat: ',.2f',
             exponentformat: "none"
         }
     };
@@ -476,7 +476,7 @@ function displaySlice(n) {
         yaxis: {
             title: 'Cost per CPU 1 TFlops (USD/TFlops)',
             tickprefix: "$",
-            hoverformat: '.2f',
+            hoverformat: ',.2f',
             exponentformat: "none",
             separatethousands: true,
             gridcolor: cpu_color.light,
@@ -488,7 +488,7 @@ function displaySlice(n) {
             overlaying: 'y',
             side: 'right',
             tickprefix: "$",
-            hoverformat: '.2f',
+            hoverformat: ',.2f',
             exponentformat: "none",
             separatethousands: true,
             gridcolor: gpu_color.light,
@@ -557,7 +557,7 @@ function displaySlice(n) {
         yaxis: {
             title: 'Cost (USD)',
             tickprefix: "$",
-            hoverformat: '.2f',
+            hoverformat: ',.2f',
             exponentformat: "none",
             separatethousands: true
         }
@@ -660,6 +660,30 @@ function displayAbsoluteValues() {
     Plotly.newPlot('slice_performance', [trace_cpu, trace_gpu], layout_perf);
 }
 
+function CurrencyFormat(s) {
+    if (s == "") {
+        return "";
+    }
+    if (s.indexOf("x")>=0) {
+        return s;
+    }
+    num = Number(s).toLocaleString('en', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 })
+    num = num.replace(",", " ")
+    return num
+}
+
+function NumberFormat(s) {
+    if (s == "") {
+        return "";
+    }
+    if (s.indexOf("x")>=0) {
+        return s;
+    }
+    num = Number(s).toLocaleString('en', { style: 'decimal', maximumFractionDigits: 2 })
+    num = num.replace(",", " ")
+    return num
+}
+
 function plotTable() {
     var head = '<table class="wide_table">\
     <thead><tr><th rowspan="2">Provider</th> \
@@ -677,9 +701,7 @@ function plotTable() {
     </tr></thead><tbody>';
     var body="";
     for (var j=0; j < offers.length; j++) {
-        if (offers[j].weekly != "") {
-            continue;
-        }
+
         body += '<tr><td><a href="'+offers[j].provider_link+'" target="_blank">'+offers[j].provider+'</a></td><td>';
         if (offers[j].name_link != "") {
             body += '<a href="'+offers[j].name_link+'" target="_blank">'+offers[j].name+'</a>';
@@ -689,14 +711,14 @@ function plotTable() {
         body += '</td> \
         <td>'+offers[j].gpu_model+'</td><td>'+offers[j].gpus+'</td>\
         <td>'+offers[j].cpu_model+'</td><td>'+offers[j].cpus+'</td>\
-        <td>'+offers[j].memory+'</td>\
-        <td>'+offers[j].hdd1+'</td><td>'+offers[j].hdd1_vol+'</td>\
-        <td>'+offers[j].hdd2+'</td><td>'+offers[j].hdd2_vol+'</td>\
+        <td>'+NumberFormat(offers[j].memory)+'</td>\
+        <td>'+offers[j].hdd1+'</td><td>'+NumberFormat(offers[j].hdd1_vol)+'</td>\
+        <td>'+offers[j].hdd2+'</td><td>'+NumberFormat(offers[j].hdd2_vol)+'</td>\
         <td>'+offers[j].net+'</td>\
-        <td>'+offers[j].hourly.toLocaleString('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 2 })+'</td>\
-        <td>'+offers[j].weekly.toLocaleString('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 2 })+'</td>\
-        <td>'+offers[j].monthly.toLocaleString('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 2 })+'</td>\
-        <td>'+offers[j].yearly.toLocaleString('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 2 })+'</td>\
+        <td>'+CurrencyFormat(offers[j].hourly)+'</td>\
+        <td>'+CurrencyFormat(offers[j].weekly)+'</td>\
+        <td>'+CurrencyFormat(offers[j].monthly)+'</td>\
+        <td>'+CurrencyFormat(offers[j].yearly)+'</td>\
         <td class="notes_cell">'+offers[j].notes+'</td></tr>';
     }
 
