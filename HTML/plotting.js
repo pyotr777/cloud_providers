@@ -1,7 +1,7 @@
 
 function ready() {
-    loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
-    //loadData("cost-performance.csv");
+    //loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
+    loadData("cost-performance.csv");
     $("select").select2();
     $("select").select2({  theme: "classic" });
 }
@@ -17,13 +17,14 @@ function loadData(filname) {
 
 var offers_all=[];
 var offers=[];
+var start_row = 2;
 
 function processStaticData(results) {
     console.log("Rows: "+results.data.length);
     var rows = results.data.length
     var provider = "";
     var provider_link = "";
-    for (var i=1; i<rows; i++) {
+    for (var i=start_row; i<rows; i++) {
         row = results.data[i];
         if (provider !=  row[0] && row[0] !="") {
             provider = row[0];
@@ -692,10 +693,10 @@ function plotTable() {
         <td>'+offers[j].hdd1+'</td><td>'+offers[j].hdd1_vol+'</td>\
         <td>'+offers[j].hdd2+'</td><td>'+offers[j].hdd2_vol+'</td>\
         <td>'+offers[j].net+'</td>\
-        <td>'+offers[j].hourly+'</td>\
-        <td>'+offers[j].weekly+'</td>\
-        <td>'+offers[j].monthly+'</td>\
-        <td>'+offers[j].yearly+'</td>\
+        <td>'+offers[j].hourly.toLocaleString('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 2 })+'</td>\
+        <td>'+offers[j].weekly.toLocaleString('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 2 })+'</td>\
+        <td>'+offers[j].monthly.toLocaleString('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 2 })+'</td>\
+        <td>'+offers[j].yearly.toLocaleString('ja-JP', { style: 'currency', currency: 'JPY', maximumFractionDigits: 2 })+'</td>\
         <td class="notes_cell">'+offers[j].notes+'</td></tr>';
     }
 
