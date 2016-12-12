@@ -1,7 +1,7 @@
 
 function ready() {
-    loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
-    //loadData("cost-performance.csv");
+    //loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
+    loadData("cost-performance.csv");
     $("select").select2();
     $("select").select2({  theme: "classic" });
 }
@@ -252,14 +252,13 @@ function prepDates(end, step) {
 var dates =[];
 var quotes=[];
 var colors=[["#ffa20b"],  // Amazon
-           ["#20d984"],  // Softlayer
-           ["#517486"],  // Nimbix
-           ["#5dbaff"],  // Cirrascale
-           ["#ff5d5d"],  // Sakura
+           ["#70de5b"],  // Softlayer
+           ["#41d4cf"],  // Nimbix
+           ["#82c0ff"],  // Cirrascale
+           ["#ff7f84"],  // Sakura
            ["#656565"]];
 
-function getColor(offer) {
-    var prov = offer.provider.toLowerCase();
+function getColor(prov) {
     var c = colors.length-1;
     //console.log("Pick color for "+ offer.provider.toLowerCase());
     switch (prov) {
@@ -296,11 +295,18 @@ function plotPeriod(period, step) {
     //console.log("Period is " + period+" (" + dates[0][dates[0].length-1] + ") hours");
     //console.log("which is " + dates[2][dates[1].length-1]);
     //console.log("Test: is it 1 month? " + Math.floor(24*accumulated_months_days[0] /step));
+
+
     var layout = {
         title: 'Cost per period (USD)',
         hovermode:'closest',
         showticklabels: true,
-        showlegend: false,
+        showlegend: true,
+        legend: {
+            orientation: "v",
+            y: 0,
+            x: 1
+        },
         margin: {
             t: 40,
             pad: 0
@@ -329,22 +335,45 @@ function plotPeriod(period, step) {
         }
     };
 
+    var last_prov = ""
     for (j=0; j < offers.length; j++) {
         quote = getQuote(offers[j], step, period, dates);
         var text = [];
         for (var i=0; i < dates[2].length; i++) {
             text.push(offers[j].shortname + " \n" + dates[2][i]);
         }
-        var c = getColor(offers[j]);
+        var prov = offers[j].provider.toLowerCase();
+        var c = getColor(prov);
+
+        if (last_prov != prov) {
+            last_prov = prov;
+            var legend_trace = {
+                showlegend: true,
+                legendgroup: prov,
+                name: offers[j].provider,
+                visible: true,
+                type: "bar",
+                x: [0],
+                y: [1],
+                fillcolor: colors[c][0]
+            }
+            traces.push(legend_trace)
+        }
         var trace = {
+            showlegend: false,
+            legendgroup: prov,
             mode: 'lines',
             line: {
                 color: colors[c][0],
-                width: 1.1
+                width: 1,
+                shape: "linear",
+                smoothing: 0
             },
+            opacity:1,
             name: offers[j].shortname,
             longname: offers[j].provider+" "+offers[j].name,
-            hoverinfo:"y+text",
+            hoveron: "points",
+            hoverinfo:"text+y",
             x: dates[0],
             text: text,
             y: quote[0] // 0 - Absolute cost
@@ -414,6 +443,34 @@ function continue_proc(filter, arg) {
          }
          Plotly.relayout('costs_period', 'annotations[' + newIndex + ']', newAnnotation);
     });
+
+
+
+
+
+    myPlot.on('plotly_hover', function(data) {
+        //console.log(data.points[0]);
+        var update= {
+            line: {
+                color: data.points[0].fullData.line.color,
+                width: 2
+            },
+            opacity: 1
+        }
+        Plotly.restyle('costs_period', update, [data.points[0].curveNumber]);
+    });
+
+    myPlot.on('plotly_unhover', function(data) {
+        var update= {
+            line: {
+                color: data.points[0].fullData.line.color,
+                width: 1
+            },
+            opacity: 1
+        }
+        Plotly.restyle('costs_period', update, [data.points[0].curveNumber]);
+    });
+
 
     // Display data for 1 month
     displaySlice(Math.floor(24 * accumulated_months_days[0] / step));
