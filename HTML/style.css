@@ -9,7 +9,7 @@ body {
     -moz-border-radius: 5px;
     border-radius: 5px;
     background: #eee;
-    padding:2px 12px;
+    padding:12px 12px;
     margin-bottom:5px;
     display: flex;
     align-items: center;
@@ -86,9 +86,11 @@ table td {
     padding: 4px !important;
 }
 
-.notes_cell {
+note, .notes_cell {
     font-size: 80%;
 }
+
+
 
 
 .tableTitle {

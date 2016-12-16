@@ -1,7 +1,7 @@
 
 function ready() {
-    //loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
-    loadData("cost-performance.csv");
+    loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
+    //loadData("cost-performance.csv");
     $("select").select2();
     $("select").select2({  theme: "classic" });
 }
@@ -213,13 +213,21 @@ function hoursToHuman(h) {
     var hours  = h;
     s = "";
     if ( years > 0) {
-        s = s + years + " years ";
+        s = s + years + " year ";
     }
     if ( months > 0) {
-        s = s + months + " months ";
+        if (months == 1) {
+            s = s + months + " month ";
+        } else {
+            s = s + months + " months ";
+        }
     }
     if ( days > 0) {
-        s = s + days + " days ";
+        if (days == 1) {
+            s = s + days + " day ";
+        } else {
+            s = s + days + " days ";
+        }
     }
     if ( hours > 0 || s.length < 2) {
         s = s + hours + " hours";
@@ -298,7 +306,7 @@ function plotPeriod(period, step) {
 
 
     var layout = {
-        title: 'Cost per period (USD)',
+        title: 'Cost for rent period* (USD)',
         hovermode:'closest',
         showticklabels: true,
         showlegend: true,
@@ -344,7 +352,7 @@ function plotPeriod(period, step) {
         }
         var prov = offers[j].provider.toLowerCase();
         var c = getColor(prov);
-
+        console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
         if (last_prov != prov) {
             last_prov = prov;
             var legend_trace = {
@@ -355,7 +363,9 @@ function plotPeriod(period, step) {
                 type: "bar",
                 x: [0],
                 y: [1],
-                fillcolor: colors[c][0]
+                marker: {
+                    color: colors[c][0]
+                }
             }
             traces.push(legend_trace)
         }
@@ -564,7 +574,7 @@ function displaySlice(n) {
         y_gpu.push(quotes[j][2][n]);
         y_cost.push(quotes[j][0][n]);
         x.push(offers[j].shortname);
-        c.push(colors[getColor(offers[j])][0]);
+        c.push(colors[getColor(offers[j].provider.toLowerCase())][0]);
     }
 
     var trace_cpu = {
@@ -596,7 +606,7 @@ function displaySlice(n) {
 
 
     var layout_cost = {
-        title: "Cost per "+dates[2][n]+ " (USD)",
+        title: "Cost for "+dates[2][n]+ " (USD)",
         showlegend: false,
         margin: {
             b: 120,
