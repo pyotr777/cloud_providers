@@ -260,7 +260,7 @@ function prepDates(end, step) {
 var dates =[];
 var quotes=[];
 var colors=[["#ffa20b"],  // Amazon
-           ["#70de5b"],  // Softlayer
+           ["#d5e245"],  // Softlayer
            ["#41d4cf"],  // Nimbix
            ["#82c0ff"],  // Cirrascale
            ["#ff7f84"],  // Sakura
@@ -290,7 +290,7 @@ function getColor(prov) {
 }
 
 // Plot all offers costs for given period.
-function plotPeriod(period, step) {
+function plotPeriod(period, step, thin, thick) {
     var tickvals = [];
     var ticktext = [];
     var traces = [];
@@ -302,8 +302,6 @@ function plotPeriod(period, step) {
     // dates[2] - array of human-readable text format dates
     //console.log("Period is " + period+" (" + dates[0][dates[0].length-1] + ") hours");
     //console.log("which is " + dates[2][dates[1].length-1]);
-    //console.log("Test: is it 1 month? " + Math.floor(24*accumulated_months_days[0] /step));
-
 
     var layout = {
         title: 'Cost for rent period* (USD)',
@@ -375,14 +373,13 @@ function plotPeriod(period, step) {
             mode: 'lines',
             line: {
                 color: colors[c][0],
-                width: 1,
+                width: thin,
                 shape: "linear",
                 smoothing: 0
             },
             opacity:1,
             name: offers[j].shortname,
             longname: offers[j].provider+" "+offers[j].name,
-            hoveron: "points",
             hoverinfo:"text+y",
             x: dates[0],
             text: text,
@@ -397,6 +394,10 @@ function plotPeriod(period, step) {
 var step = 12; // hours step
 
 function continue_proc(filter, arg) {
+    // line width on graph
+    var thin=0.8
+    var thick=1.5
+
     if (accumulated_months_days.length < 1) {
         console.log("Calculate accumulated months days");
         accumulated_days = 0;
@@ -409,7 +410,7 @@ function continue_proc(filter, arg) {
     filter(arg);
     quotes=[];
     console.log("Have "+ offers.length+" offers.")
-    plotPeriod(24*accumulated_months_days[11], step);  // Period for top plot
+    plotPeriod(24*accumulated_months_days[11], step, thin, thick);  // Period for top plot
     console.log("Have "+ quotes.length+" quotes.")
     var myPlot = document.getElementById('costs_period');
 
@@ -455,15 +456,12 @@ function continue_proc(filter, arg) {
     });
 
 
-
-
-
     myPlot.on('plotly_hover', function(data) {
         //console.log(data.points[0]);
         var update= {
             line: {
                 color: data.points[0].fullData.line.color,
-                width: 2
+                width: thick
             },
             opacity: 1
         }
@@ -474,7 +472,7 @@ function continue_proc(filter, arg) {
         var update= {
             line: {
                 color: data.points[0].fullData.line.color,
-                width: 1
+                width: thin
             },
             opacity: 1
         }
@@ -517,7 +515,9 @@ var gpu_color = {light: "rgba(252, 120, 36, 0.33)", dark: "#fc7824"};
 
 // Argument is array index
 function displaySlice(n) {
-    console.log("Clicked "+n+ " X: "+ dates[0][n] + " / " + dates[2][n]);
+    console.log(dates[1][n]);
+    var months = dates[1][n].years*12 + dates[1][n].months;
+    console.log("Clicked "+n+ " X: "+ dates[0][n] + ", full "+months+"months / " + dates[2][n]);
     var layout_bar = {
         title: "1 TFlops cost per " + dates[2][n],
         barmode: 'group',
@@ -566,6 +566,7 @@ function displaySlice(n) {
     var y_cpu = [];
     var y_gpu = [];
     var y_cost = [];
+    var y_cost_monthly = [];
     var x = [];
     var c = [];
     console.log("displaySlice has " + offers.length+" offers.")
@@ -573,6 +574,8 @@ function displaySlice(n) {
         y_cpu.push(quotes[j][1][n]);
         y_gpu.push(quotes[j][2][n]);
         y_cost.push(quotes[j][0][n]);
+        // TODO: For monthly cost calculations use cost for presize "months" months period.
+        y_cost_monthly.push(quotes[j][0][n]/months)
         x.push(offers[j].shortname);
         c.push(colors[getColor(offers[j].provider.toLowerCase())][0]);
     }
@@ -606,7 +609,7 @@ function displaySlice(n) {
 
 
     var layout_cost = {
-        title: "Cost for "+dates[2][n]+ " (USD)",
+        title: "Cost for "+dates[2][n],
         showlegend: false,
         margin: {
             b: 120,
@@ -638,8 +641,24 @@ function displaySlice(n) {
             color: c
         }
     };
-    console.log("Colors: " + c);
+    var trace_monthly_cost = {
+        x: x,
+        y: y_cost_monthly,
+        name: "USD",
+        type: "bar",
+        marker: {
+            color: c
+        }
+    };
+    //console.log("Colors: " + c);
     Plotly.newPlot('slice_cost', [trace_cost], layout_cost);
+    if (months > 1) {
+        document.getElementById('slice_cost_monthly').style.height= "300px";
+        layout_cost.title = "Cost per 1 month";
+        Plotly.newPlot('slice_cost_monthly', [trace_monthly_cost], layout_cost);
+    } else {
+        document.getElementById('slice_cost_monthly').style.height= "0";
+    }
 }
 
 
