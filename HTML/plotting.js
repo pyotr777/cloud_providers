@@ -1,7 +1,7 @@
 
 function ready() {
-    loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
-    //loadData("cost-performance.csv");
+    //loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
+    loadData("cost-performance.csv");
     $("select").select2();
     $("select").select2({  theme: "classic" });
 }
@@ -482,6 +482,7 @@ function continue_proc(filter, arg) {
 
     // Display data for 1 month
     displaySlice(Math.floor(24 * accumulated_months_days[0] / step));
+    displayPerformanceScatter();
     displayAbsoluteValues();
     plotTable();
 }
@@ -745,6 +746,49 @@ function displayAbsoluteValues() {
 
     Plotly.newPlot('slice_performance', [trace_cpu, trace_gpu], layout_perf);
 }
+
+
+function displayPerformanceScatter() {
+    var layout = {
+        title:'CPU and GPU performance (TFlops)'
+    };
+    //offers[j].provider
+    //offers[j].name
+    var traces = [];
+    var last_prov="";
+    for (j=0; j < offers.length; j++) {
+        var prov = offers[j].provider.toLowerCase();
+        console.log(j+" "+prov)
+        if (last_prov != prov) {
+            last_prov = prov;
+            var c = getColor(prov);
+            //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
+            if (new_trace) {
+                traces.push(new_trace);
+                new_trace=null;
+            }
+            var new_trace = {
+                name: offers[j].provider,
+                mode: "markers",
+                type: "scatter",
+                x: [],
+                y: [],
+                marker: {
+                    color: colors[c][0],
+                    size: 12
+                }
+            }
+        }
+        new_trace.x.push(offers[j].cpu_p);
+        new_trace.y.push(offers[j].gpu_p);
+    }
+    if (new_trace) {
+        traces.push(new_trace);
+    }
+    console.log(traces);
+    Plotly.newPlot('scatter_performance', traces, layout);
+}
+
 
 function CurrencyFormat(s) {
     if (s == "") {
