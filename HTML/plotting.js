@@ -259,11 +259,11 @@ function prepDates(end, step) {
 
 var dates =[];
 var quotes=[];
-var colors=[["#ffa20b"],  // Amazon
-           ["#d5e245"],  // Softlayer
-           ["#41d4cf"],  // Nimbix
-           ["#82c0ff"],  // Cirrascale
-           ["#ff7f84"],  // Sakura
+var colors=[["#ffa20b","#ffa20b","#ffab0b","#ffc565"],  // Amazon
+           ["#d5e245","#d5e245","#ebdf4f","#d5e245"],  // Softlayer
+           ["#41d4cf","#41d4cf","#26d3ab","#41d4cf"],  // Nimbix
+           ["#82c0ff","#82c0ff","#77a4fa","#82b2ff"],  // Cirrascale
+           ["#ff7f84","#ff7f84","#f4819c","#ff7f84"],  // Sakura
            ["#656565"]];
 
 function getColor(prov) {
@@ -342,6 +342,7 @@ function plotPeriod(period, step, thin, thick) {
     };
 
     var last_prov = ""
+    var color_i = 1;
     for (j=0; j < offers.length; j++) {
         quote = getQuote(offers[j], step, period, dates);
         var text = [];
@@ -350,9 +351,10 @@ function plotPeriod(period, step, thin, thick) {
         }
         var prov = offers[j].provider.toLowerCase();
         var c = getColor(prov);
-        console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
         if (last_prov != prov) {
+            console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
             last_prov = prov;
+            color_i = 1;
             var legend_trace = {
                 showlegend: true,
                 legendgroup: prov,
@@ -366,13 +368,18 @@ function plotPeriod(period, step, thin, thick) {
                 }
             }
             traces.push(legend_trace)
+        } else {
+            color_i++;
+            if (color_i > 3) {
+                color_i = 1;
+            }
         }
         var trace = {
             showlegend: false,
             legendgroup: prov,
             mode: 'lines',
             line: {
-                color: colors[c][0],
+                color: colors[c][color_i],
                 width: thin,
                 shape: "linear",
                 smoothing: 0
@@ -395,7 +402,7 @@ var step = 12; // hours step
 
 function continue_proc(filter, arg) {
     // line width on graph
-    var thin=0.8
+    var thin=1
     var thick=1.5
 
     if (accumulated_months_days.length < 1) {
@@ -489,7 +496,7 @@ function continue_proc(filter, arg) {
     });
 
 
-    // Display data for 1 month
+    // Display data for 1 month by default
     displaySlice(Math.floor(24 * accumulated_months_days[0] / step));
     displayPerformanceScatter();
     plotTable();
@@ -721,11 +728,13 @@ function displayPerformanceScatter() {
         }
     };
     var last_prov="";
+    var color_i = 1;
     for (j=0; j < offers.length; j++) {
         var prov = offers[j].provider.toLowerCase();
         //console.log(j+" "+prov)
         if (last_prov != prov) {
             last_prov = prov;
+            color_i = 1;
             var c = getColor(prov);
             //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
             if (new_trace) {
@@ -740,14 +749,20 @@ function displayPerformanceScatter() {
                 y: [],
                 text: [],
                 marker: {
-                    color: colors[c][0],
+                    color: [],
                     size: 12
                 }
+            }
+        } else {
+            color_i++;
+            if (color_i > 3) {
+                color_i = 1;
             }
         }
         new_trace.x.push(offers[j].cpu_p);
         new_trace.y.push(offers[j].gpu_p);
         new_trace.text.push(offers[j].provider + " " + offers[j].name + " ("+offers[j].shortname+")")
+        new_trace.marker.color.push(colors[c][color_i]);
 
         memory_trace.x.push(offers[j].cpu_p);
         memory_trace.y.push(offers[j].gpu_p);
@@ -790,13 +805,13 @@ function NumberFormat(s) {
 function plotTable() {
     var head = '<table class="wide_table">\
     <thead><tr><th rowspan="2">Provider</th> \
-    <th rowspan="2">Offer</th><th colspan="2" class="double">GPU</th><th colspan="2" class="double">CPU</th> \
+    <th rowspan="2" class="quadruple">Offer</th><th class="double">GPU</th><th class="double">CPU</th> \
     <th>Memory</th><th colspan="4" class="quadruple">HDD</th> \
     <th>Network</th>\
     <th colspan="4" class="quadruple">Pricing (USD) per</th> \
     <th rowspan="2" class="notes_cell quadruple">Notes</th></tr> \
-    <tr><th>model</th><th>quantity</th> \
-    <th>model</th><th>quantity</th> \
+    <tr><th>model x quantity</th> \
+    <th>model x quantity</th> \
     <th>RAM (GB)</th> \
     <th>primary</th><th>vol. (GB)</th><th>secondary</th><th>vol. (GB)</th> \
     <th>Internet (GB/s)</th> \
@@ -811,10 +826,10 @@ function plotTable() {
         } else {
             body += offers[j].name;
         }
-        body += "<br>"+offers[j].shortname;
+        body += "<br><note>"+offers[j].shortname+"</note>";
         body += '</td> \
-        <td>'+offers[j].gpu_model+'</td><td>'+offers[j].gpus+'</td>\
-        <td>'+offers[j].cpu_model+'</td><td>'+offers[j].cpus+'</td>\
+        <td>'+offers[j].gpu_model+' x '+offers[j].gpus+'</td>\
+        <td>'+offers[j].cpu_model+' x '+offers[j].cpus+'</td>\
         <td>'+NumberFormat(offers[j].memory)+'</td>\
         <td>'+offers[j].hdd1+'</td><td>'+NumberFormat(offers[j].hdd1_vol)+'</td>\
         <td>'+offers[j].hdd2+'</td><td>'+NumberFormat(offers[j].hdd2_vol)+'</td>\

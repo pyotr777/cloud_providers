@@ -91,7 +91,9 @@ note, .notes_cell {
 }
 
 
-
+td note {
+    color:#888;
+}
 
 .tableTitle {
     font:  14pt Lato, "Helvetica", "Arial", sans-serif;
