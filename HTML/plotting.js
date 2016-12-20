@@ -346,7 +346,7 @@ function plotPeriod(period, step, thin, thick) {
         quote = getQuote(offers[j], step, period, dates);
         var text = [];
         for (var i=0; i < dates[2].length; i++) {
-            text.push(offers[j].shortname + " \n" + dates[2][i]);
+            text.push(offers[j].provider+" "+offers[j].name+"\n("+offers[j].shortname + ")\n" + dates[2][i]);
         }
         var prov = offers[j].provider.toLowerCase();
         var c = getColor(prov);
@@ -418,43 +418,52 @@ function continue_proc(filter, arg) {
         //console.log(data);
         var pts = '';
         for(var i=0; i < data.points.length; i++) {
-            //console.log("Clicked: ");
-            //console.log(data.points[i]);
+            console.log("Clicked: ");
+            console.log(data.points[i]);
             displaySlice(data.points[i].pointNumber);
             var point = data.points[i];
-            newAnnotation = {
-                x: point.xaxis.d2l(point.x),
-                y: point.yaxis.d2l(point.y),
-                arrowhead: 7,
-                ax: 0,
-                ay: -50,
-                bgcolor: point.data.line.color,
-                arrowwidth: 1.2,
-                arrowcolor: '#303030',
-                font: {size:12},
-                bordercolor: '#707070',
-                borderwidth: 2,
-                borderpad: 4,
-                text: '<b>' + dates[2][point.pointNumber]+'</b><br>'+point.data.longname+
-                '<br>['+point.data.name +']'
-            }
+            newannotations = [
+                {
+                    x: point.xaxis.d2l(point.x),
+                    y: 150,
+                    arrowhead: 0,
+                    ax: 0,
+                    ay: -250,
+                    arrowwidth: 1,
+                    arrowcolor: '#aaaaaa',
+                    borderwidth: 0,
+                    borderpad: 0,
+                    text: ''
+                },
+                {
+                    x: point.xaxis.d2l(point.x),
+                    y: point.yaxis.d2l(point.y),
+                    arrowhead: 7,
+                    ax: 0,
+                    ay: -50,
+                    bgcolor: point.data.line.color,
+                    arrowwidth: 1.2,
+                    arrowcolor: '#303030',
+                    font: {size:12},
+                    bordercolor: '#707070',
+                    borderwidth: 2,
+                    borderpad: 4,
+                    text: '<b>' + dates[2][point.pointNumber]+'</b><br>'+point.data.longname+
+                    '<br>['+point.data.name +']'
+                }
+                ];
         }
-        newIndex = (myPlot.layout.annotations || []).length;
-        //console.log("newindex is "+newIndex);
+        an = (myPlot.layout.annotations || []).length;
 
          // delete instead if clicked twice
-        if(newIndex) {
-            var foundCopy = false;
-            myPlot.layout.annotations.forEach(function(ann, sameIndex) {
-                //console.log("annotations foreach with");
-                //console.log(ann);
-                //console.log(sameIndex);
-                Plotly.relayout('costs_period', 'annotations[' + sameIndex + ']', 'remove');
-            });
-         }
-         Plotly.relayout('costs_period', 'annotations[' + newIndex + ']', newAnnotation);
+        console.log("Annotations: "+an);
+        for (var i=0; i < 2; i++) {
+            if (an) {
+                Plotly.relayout('costs_period', 'annotations[' + i + ']', 'remove');
+            }
+            Plotly.relayout('costs_period', 'annotations[' + i + ']', newannotations[i]);
+        }
     });
-
 
     myPlot.on('plotly_hover', function(data) {
         //console.log(data.points[0]);
@@ -483,8 +492,17 @@ function continue_proc(filter, arg) {
     // Display data for 1 month
     displaySlice(Math.floor(24 * accumulated_months_days[0] / step));
     displayPerformanceScatter();
-    displayAbsoluteValues();
     plotTable();
+}
+
+
+function removeAnnotations() {
+    var myPlot = document.getElementById('costs_period');
+    an = (myPlot.layout.annotations || []).length;
+    console.log("annotations: "+an);
+    for (var i=0; i < an; i++) {
+        Plotly.relayout('costs_period', 'annotations[' + i + ']', 'remove');
+    }
 }
 
 // Argument in string
@@ -507,6 +525,7 @@ function displayTime(s) {
             break;
     }
     console.log("i="+i+ " "+parts[1]+ " n="+n);
+    removeAnnotations();
     displaySlice(n);
 }
 
@@ -519,6 +538,16 @@ function displaySlice(n) {
     console.log(dates[1][n]);
     var months = dates[1][n].years*12 + dates[1][n].months;
     console.log("Clicked "+n+ " X: "+ dates[0][n] + ", full "+months+"months / " + dates[2][n]);
+    // rewind to the beginning of the month
+    var i = n;
+    var point = 0;
+    while (i > 0 && point == 0 ) {
+        i--;
+        if (dates[1][i].months != months) {
+            point = i+1;
+        }
+    }
+    console.log("Month start point: "+ point+" / "+dates[2][point]);
     var layout_bar = {
         title: "1 TFlops cost per " + dates[2][n],
         barmode: 'group',
@@ -575,8 +604,8 @@ function displaySlice(n) {
         y_cpu.push(quotes[j][1][n]);
         y_gpu.push(quotes[j][2][n]);
         y_cost.push(quotes[j][0][n]);
-        // TODO: For monthly cost calculations use cost for presize "months" months period.
-        y_cost_monthly.push(quotes[j][0][n]/months)
+        //console.log("For monthly cost using point "+point + " with quote: "+quotes[j][0][point])
+        y_cost_monthly.push(quotes[j][0][point]/months)
         x.push(offers[j].shortname);
         c.push(colors[getColor(offers[j].provider.toLowerCase())][0]);
     }
@@ -653,7 +682,7 @@ function displaySlice(n) {
     };
     //console.log("Colors: " + c);
     Plotly.newPlot('slice_cost', [trace_cost], layout_cost);
-    if (months > 1) {
+    if (months >= 1) {
         document.getElementById('slice_cost_monthly').style.height= "300px";
         layout_cost.title = "Cost per 1 month";
         Plotly.newPlot('slice_cost_monthly', [trace_monthly_cost], layout_cost);
@@ -664,101 +693,37 @@ function displaySlice(n) {
 
 
 
-function displayAbsoluteValues() {
-    var layout_perf = {
-        title: "CPU and GPU performance (TFlops)",
-        barmode: 'group',
-        hovermode:'closest',
-        margin: {
-            b: 120,
-            t: 50
-        },
-        legend: {
-            y: 1.05,
-            orientation: "h",
-            bgcolor: 'rgba(255, 255, 255, 0.5)',
-        },
-        xaxis: {
-            fixedrange: true,
-            tickangle: 45,
-            tickfont: {
-                family: 'Arial Narrow, sans-serif',
-                size: 13,
-                color: 'black'
-            }
-        },
-        yaxis: {
-            title: 'CPU performance (TFlops)',
-            hoverformat: '.1f',
-            exponentformat: "none",
-            separatethousands: true,
-            gridwidth: 1,
-            gridcolor: cpu_color.light,
-            gridwidth: 1,
-            linecolor: cpu_color.light
-        },
-        yaxis2: {
-            title: 'GPU performance (TFlops)',
-            overlaying: 'y',
-            side: 'right',
-            hoverformat: '.1f',
-            exponentformat: "none",
-            separatethousands: true,
-            gridcolor: gpu_color.light,
-            gridwidth: 1,
-            linecolor: gpu_color.light
-        }
-    }
-    y_cpu = [];
-    y_gpu = [];
-    x = [];
-
-    for (j=0; j < offers.length; j++) {
-        y_cpu.push(offers[j].cpu_p);
-        y_gpu.push(offers[j].gpu_p);
-        x.push(offers[j].shortname);
-    }
-
-    var trace_cpu = {
-        x: x,
-        y: y_cpu,
-        name: "CPU TFlops",
-        offset: -0.35,
-        width: 0.3,
-        type: "bar",
-        marker: {
-            color: cpu_color.dark
-        }
-    };
-
-    var trace_gpu = {
-        x: x,
-        y: y_gpu,
-        name: "GPU TFlops",
-        type: "bar",
-        offset: 0,
-        width: 0.3,
-        yaxis: 'y2',
-        marker: {
-            color: gpu_color.dark
-        }
-    };
-
-    Plotly.newPlot('slice_performance', [trace_cpu, trace_gpu], layout_perf);
-}
-
-
 function displayPerformanceScatter() {
     var layout = {
-        title:'CPU and GPU performance (TFlops)'
+        title:'CPU and GPU performance (TFlops), memory volume (GB)',
+        xaxis: {title: 'CPU performance (TFlops)'},
+        yaxis: {title: 'GPU performance (TFlops)'},
+        hovermode: 'closest'
     };
     //offers[j].provider
     //offers[j].name
     var traces = [];
+    var memory_trace = {
+        mode: "markers",
+        type: "scatter",
+        name: "RAM (GB)",
+        x: [],
+        y:[],
+        text:[],
+        marker: {
+            sizemode: "area",
+            size: [],
+            color:"rgba(0,0,0,0)",
+            line: {
+                color: 'rgb(0,0,0)',
+                width: 1
+            }
+        }
+    };
     var last_prov="";
     for (j=0; j < offers.length; j++) {
         var prov = offers[j].provider.toLowerCase();
-        console.log(j+" "+prov)
+        //console.log(j+" "+prov)
         if (last_prov != prov) {
             last_prov = prov;
             var c = getColor(prov);
@@ -773,6 +738,7 @@ function displayPerformanceScatter() {
                 type: "scatter",
                 x: [],
                 y: [],
+                text: [],
                 marker: {
                     color: colors[c][0],
                     size: 12
@@ -781,11 +747,18 @@ function displayPerformanceScatter() {
         }
         new_trace.x.push(offers[j].cpu_p);
         new_trace.y.push(offers[j].gpu_p);
+        new_trace.text.push(offers[j].provider + " " + offers[j].name + " ("+offers[j].shortname+")")
+
+        memory_trace.x.push(offers[j].cpu_p);
+        memory_trace.y.push(offers[j].gpu_p);
+        memory_trace.text.push(offers[j].memory+" GB");
+        memory_trace.marker.size.push(offers[j].memory);
     }
     if (new_trace) {
         traces.push(new_trace);
     }
-    console.log(traces);
+    traces.push(memory_trace);
+    //console.log(traces);
     Plotly.newPlot('scatter_performance', traces, layout);
 }
 
@@ -838,6 +811,7 @@ function plotTable() {
         } else {
             body += offers[j].name;
         }
+        body += "<br>"+offers[j].shortname;
         body += '</td> \
         <td>'+offers[j].gpu_model+'</td><td>'+offers[j].gpus+'</td>\
         <td>'+offers[j].cpu_model+'</td><td>'+offers[j].cpus+'</td>\
