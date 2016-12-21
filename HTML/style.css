@@ -16,17 +16,25 @@ body {
 }
 
 .grouptitle {
-    margin-top:15px;
-    padding: 5px;
+    margin:15px 0 5px 0;
+    padding: 6pt 5px 5px 5px;
+    border: 1px dotted #ccc;
+    webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
-.grouptitle p {
-    margin: 0 0 5px 0;
-    padding: 0;
-    margin-left: 12px;
+.grouptitle h3 {
+    margin: 0 0 0 12px;
+    padding: 0 5px;
     font: 10pt "Helvetica", "Arial", sans-serif;
     color: #a8a8a8;
     text-transform: uppercase;
     letter-spacing: 0.3pt;
+    position: relative;
+    top: -11pt;
+    background-color: #fff;
+    height: 6pt;
+    float: left;
 }
 
 .groupname {
