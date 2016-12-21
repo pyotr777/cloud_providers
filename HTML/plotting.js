@@ -259,11 +259,11 @@ function prepDates(end, step) {
 
 var dates =[];
 var quotes=[];
-var colors=[["#ffa20b","#ffa20b","#ffab0b","#ffc565"],  // Amazon
-           ["#d5e245","#d5e245","#ebdf4f","#d5e245"],  // Softlayer
-           ["#41d4cf","#41d4cf","#26d3ab","#41d4cf"],  // Nimbix
-           ["#82c0ff","#82c0ff","#77a4fa","#82b2ff"],  // Cirrascale
-           ["#ff7f84","#ff7f84","#f4819c","#ff7f84"],  // Sakura
+var colors=[["#ffaa4b","#ff9e2b","#ffa943","#ffb152"],  // Amazon
+           ["#ffe942","#ffde3d","#ffe55e","#ffe875"],  // Softlayer
+           ["#8ad34f","#a1dc72","#a7dd7b","#a7dd7b"],  // Nimbix
+           ["#8ed0ee","#8ad5ed","#95d5ef","#a3ddf1"],  // Cirrascale
+           ["#f773a9","#f161a0","#ea6eaa","#ec8ec5"],  // Sakura
            ["#656565"]];
 
 function getColor(prov) {
@@ -402,8 +402,8 @@ var step = 12; // hours step
 
 function continue_proc(filter, arg) {
     // line width on graph
-    var thin=1
-    var thick=1.5
+    var thin=0.8
+    var thick=1.8
 
     if (accumulated_months_days.length < 1) {
         console.log("Calculate accumulated months days");
@@ -416,7 +416,6 @@ function continue_proc(filter, arg) {
     }
     filter(arg);
     quotes=[];
-    console.log("Have "+ offers.length+" offers.")
     plotPeriod(24*accumulated_months_days[11], step, thin, thick);  // Period for top plot
     console.log("Have "+ quotes.length+" quotes.")
     var myPlot = document.getElementById('costs_period');
@@ -555,6 +554,8 @@ function displaySlice(n) {
         }
     }
     console.log("Month start point: "+ point+" / "+dates[2][point]);
+    // Set plot description period
+    document.getElementById("r_period").innerHTML=dates[2][point];
     var layout_bar = {
         title: "1 TFlops cost per " + dates[2][n],
         barmode: 'group',
@@ -691,10 +692,12 @@ function displaySlice(n) {
     Plotly.newPlot('slice_cost', [trace_cost], layout_cost);
     if (months >= 1) {
         document.getElementById('slice_cost_monthly').style.height= "300px";
+        document.getElementById('slice_cost_monthly_text').style.display= "inline";
         layout_cost.title = "Cost per 1 month";
         Plotly.newPlot('slice_cost_monthly', [trace_monthly_cost], layout_cost);
     } else {
         document.getElementById('slice_cost_monthly').style.height= "0";
+        document.getElementById('slice_cost_monthly_text').style.display= "none";
     }
 }
 

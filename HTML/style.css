@@ -11,7 +11,7 @@ body {
     background: #eee;
     padding:12px 12px;
     margin-bottom:5px;
-    display: flex;
+    /*display: flex;*/
     align-items: center;
 }
 
@@ -53,7 +53,7 @@ body {
 	padding:4px 6px;
 	text-decoration:none;
 	text-shadow:0px 1px 0px #5b6178;
-    margin: auto 0px auto 8px;
+    margin: 2px 0px 2px 8px;
     min-width: 62px;
     vertical-align: middle;
 }
