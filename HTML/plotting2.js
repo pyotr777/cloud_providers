@@ -18,9 +18,21 @@ function loadData(filname) {
 var offers_all=[];
 var offers=[];
 var start_row = 2;
+var dates =[];
+var quotes=[];
+var colors=[["#ffaa4b","#ff9e2b","#ffa943","#ffb152"],  // Amazon
+           ["#ffe942","#ffde3d","#ffe55e","#ffe875"],  // Softlayer
+           ["#8ad34f","#a1dc72","#a7dd7b","#a7dd7b"],  // Nimbix
+           ["#8ed0ee","#8ad5ed","#95d5ef","#a3ddf1"],  // Cirrascale
+           ["#f773a9","#f161a0","#ea6eaa","#ec8ec5"],  // Sakura
+           ["#656565"]];
+var TimeCost;
+var FLOPsScale;
 
 function processStaticData(results) {
     console.log("Rows: "+results.data.length);
+    TimeCost = document.getElementById('time_x_cost');
+    FLOPsScale = document.getElementById('FLOPsScale');
     var rows = results.data.length
     var provider = "";
     var provider_link = "";
@@ -58,6 +70,107 @@ function processStaticData(results) {
     }
     continue_proc(filterAll, "");
 }
+
+function continue_proc(filter, arg) {
+    var TFLOPS = 1000000000;
+    filter(arg);
+    quotes=[];
+
+    plotTimeCost(TFLOPS);
+    plotFLOPsScale(TFLOPS);
+}
+
+
+function plotTimeCost(TFLOPS) {
+    console.log("Plotting GPU Time x Cost fot " + TFLOPS + " TFLOP-s");
+    var layout = {
+        title:'Time x Cost for ' +TFLOPS+ ' TFLOP-s',
+        hovermode: 'closest',
+        projection: {
+            y: {
+                show: true
+            }
+        }
+    };
+    var traces = [];
+    var last_prov="";
+    var color_i = 1;
+    for (j=0; j < offers.length; j++) {
+        var prov = offers[j].provider.toLowerCase();
+        //console.log(j+" "+prov)
+        if (last_prov != prov) {
+            last_prov = prov;
+            color_i = 1;
+            var c = getColor(prov);
+            //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
+            if (new_trace) {
+                traces.push(new_trace);
+                new_trace=null;
+            }
+            var new_trace = {
+                name: offers[j].provider,
+                mode: "markers",
+                type: "scatter",
+                x: [],
+                y: [],
+                text: [],
+                marker: {
+                    color: [],
+                    size: 12,
+                    opacity: 0.8,
+                    symbol: "x"
+                }
+            }
+        } else {
+            color_i++;
+            if (color_i > 3) {
+                color_i = 1;
+            }
+        }
+
+        var time = Math.ceil(TFLOPS / offers[j].gpu_p / 3600); // Calculation time in hours
+        var cost = getQuote4Hours(offers[j], time);
+        new_trace.x.push(time);
+        new_trace.y.push(cost);
+        //console.log(offers[j].shortname + " " + time + "(h) x" + cost + "($)");
+        new_trace.text.push(offers[j].provider + " " + offers[j].name + " ("+offers[j].shortname+")")
+        new_trace.marker.color.push(colors[c][color_i]);
+    }
+    if (new_trace) {
+        traces.push(new_trace);
+    }
+    Plotly.newPlot('time_x_cost', traces, layout);
+}
+
+
+function plotFLOPsScale() {
+    var x = [100000, 1000000, 10000000, 100000000, 1000000000, 10000000000, 100000000000];
+    var trace = {
+        x: x,
+        fill: 'tozeroy',
+        type: 'scatter'
+    };
+    var layout = {
+        title:'TFLOP-s selector (hover)',
+        hovermode: 'closest',
+        xaxis: {
+            type: 'log',
+            autorange: true
+        },
+        yaxis: {
+            showticklabels: false
+        }
+    }
+    Plotly.newPlot('FLOPsScale', [trace], layout);
+    FLOPsScale.on('plotly_hover', function(data) {
+        for(var i=0; i < data.points.length; i++){
+            pn = data.points[i].pointNumber;
+            console.log(pn+" "+x[pn]);
+            plotTimeCost(x[pn]);
+        };
+    });
+}
+
 
 // "Filters" offers: save filtered list in "offers" global variable.
 function filterAll(arg) {
@@ -119,60 +232,22 @@ function filterProviders(optionslist) {
 }
 
 
-// Return array of Cost, Cost/CPU FLops, Cost/GPU FLops for given number of hours (period).
-// Period must be in hours.
-function getQuote(offer, step, period, dates) {
-    var costs = [], costs_cpu=[], costs_gpu=[];
+// Return Cost for given number of hours (period).
+function getQuote4Hours(offer, period) {
     if (offer.hourly != "" ) {
-        for (var i=0; i <= period; i+=step) {
-            cost = i * offer.hourly;
-            costs.push(cost);
-            costs_cpu.push(cost/offer.cpu_p);
-            costs_gpu.push(cost/offer.gpu_p);
-        }
+        return period * offer.hourly;
     } else if (offer.weekly != "" ) {
-        for (var i=0; i <= period; i+=step) {
-            // Shift billing moments to one position later (use "i" instead of "i+1"),
-            // so that 1 week (presize moment) counts for 1 week costs, not 2 weeks.
-            period_w = Math.ceil((i) / (24 * 7));
-            cost = period_w * offer.weekly;
-            costs.push(cost);
-            costs_cpu.push(cost/offer.cpu_p);
-            costs_gpu.push(cost/offer.gpu_p);
-        }
+        var period_w = Math.ceil(period / (24 * 7));
+        return period_w * offer.weekly;
     } else if (offer.monthly != "" ) {
-        for (var h=0; h <= period; h+=step) {
-            // Shift billing moments to one position later,
-            // so that 1 month (presize moment) counts for 1 month costs, not 2 months.
-            var i = Math.floor(h/step) - 1;
-            var period_m = 0;
-            if ( i < 0 ) {
-                i = 0;
-            } else {
-             period_m = dates[1][i].years * 12 + dates[1][i].months+1;
-            }
-            cost = period_m * offer.monthly;
-            costs.push(cost);
-            costs_cpu.push(cost/offer.cpu_p);
-            costs_gpu.push(cost/offer.gpu_p);
-        }
+        // Month is counted as 30 days
+        var period_m = Math.ceil(period / (24 * 30));
+        return period_m * offer.monthly;
     } else if (offer.yearly != "" ) {
-        for (var h=0; h <= period; h+=step) {
-            // Shift billing moments to one position later
-            var i = Math.floor(h/step) - 1;
-            var period_y = 0;
-            if ( i < 0 ) {
-                i = 0;
-            } else {
-                period_y = dates[1][i].years+1;
-            }
-            cost = period_y * offer.yearly;
-            costs.push(cost);
-            costs_cpu.push(cost/offer.cpu_p);
-            costs_gpu.push(cost/offer.gpu_p);
-        }
+        // Year is counted as 365 days
+        var period_y = Math.ceil(period / (24 * 365));
+        return period_y * offer.yearly;
     }
-    return [ costs, costs_cpu, costs_gpu];
 }
 
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
@@ -257,14 +332,7 @@ function prepDates(end, step) {
     return [h_arr, human, text];
 }
 
-var dates =[];
-var quotes=[];
-var colors=[["#ffaa4b","#ff9e2b","#ffa943","#ffb152"],  // Amazon
-           ["#ffe942","#ffde3d","#ffe55e","#ffe875"],  // Softlayer
-           ["#8ad34f","#a1dc72","#a7dd7b","#a7dd7b"],  // Nimbix
-           ["#8ed0ee","#8ad5ed","#95d5ef","#a3ddf1"],  // Cirrascale
-           ["#f773a9","#f161a0","#ea6eaa","#ec8ec5"],  // Sakura
-           ["#656565"]];
+
 
 function getColor(prov) {
     var c = colors.length-1;
@@ -398,108 +466,7 @@ function plotPeriod(period, step, thin, thick) {
     Plotly.newPlot("costs_period", traces, layout);
 }
 
-var step = 12; // hours step
 
-function continue_proc(filter, arg) {
-    // line width on graph
-    var thin=0.8
-    var thick=1.8
-
-    if (accumulated_months_days.length < 1) {
-        console.log("Calculate accumulated months days");
-        accumulated_days = 0;
-        for (var m = 0; m < 12; m++) {
-            accumulated_days += days_in_month[m];
-            accumulated_months_days.push(accumulated_days);
-        }
-        console.log(accumulated_months_days);
-    }
-    filter(arg);
-    quotes=[];
-    plotPeriod(24*accumulated_months_days[11], step, thin, thick);  // Period for top plot
-    console.log("Have "+ quotes.length+" quotes.")
-    var myPlot = document.getElementById('costs_period');
-
-    myPlot.on('plotly_click', function(data) {
-        //console.log(data);
-        var pts = '';
-        for(var i=0; i < data.points.length; i++) {
-            console.log("Clicked: ");
-            console.log(data.points[i]);
-            displaySlice(data.points[i].pointNumber);
-            var point = data.points[i];
-            newannotations = [
-                {
-                    x: point.xaxis.d2l(point.x),
-                    y: 150,
-                    arrowhead: 0,
-                    ax: 0,
-                    ay: -250,
-                    arrowwidth: 1,
-                    arrowcolor: '#aaaaaa',
-                    borderwidth: 0,
-                    borderpad: 0,
-                    text: ''
-                },
-                {
-                    x: point.xaxis.d2l(point.x),
-                    y: point.yaxis.d2l(point.y),
-                    arrowhead: 7,
-                    ax: 0,
-                    ay: -50,
-                    bgcolor: point.data.line.color,
-                    arrowwidth: 1.2,
-                    arrowcolor: '#303030',
-                    font: {size:12},
-                    bordercolor: '#707070',
-                    borderwidth: 2,
-                    borderpad: 4,
-                    text: '<b>' + dates[2][point.pointNumber]+'</b><br>'+point.data.longname+
-                    '<br>['+point.data.name +']'
-                }
-                ];
-        }
-        an = (myPlot.layout.annotations || []).length;
-
-         // delete instead if clicked twice
-        console.log("Annotations: "+an);
-        for (var i=0; i < 2; i++) {
-            if (an) {
-                Plotly.relayout('costs_period', 'annotations[' + i + ']', 'remove');
-            }
-            Plotly.relayout('costs_period', 'annotations[' + i + ']', newannotations[i]);
-        }
-    });
-
-    myPlot.on('plotly_hover', function(data) {
-        //console.log(data.points[0]);
-        var update= {
-            line: {
-                color: data.points[0].fullData.line.color,
-                width: thick
-            },
-            opacity: 1
-        }
-        Plotly.restyle('costs_period', update, [data.points[0].curveNumber]);
-    });
-
-    myPlot.on('plotly_unhover', function(data) {
-        var update= {
-            line: {
-                color: data.points[0].fullData.line.color,
-                width: thin
-            },
-            opacity: 1
-        }
-        Plotly.restyle('costs_period', update, [data.points[0].curveNumber]);
-    });
-
-
-    // Display data for 1 month by default
-    displaySlice(Math.floor(24 * accumulated_months_days[0] / step));
-    displayPerformanceScatter();
-    plotTable();
-}
 
 
 function removeAnnotations() {
@@ -511,7 +478,7 @@ function removeAnnotations() {
     }
 }
 
-// Argument is string
+// Argument in string
 function displayTime(s) {
     var parts = s.split(" ");
     var i = parseInt(parts[0]);
