@@ -94,6 +94,17 @@ table td {
     padding: 4px !important;
 }
 
+div.note {
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+}
+
+.note {
+    font-family: "Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif;
+    padding: 2px;
+}
+
 note, .notes_cell {
     font-size: 80%;
 }
