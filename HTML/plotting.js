@@ -308,7 +308,7 @@ function plotPeriod(period, step, thin, thick) {
     var traces = [];
 
     dates = prepDates(period, step);
-    console.log(dates);
+    //console.log(dates);
     // dates[0] - array of hours: 0,1,2,...,period
     // dates[1] - array of objects
     // dates[2] - array of human-readable text format dates
@@ -480,7 +480,7 @@ function plotPeriod(period, step, thin, thick) {
         }
         hover_info2.innerHTML = hover_info2.innerHTML + " " +point.data.info;
         hover_info2.style.backgroundColor = point.fullData.line.color;
-        console.log(point.data.info + " " + point.fullData.line.color);
+        //console.log(point.data.info + " " + point.fullData.line.color);
     });
 
     myPlot.on('plotly_unhover', function(data) {
@@ -505,13 +505,13 @@ function continue_proc(filter, arg) {
     var thick=3
 
     if (accumulated_months_days.length < 1) {
-        console.log("Calculate accumulated months days");
+        //console.log("Calculate accumulated months days");
         accumulated_days = 0;
         for (var m = 0; m < 12; m++) {
             accumulated_days += days_in_month[m];
             accumulated_months_days.push(accumulated_days);
         }
-        console.log(accumulated_months_days);
+        //console.log(accumulated_months_days);
     }
     filter(arg);
     quotes=[];
@@ -555,7 +555,7 @@ function displayTime(s) {
             n = i * accumulated_months_days[11] * Math.floor(24/step);
             break;
     }
-    console.log("i="+i+ " "+parts[1]+ " n="+n);
+    //console.log("i="+i+ " "+parts[1]+ " n="+n);
     removeAnnotations();
     displaySlice(n);
 }
@@ -566,7 +566,7 @@ var gpu_color = {light: "rgba(252, 120, 36, 0.33)", dark: "#fc7824"};
 
 // Argument is array index
 function displaySlice(n) {
-    console.log(dates[1][n]);
+    //console.log(dates[1][n]);
     var months = dates[1][n].years*12 + dates[1][n].months;
     console.log("Clicked "+n+ " X: "+ dates[0][n] + ", full "+months+"months / " + dates[2][n]);
     // rewind to the beginning of the month
@@ -578,7 +578,7 @@ function displaySlice(n) {
             point = i+1;
         }
     }
-    console.log("Month start point: "+ point+" / "+dates[2][point]);
+    //console.log("Month start point: "+ point+" / "+dates[2][point]);
     // Set plot description period
     document.getElementById("r_period").innerHTML=dates[2][point];
     var layout_bar = {
@@ -739,10 +739,11 @@ function displaySlice(n) {
     };
     //console.log("Colors: " + c);
     Plotly.newPlot('slice_cost', [trace_cost], layout_cost);
-    if (months >= 1) {
+    if (months > 1) {
         document.getElementById('slice_cost_monthly').style.height= "300px";
         document.getElementById('slice_cost_monthly_text').style.display= "inline";
-        layout_cost.title = "Cost per 1 month";
+        // Reuse layout for montly cost graph
+        layout_cost.title = "Monthly cost for "+dates[2][n] + " rent period";
         Plotly.newPlot('slice_cost_monthly', [trace_monthly_cost], layout_cost);
     } else {
         document.getElementById('slice_cost_monthly').style.height= "0";
@@ -773,23 +774,25 @@ function displaySlice(n) {
         hover_info3.style.backgroundColor = "#fff";
     });
 
-    slice_cost_monthly_plot.on("plotly_hover", function(data) {
-        for (var i=0; i < data.points.length; i++) {
-            var point = data.points[i];
-            if (point.data.info == null) {
-                return;
+    if (months > 1) {
+        slice_cost_monthly_plot.on("plotly_hover", function(data) {
+            for (var i=0; i < data.points.length; i++) {
+                var point = data.points[i];
+                if (point.data.info == null) {
+                    return;
+                }
+                point_index = point.pointNumber;
+                hover_info3.innerHTML = hover_info3.innerHTML + " " +point.data.info[point_index];
+                hover_info3.style.backgroundColor = point.data.marker.color[point_index];
+                //console.log(point.data.info[point_index] + " " + point_index + " " + point.data.marker.color[point_index]);
             }
-            point_index = point.pointNumber;
-            hover_info3.innerHTML = hover_info3.innerHTML + " " +point.data.info[point_index];
-            hover_info3.style.backgroundColor = point.data.marker.color[point_index];
-            //console.log(point.data.info[point_index] + " " + point_index + " " + point.data.marker.color[point_index]);
-        }
-    });
+        });
 
-    slice_cost_monthly_plot.on("plotly_unhover", function(data) {
-        hover_info3.innerHTML = "&nbsp;";
-        hover_info3.style.backgroundColor = "#fff";
-    });
+        slice_cost_monthly_plot.on("plotly_unhover", function(data) {
+            hover_info3.innerHTML = "&nbsp;";
+            hover_info3.style.backgroundColor = "#fff";
+        });
+    }
 
     slice_cost_perf_plot.on("plotly_hover", function(data) {
         for (var i=0; i < data.points.length; i++) {
@@ -902,7 +905,7 @@ function displayPerformanceScatter() {
             //console.log(point);
             hover_info1.innerHTML = hover_info1.innerHTML + " " +point.data.info[point_index];
             hover_info1.style.backgroundColor = point.data.marker.color[point_index];
-            console.log(point.data.info[point_index] + " " + point_index + " " + point.data.marker.color[point_index]);
+            //console.log(point.data.info[point_index] + " " + point_index + " " + point.data.marker.color[point_index]);
         }
     });
 
