@@ -82,19 +82,33 @@ function continue_proc(filter, arg) {
 
 
 function plotTimeCost(TFLOPS) {
-    console.log("Plotting GPU Time x Cost fot " + TFLOPS + " TFLOP-s");
+    console.log("Plotting GPU Time x Cost fot " + TFLOPS/1e+6 + " EFLOP-s 1*e+18 FLOPS");
     var layout = {
-        title:'Time x Cost for ' +TFLOPS+ ' TFLOP-s',
+        title:'Calculation Time and Cost for ' + TFLOPS/1e+6 + ' EFLOP-s ('+ TFLOPS/1e+6+' * 10<sup>+18</sup> FLOP-s<sup>*</sup>)',
         hovermode: 'closest',
-        projection: {
-            y: {
-                show: true
-            }
+        xaxis: {
+            title: 'Calculation time',
+            tickangle: 45,
+            tickvals: [],
+            ticktext: [],
+            tickfont: {
+                family: '"Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif',
+                size: 11
+            },
+            showline: true
+        },
+        yaxis: {
+            tickprefix: "$",
+            hoverformat: ',.2f',
+            exponentformat: "none",
+            zeroline: false,
+            range: [0]
         }
     };
     var traces = [];
     var last_prov="";
     var color_i = 1;
+    var max_y = 0;
     for (j=0; j < offers.length; j++) {
         var prov = offers[j].provider.toLowerCase();
         //console.log(j+" "+prov)
@@ -116,9 +130,9 @@ function plotTimeCost(TFLOPS) {
                 text: [],
                 marker: {
                     color: [],
-                    size: 12,
+                    size: 15,
                     opacity: 0.8,
-                    symbol: "x"
+                    symbol: "diamond"
                 }
             }
         } else {
@@ -132,10 +146,17 @@ function plotTimeCost(TFLOPS) {
         var cost = getQuote4Hours(offers[j], time);
         new_trace.x.push(time);
         new_trace.y.push(cost);
+        if (cost > max_y) {
+            max_y = Math.ceil(cost*1.1);
+        }
+        layout.xaxis.tickvals.push(time);
+        layout.xaxis.ticktext.push(hoursToHuman(time)[1]);
         //console.log(offers[j].shortname + " " + time + "(h) x" + cost + "($)");
         new_trace.text.push(offers[j].provider + " " + offers[j].name + " ("+offers[j].shortname+")")
         new_trace.marker.color.push(colors[c][color_i]);
     }
+    layout.yaxis.range.push(max_y);
+    console.log("MAX Y set to " + max_y);
     if (new_trace) {
         traces.push(new_trace);
     }
@@ -144,31 +165,13 @@ function plotTimeCost(TFLOPS) {
 
 
 function plotFLOPsScale() {
-    var x = [100000, 1000000, 10000000, 100000000, 1000000000, 10000000000, 100000000000];
-    var trace = {
-        x: x,
-        fill: 'tozeroy',
-        type: 'scatter'
-    };
-    var layout = {
-        title:'TFLOP-s selector (hover)',
-        hovermode: 'closest',
-        xaxis: {
-            type: 'log',
-            autorange: true
-        },
-        yaxis: {
-            showticklabels: false
-        }
+    var x = [0.1, 0.5, 1, 5, 10, 50, 100, 200, 500, 800, 1000, 5000, 10000,];
+    var div=document.getElementById("FLOPsScale");
+    div.innerHTML = "Hover over number to update the above graph.<br>EFLOP-s: ";
+
+    for (var i=0; i < x.length;i++) {
+        div.innerHTML = div.innerHTML + " <span class='scale_number' onmouseover='javascript:plotTimeCost(" + x[i]*1e+6 + ");'> "+ x[i] + "</a>&nbsp;"
     }
-    Plotly.newPlot('FLOPsScale', [trace], layout);
-    FLOPsScale.on('plotly_hover', function(data) {
-        for(var i=0; i < data.points.length; i++){
-            pn = data.points[i].pointNumber;
-            console.log(pn+" "+x[pn]);
-            plotTimeCost(x[pn]);
-        };
-    });
 }
 
 
@@ -256,6 +259,15 @@ var accumulated_months_days = [];
 // Convert time in hours to human readable format
 // Return object {years, months, days, text}
 function hoursToHuman(h) {
+    if (accumulated_months_days.length < 1) {
+        //console.log("Calculate accumulated months days");
+        accumulated_days = 0;
+        for (var m = 0; m < 12; m++) {
+            accumulated_days += days_in_month[m];
+            accumulated_months_days.push(accumulated_days);
+        }
+        console.log(accumulated_months_days);
+    }
     var init_h = h;
     var hours_day   = 24;
     var hours_year  = 24 * accumulated_months_days[11];
@@ -288,26 +300,18 @@ function hoursToHuman(h) {
     var hours  = h;
     s = "";
     if ( years > 0) {
-        s = s + years + " year ";
+        s = s + years + "y. ";
     }
     if ( months > 0) {
-        if (months == 1) {
-            s = s + months + " month ";
-        } else {
-            s = s + months + " months ";
-        }
+        s = s + months + "m. ";
     }
     if ( days > 0) {
-        if (days == 1) {
-            s = s + days + " day ";
-        } else {
-            s = s + days + " days ";
-        }
+        s = s + days + "d. ";
     }
     if ( hours > 0 || s.length < 2) {
-        s = s + hours + " hours";
+        s = s + hours + "h.";
     }
-    //console.log("Count "+init_h+ " hours as "+ s );
+    console.log("Count "+init_h+ " hours as "+ s );
     return [{
         years: years,
         months: months,
