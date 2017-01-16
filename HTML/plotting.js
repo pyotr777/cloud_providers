@@ -1,7 +1,7 @@
 
 function ready() {
-    //loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
-    loadData("cost-performance.csv");
+    loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
+    //loadData("cost-performance.csv");
     $("select").select2();
     $("select").select2({  theme: "classic" });
 }
@@ -743,7 +743,7 @@ function displaySlice(n) {
         document.getElementById('slice_cost_monthly').style.height= "300px";
         document.getElementById('slice_cost_monthly_text').style.display= "inline";
         // Reuse layout for montly cost graph
-        layout_cost.title = "Monthly cost for "+dates[2][n] + " rent period";
+        layout_cost.title = "Monthly cost for "+months + " months rent period";
         Plotly.newPlot('slice_cost_monthly', [trace_monthly_cost], layout_cost);
     } else {
         document.getElementById('slice_cost_monthly').style.height= "0";
