@@ -143,6 +143,15 @@ table.wide_table th.quadruple {
 }
 
 
+.scale_number {
+    display: inline-block;
+    -moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	border-radius:5px;
+    border: 1px solid #057fd0;
+    padding: 0px 4px 0 4px;
+}
+
 
 
 #table_div {
