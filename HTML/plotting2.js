@@ -1,15 +1,31 @@
+var setRates = function(data) {
+    fx.base = base_currency;
+    fx.settings = { to: base_currency };
+    fx.rates = data.rates
+
+    //alert("£1 = $" + rate.toFixed(4));
+    fx.rates[base_currency] = 1;
+
+    console.log(fx.rates);
+    console.log(fx.base);
+    loadData("cost-performance.csv");
+    //loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
+}
+
 
 function ready() {
-    //loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
-    loadData("cost-performance.csv");
+    var msg = document.getElementById("messages");
+    msg.innerHTML = "Loading data...";
+    getRates();
+
     $("select").select2();
     $("select").select2({  theme: "classic" });
 }
 
 document.addEventListener("DOMContentLoaded", ready);
 
-function loadData(filname) {
-    Papa.parse(filname, {
+function loadData(filename) {
+    Papa.parse(filename, {
         download: true,
         complete: processStaticData
     });
@@ -28,6 +44,17 @@ var colors=[["#ffaa4b","#ff9e2b","#ffa943","#ffb152"],  // Amazon
            ["#656565"]];
 var TimeCost;
 var FLOPsScale;
+var base_currency="USD";
+
+
+// Refer to
+// http://openexchangerates.github.io/money.js/
+function getRates() {
+    $.getJSON("http://api.fixer.io/latest?base="+base_currency, setRates);
+}
+
+
+
 
 function processStaticData(results) {
     console.log("Rows: "+results.data.length);
@@ -48,27 +75,37 @@ function processStaticData(results) {
             name: row[2],
             name_link: row[3],
             shortname: row[4],
-            hourly:    row[5],
-            weekly:    row[6],
-            monthly:   row[7],
-            yearly:    row[8],
-            cpu_p:     row[9],
-            gpu_p:     row[10],
-            gpu_model: row[11],
-            gpus:      row[12],
-            cpu_model: row[13],
-            cpus:      row[14],
-            memory:    row[15],
-            hdd1:      row[16],
-            hdd1_vol:  row[17],
-            hdd2:      row[18],
-            hdd2_vol:  row[19],
-            net:       row[20],
-            notes:     row[21]
+            hourly_native: row[5],
+            weekly_native: row[6],
+            monthly_native: row[7],
+            yearly_native: row[8],
+            setup_native: row[9],
+            hourly:    convert2BaseCurrency(row[5],row[10]),
+            weekly:    convert2BaseCurrency(row[6],row[10]),
+            monthly:   convert2BaseCurrency(row[7],row[10]),
+            yearly:    convert2BaseCurrency(row[8],row[10]),
+            setup:     convert2BaseCurrency(row[9],row[10]),
+            currency:  row[10],
+            cpu_p:     row[11],
+            gpu_p:     row[12],
+            gpu_model: row[13],
+            gpus:      row[14],
+            cpu_model: row[15],
+            cpus:      row[16],
+            memory:    row[17],
+            hdd1:      row[18],
+            hdd1_vol:  row[19],
+            hdd2:      row[20],
+            hdd2_vol:  row[21],
+            net:       row[22],
+            notes:     row[23]
         }
         offers_all.push(offer);
     }
     continue_proc(filterAll, "");
+    var msg = document.getElementById("messages");
+    msg.innerHTML = "";
+    printRates();
 }
 
 function continue_proc(filter, arg) {
@@ -236,21 +273,29 @@ function filterProviders(optionslist) {
 
 
 // Return Cost for given number of hours (period).
-function getQuote4Hours(offer, period) {
+function getQuote4Hours(offer, h) {
+    var cost = 0;
+    if (offer.setup != "" ) {
+        cost = offer.setup;
+    }
     if (offer.hourly != "" ) {
-        return period * offer.hourly;
+        cost += h * offer.hourly;
     } else if (offer.weekly != "" ) {
-        var period_w = Math.ceil(period / (24 * 7));
-        return period_w * offer.weekly;
+        var period_w = Math.ceil(h / (24 * 7));
+        cost += period_w * offer.weekly;
     } else if (offer.monthly != "" ) {
-        // Month is counted as 30 days
-        var period_m = Math.ceil(period / (24 * 30));
-        return period_m * offer.monthly;
+        period = hoursToHuman(h);
+        more_than_month = 0;
+        if (period[0].days > 0 || period[0].hours > 0) {
+            more_than_month = 1;
+        }
+        cost += (period[0].years*12 + period[0].months + more_than_month) * offer.monthly;
     } else if (offer.yearly != "" ) {
         // Year is counted as 365 days
         var period_y = Math.ceil(period / (24 * 365));
-        return period_y * offer.yearly;
+        cost += period_y * offer.yearly;
     }
+    return cost;
 }
 
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
@@ -320,22 +365,15 @@ function hoursToHuman(h) {
         }, s ];
 }
 
-// Return array of dates from 0 to given period of hours
-// with 1 hour step. Second returned variable – array of years, months, days and hours and human readable labels.
-function prepDates(end, step) {
-    var h_arr = [];
-    var human =[];
-    var text  =[];
-    start_date = 0;
-    for (h = 0; h <= end; h+=step) {
-        h_arr.push(h);
-        human_time = hoursToHuman(h)
-        human.push(human_time[0]);
-        text.push(human_time[1]);
+// Convert SUM in currency to base_currency
+function convert2BaseCurrency(sum, currency) {
+    if (currency != base_currency) {
+        var conv = fx.convert(sum, { from: currency});
+        console.log(sum + " " +currency + " = " + conv + " " + base_currency );
+        return conv;
     }
-    return [h_arr, human, text];
+    return sum;
 }
-
 
 
 function getColor(prov) {
@@ -371,4 +409,23 @@ function ButtonOver(button) {
     button.innerHTML = button.title;
     button.title = tmp;
 }
+
+
+function printRates() {
+    var div = document.getElementById("rates");
+    div.innerHTML = "* All sums are in " + base_currency+ ". Offers based on other currencies are converted using today's rates from <a href=http://www.ecb.europa.eu/stats/exchange/eurofxref/html/index.en.html target=_blank>European Central Bank</a>:<br>";
+    var cur = "JPY";
+    var rate = fx.convert(1, {from: base_currency, to: cur});
+    div.innerHTML += base_currency + "/" + cur +" = 1/" +rate.toFixed(2)+ " &nbsp; ";
+    cur = "EUR";
+    rate = fx.convert(1, {from: base_currency,to: cur});
+    div.innerHTML += base_currency + "/" + cur+" = 1/"+rate.toFixed(2)+ " &nbsp; ";
+    cur = "RUB";
+    rate = fx.convert(1, {from: base_currency,to: cur});
+    div.innerHTML += base_currency + "/" + cur+" = 1/"+rate.toFixed(2);
+}
+
+
+
+
 
