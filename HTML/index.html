@@ -4,6 +4,8 @@
     <meta charset="utf-8"/>
     <script src="plotly-latest.min.js"></script>
     <script src="PapaParse-4.1.2/papaparse.min.js"></script>
+    <script src="money.min.js"></script>
+    <script src="lib.js"></script>
     <script src="plotting.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -15,10 +17,11 @@
 
 [hoops name="plotting"]
 
-<p>In this post I compiled some data about Cloud providers GPU offerings: CPU and GPU performance, costs. etc. Beware that performance data is a rough estimate, and actual performance may vary greatly between applications. </p>
+<p>In this post I compiled some data about Cloud providers GPU offerings: CPU and GPU performance, costs. etc. <b>Beware that performance data is a rough estimate, and actual performance may vary greatly between applications.</b>
+For CPUs we used double precision FLOPS and for GPUs &mdash; single presicion FLOPS.</p>
 <p>Using the graphs below you can compare estimate CPU and GPU performance, compare costs and cost/performance values for a particular period. To select the period click on the "Cost per period" graph or use one of the buttons below it. You can also filter offerings by GPU numbers and providers.</p>
 <p>You can find details for all offerings in the table at the bottom of this post. The data will be updated on (I hope) a regular basis.</p>
-<p>Last update 2017/01/13.</p>
+<p>Last update 2017/01/23.</p>
 
 
 <!--more-->
@@ -42,8 +45,10 @@
             <option value="nimbix">Nimbix</option>
             <option value="cirrascale">Cirrascale</option>
             <option value="sakura">Sakura</option>
+            <option value="leadertelecom">LeaderTelecom</option>
         </select>
     </div>
+    <div id="messages"></div>
 
     <div id="scatter_performance" style="width: 100%; height: 420px;"></div>
     <div id="offer_details1" class="note"></div>
@@ -87,7 +92,14 @@
 
 </div>
 
+<div class="note"><p>* All sums are in USD. Offers based on other currencies are converted using today's rates from <a href=http://www.ecb.europa.eu/stats/exchange/eurofxref/html/index.en.html target=_blank>European Central Bank</a>:<br>
+    <div id="rates"></div>
+    </p>
+    <p>** Perfomance data shows single presicion FLOPS for GPUs and double precision FLOPS for CPUs.
+    </p>
+</div>
 
+<a href="/cloud-gpu-providers-more-graphs/">Even more graphs</a>
 
 </body>
 </html>

@@ -106,6 +106,13 @@ div.note {
 }
 
 note, .notes_cell {
+    font-family: "Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif;
+    font-size: 10pt;
+    line-height: 4pt;
+}
+
+div.note p {
+    margin-bottom:7px;
     font-size: 80%;
 }
 
@@ -142,6 +149,9 @@ table.wide_table th.quadruple {
 	width: 240px;
 }
 
+table.wide_table th.pentadruple {
+    width: 350px;
+}
 
 .scale_number {
     display: inline-block;

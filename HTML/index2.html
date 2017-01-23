@@ -5,9 +5,9 @@
     <script src="plotly-latest.min.js"></script>
     <script src="PapaParse-4.1.2/papaparse.min.js"></script>
     <script src="money.min.js"></script>
+    <script src="lib.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="plotting2.js"></script>
-
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cabin+Condensed" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
@@ -16,6 +16,9 @@
 <body>
 
 [hoops name="plotting2"]
+<p>Continued from <a href="/cloud-gpu-providers/">the previous post</a>.</p>
+<!--more-->
+
 <div class="grouptitle"><h3>Filter all graphs by number of GPUs and by Provider</h3>
     <div class="buttons">
         <div class="groupname">GPUs number</div>
@@ -34,6 +37,7 @@
             <option value="nimbix">Nimbix</option>
             <option value="cirrascale">Cirrascale</option>
             <option value="sakura">Sakura</option>
+            <option value="leadertelecom">LeaderTelecom</option>
         </select>
     </div>
     <div id="messages"></div>
@@ -43,7 +47,12 @@
 
 </div>
 
+<div class="note"><p>* All sums are in USD. Offers based on other currencies are converted using today's rates from <a href=http://www.ecb.europa.eu/stats/exchange/eurofxref/html/index.en.html target=_blank>European Central Bank</a>:<br>
     <div id="rates"></div>
+    </p>
+    <p>**Perfomance data shows single presicion FLOPS for GPUs and double precision FLOPS for CPUs.
+    </p>
+</div>
 
 </body>
 </html>

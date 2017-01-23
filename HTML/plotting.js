@@ -1,194 +1,189 @@
 
 function ready() {
-    //loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
-    loadData("cost-performance.csv");
+    msg = document.getElementById("messages");
+    msg.innerHTML = "Loading data...";
+    getRates();
+
     $("select").select2();
     $("select").select2({  theme: "classic" });
 }
 
 document.addEventListener("DOMContentLoaded", ready);
 
-function loadData(filname) {
-    Papa.parse(filname, {
-        download: true,
-        complete: processStaticData
-    });
-}
 
 var offers_all=[];
 var offers=[];
 var start_row = 2;
+var dates =[];
+var quotes=[];
+var msg;
 
-function processStaticData(results) {
-    console.log("Rows: "+results.data.length);
-    var rows = results.data.length
-    var provider = "";
-    var provider_link = "";
-    for (var i=start_row; i<rows; i++) {
-        row = results.data[i];
-        if (provider !=  row[0] && row[0] !="") {
-            provider = row[0];
-            provider_link = row[1];
+
+var step = 24; // hours step
+var plot_period = 12; // months for plot "cost for rent period"
+
+function continue_proc(filter, arg) {
+    // line width on graph
+    var thin=0.8
+    var thick=3
+
+    if (accumulated_months_days.length < 1) {
+        //console.log("Calculate accumulated months days");
+        accumulated_days = 0;
+        for (var m = 0; m < 12; m++) {
+            accumulated_days += days_in_month[m];
+            accumulated_months_days.push(accumulated_days);
         }
-        var offer = {
-            provider: provider,
-            provider_link: provider_link,
-            name: row[2],
-            name_link: row[3],
-            shortname: row[4],
-            hourly:    row[5],
-            weekly:    row[6],
-            monthly:   row[7],
-            yearly:    row[8],
-            cpu_p:     row[9],
-            gpu_p:     row[10],
-            gpu_model: row[11],
-            gpus:      row[12],
-            cpu_model: row[13],
-            cpus:      row[14],
-            memory:    row[15],
-            hdd1:      row[16],
-            hdd1_vol:  row[17],
-            hdd2:      row[18],
-            hdd2_vol:  row[19],
-            net:       row[20],
-            notes:     row[21]
+        //console.log(accumulated_months_days);
+    }
+    filter(arg);
+    quotes=[];
+    plotPeriod(getHours4Months(plot_period), step, thin, thick);  // Period for top plot
+    console.log("Have "+ quotes.length+" quotes.")
+
+
+
+    // Display data for 1 month by default
+    displaySlice(Math.floor(24 * accumulated_months_days[0] / step));
+    displayPerformanceScatter();
+    plotTable();
+}
+
+
+function getHours4Months(months) {
+    var hours = 0;
+    var months_total = months;
+    while (months > 11) {
+        hours += 24*accumulated_months_days[11]; // Should be 24*365 = 8760 (hours in a year).
+        months -= 12;
+    }
+    if (months > 0) {
+        hours += 24*accumulated_months_days[months-1];
+    }
+    console.log("Count " +months_total+ " months as "+hours+" hours.")
+    return hours;
+}
+
+
+
+function displayPerformanceScatter() {
+    var scatter_plt = document.getElementById("scatter_performance");
+    var hover_info1 = document.getElementById("offer_details1");
+    var layout = {
+        title:'CPU and GPU performance (TFlops), memory volume (GB)',
+        xaxis: {title: 'CPU performance (TFlops)'},
+        yaxis: {title: 'GPU performance (TFlops)'},
+        hovermode: 'closest'
+    };
+    //offers[j].provider
+    //offers[j].name
+    var traces = [];
+    var memory_trace = {
+        mode: "markers",
+        type: "scatter",
+        name: "RAM (GB)",
+        x: [],
+        y:[],
+        text:[],
+        marker: {
+            sizemode: "area",
+            size: [],
+            color:"rgba(0,0,0,0)",
+            line: {
+                color: 'rgb(0,0,0)',
+                width: 1
+            }
         }
-        offers_all.push(offer);
-    }
-    continue_proc(filterAll, "");
-}
-
-
-function getOfferInfo(j) {
-    var memory = offers[j].memory;
-    if (memory == null || memory == "") {
-        memory = ""
-    } else {
-        memory = " | RAM: " + memory + " GB"
-    }
-    return offers[j].provider + " "+ offers[j].name + " | CPU: " + offers[j].cpu_model + " x" + offers[j].cpus + " |  GPU: "+ offers[j].gpu_model + " x"+ offers[j].gpus + memory;
-}
-
-
-// "Filters" offers: save filtered list in "offers" global variable.
-function filterAll(arg) {
-    offers = [];
-    for (j=0; j < offers_all.length; j++) {
-        offers.push(offers_all[j]);
-    }
-}
-
-// Filters offers: save filtered list in "offers" global variable.
-// Filter out offers with GPUs in range given by group argument with format string "min-miax".
-function filterByGPU(group) {
-    offers = [];
-    min = 0;
-    max = 0;
-    splits = group.split("-");
-    min = parseInt(splits[0]);
-    if (splits.length >= 2  && splits[1] != "") {
-        max = parseInt(splits[1]);
-    } else {
-        max = 1000000;
-    }
-    console.log("Filtering by "+min+" - " + max+ ", "+splits.length+":"+splits);
-    for (j=0; j < offers_all.length; j++) {
-        if (offers_all[j].gpus >= min && offers_all[j].gpus <= max) {
-            offers.push(offers_all[j]);
+    };
+    var last_prov="";
+    var color_i = 0;
+    for (j=0; j < offers.length; j++) {
+        var prov = offers[j].provider.toLowerCase();
+        //console.log(j+" "+prov)
+        if (last_prov != prov) {
+            last_prov = prov;
+            color_i = 0;
+            var c = getColor(prov);
+            //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
+            if (new_trace) {
+                traces.push(new_trace);
+                new_trace=null;
+            }
+            var new_trace = {
+                name: offers[j].provider,
+                mode: "markers",
+                type: "scatter",
+                x: [],
+                y: [],
+                text: [],
+                marker: {
+                    color: [],
+                    size: 12
+                },
+                info: []
+            }
+        } else {
+            color_i++;
+            if (color_i >= colors[c].length) {
+                color_i = 0;
+            }
         }
+        new_trace.x.push(offers[j].cpu_p);
+        new_trace.y.push(offers[j].gpu_p);
+        new_trace.text.push(offers[j].provider + " " +offers[j].shortname)
+        new_trace.marker.color.push(colors[c][color_i]);
+        new_trace.info.push(getOfferInfo(j));
+
+        memory_trace.x.push(offers[j].cpu_p);
+        memory_trace.y.push(offers[j].gpu_p);
+        memory_trace.text.push(offers[j].memory+" GB");
+        memory_trace.marker.size.push(offers[j].memory);
     }
+    if (new_trace) {
+        traces.push(new_trace);
+    }
+    traces.push(memory_trace);
+    //console.log(traces);
+    Plotly.newPlot('scatter_performance', traces, layout);
+
+    scatter_plt.on("plotly_hover", function(data) {
+        for (var i=0; i < data.points.length; i++) {
+            var point = data.points[i];
+            if (point.data.info == null) {
+                return;
+            }
+            point_index = point.pointNumber;
+            //console.log(point);
+            hover_info1.innerHTML = hover_info1.innerHTML + " " +point.data.info[point_index];
+            hover_info1.style.backgroundColor = point.data.marker.color[point_index];
+            //console.log(point.data.info[point_index] + " " + point_index + " " + point.data.marker.color[point_index]);
+        }
+    });
+
+    scatter_plt.on("plotly_unhover", function(data) {
+        hover_info1.innerHTML = "";
+        hover_info1.style.backgroundColor = "#fff";
+    });
 }
 
-// Filter by provider
-function filterProvider(prov) {
-    offers = [];
-    //console.log("Filter " + prov.toLowerCase());
-    for (j=0; j < offers_all.length; j++) {
-        //console.log(offers_all[j].provider.toLowerCase());
-        if (offers_all[j].provider.toLowerCase() == prov.toLowerCase()) {
-            offers.push(offers_all[j]);
-        }
-    }
-}
 
-function filterProviders(optionslist) {
-    if (optionslist.length == 0) {
-        filterAll("");
-        return;
-    }
-    providerlist = [];
-    for (var i=0 ; i < optionslist.length; i++ ) {
-        providerlist.push(optionslist[i].value);
-    }
-    offers = [];
-    for (j=0; j < offers_all.length; j++) {
-        if ($.inArray(offers_all[j].provider.toLowerCase(), providerlist) != -1) {
-            //console.log("Accept "+ offers_all[j].provider);
-            offers.push(offers_all[j]);
-        }
-    }
-}
 
 
 // Return array of Cost, Cost/CPU FLops, Cost/GPU FLops for given number of hours (period).
 // Period must be in hours.
 function getQuote(offer, step, period, dates) {
     var costs = [], costs_cpu=[], costs_gpu=[];
-    if (offer.hourly != "" ) {
-        for (var i=0; i <= period; i+=step) {
-            cost = i * offer.hourly;
-            costs.push(cost);
-            costs_cpu.push(cost/offer.cpu_p);
-            costs_gpu.push(cost/offer.gpu_p);
-        }
-    } else if (offer.weekly != "" ) {
-        for (var i=0; i <= period; i+=step) {
-            // Shift billing moments to one position later (use "i" instead of "i+1"),
-            // so that 1 week (presize moment) counts for 1 week costs, not 2 weeks.
-            period_w = Math.ceil((i) / (24 * 7));
-            cost = period_w * offer.weekly;
-            costs.push(cost);
-            costs_cpu.push(cost/offer.cpu_p);
-            costs_gpu.push(cost/offer.gpu_p);
-        }
-    } else if (offer.monthly != "" ) {
-        for (var h=0; h <= period; h+=step) {
-            // Shift billing moments to one position later,
-            // so that 1 month (presize moment) counts for 1 month costs, not 2 months.
-            var i = Math.floor(h/step) - 1;
-            var period_m = 0;
-            if ( i < 0 ) {
-                i = 0;
-            } else {
-             period_m = dates[1][i].years * 12 + dates[1][i].months+1;
-            }
-            cost = period_m * offer.monthly;
-            costs.push(cost);
-            costs_cpu.push(cost/offer.cpu_p);
-            costs_gpu.push(cost/offer.gpu_p);
-        }
-    } else if (offer.yearly != "" ) {
-        for (var h=0; h <= period; h+=step) {
-            // Shift billing moments to one position later
-            var i = Math.floor(h/step) - 1;
-            var period_y = 0;
-            if ( i < 0 ) {
-                i = 0;
-            } else {
-                period_y = dates[1][i].years+1;
-            }
-            cost = period_y * offer.yearly;
-            costs.push(cost);
-            costs_cpu.push(cost/offer.cpu_p);
-            costs_gpu.push(cost/offer.gpu_p);
-        }
+    for (var i=0; i <= period; i+=step) {
+        cost = getQuote4Hours(offer, i);
+        costs.push(cost);
+        costs_cpu.push(cost/offer.cpu_p);
+        costs_gpu.push(cost/offer.gpu_p);
     }
+    //console.log(offer.shortname+ " " + costs);
     return [ costs, costs_cpu, costs_gpu];
 }
 
-var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
-var accumulated_months_days = [];
+
 
 // Convert time in hours to human readable format
 // Return object {years, months, days, text}
@@ -269,37 +264,7 @@ function prepDates(end, step) {
     return [h_arr, human, text];
 }
 
-var dates =[];
-var quotes=[];
-var colors=[["#ffaa4b","#ff9e2b","#ffa943","#ffb152"],  // Amazon
-           ["#ffe942","#ffde3d","#ffe55e","#ffe875"],  // Softlayer
-           ["#8ad34f","#a1dc72","#a7dd7b","#a7dd7b"],  // Nimbix
-           ["#8ed0ee","#8ed0ee","#8ad5ed","#8ad5ed","#95d5ef","#95d5ef","#a3ddf1", "#a3ddf1", "#a3f0fa","#a3f0fa"],  // Cirrascale
-           ["#f773a9","#f161a0","#ea6eaa","#ec8ec5"],  // Sakura
-           ["#656565"]];
 
-function getColor(prov) {
-    var c = colors.length-1;
-    //console.log("Pick color for "+ offer.provider.toLowerCase());
-    switch (prov) {
-        case "amazon":
-            c = 0;
-            break;
-        case "softlayer":
-            c = 1;
-            break;
-        case "nimbix":
-            c = 2;
-            break;
-        case "cirrascale":
-            c = 3;
-            break;
-        case "sakura":
-            c = 4;
-            break;
-    };
-    return c;
-}
 
 // Plot all offers costs for given period.
 function plotPeriod(period, step, thin, thick) {
@@ -364,7 +329,7 @@ function plotPeriod(period, step, thin, thick) {
         var prov = offers[j].provider.toLowerCase();
         var c = getColor(prov);
         if (last_prov != prov) {
-            console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
+            //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
             last_prov = prov;
             color_i = 1;
             var legend_trace = {
@@ -497,34 +462,6 @@ function plotPeriod(period, step, thin, thick) {
     });
 }
 
-var step = 12; // hours step
-
-function continue_proc(filter, arg) {
-    // line width on graph
-    var thin=0.8
-    var thick=3
-
-    if (accumulated_months_days.length < 1) {
-        //console.log("Calculate accumulated months days");
-        accumulated_days = 0;
-        for (var m = 0; m < 12; m++) {
-            accumulated_days += days_in_month[m];
-            accumulated_months_days.push(accumulated_days);
-        }
-        //console.log(accumulated_months_days);
-    }
-    filter(arg);
-    quotes=[];
-    plotPeriod(24*accumulated_months_days[11], step, thin, thick);  // Period for top plot
-    console.log("Have "+ quotes.length+" quotes.")
-
-
-
-    // Display data for 1 month by default
-    displaySlice(Math.floor(24 * accumulated_months_days[0] / step));
-    displayPerformanceScatter();
-    plotTable();
-}
 
 
 function removeAnnotations() {
@@ -814,118 +751,14 @@ function displaySlice(n) {
 }
 
 
-
-function displayPerformanceScatter() {
-    var scatter_plt = document.getElementById("scatter_performance");
-    var hover_info1 = document.getElementById("offer_details1");
-    var layout = {
-        title:'CPU and GPU performance (TFlops), memory volume (GB)',
-        xaxis: {title: 'CPU performance (TFlops)'},
-        yaxis: {title: 'GPU performance (TFlops)'},
-        hovermode: 'closest'
-    };
-    //offers[j].provider
-    //offers[j].name
-    var traces = [];
-    var memory_trace = {
-        mode: "markers",
-        type: "scatter",
-        name: "RAM (GB)",
-        x: [],
-        y:[],
-        text:[],
-        marker: {
-            sizemode: "area",
-            size: [],
-            color:"rgba(0,0,0,0)",
-            line: {
-                color: 'rgb(0,0,0)',
-                width: 1
-            }
-        }
-    };
-    var last_prov="";
-    var color_i = 0;
-    for (j=0; j < offers.length; j++) {
-        var prov = offers[j].provider.toLowerCase();
-        //console.log(j+" "+prov)
-        if (last_prov != prov) {
-            last_prov = prov;
-            color_i = 0;
-            var c = getColor(prov);
-            //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
-            if (new_trace) {
-                traces.push(new_trace);
-                new_trace=null;
-            }
-            var new_trace = {
-                name: offers[j].provider,
-                mode: "markers",
-                type: "scatter",
-                x: [],
-                y: [],
-                text: [],
-                marker: {
-                    color: [],
-                    size: 12
-                },
-                info: []
-            }
-        } else {
-            color_i++;
-            if (color_i >= colors[c].length) {
-                color_i = 0;
-            }
-        }
-        new_trace.x.push(offers[j].cpu_p);
-        new_trace.y.push(offers[j].gpu_p);
-        new_trace.text.push(offers[j].provider + " " +offers[j].shortname)
-        new_trace.marker.color.push(colors[c][color_i]);
-        new_trace.info.push(getOfferInfo(j));
-
-        memory_trace.x.push(offers[j].cpu_p);
-        memory_trace.y.push(offers[j].gpu_p);
-        memory_trace.text.push(offers[j].memory+" GB");
-        memory_trace.marker.size.push(offers[j].memory);
-    }
-    if (new_trace) {
-        traces.push(new_trace);
-    }
-    traces.push(memory_trace);
-    //console.log(traces);
-    Plotly.newPlot('scatter_performance', traces, layout);
-
-    scatter_plt.on("plotly_hover", function(data) {
-        for (var i=0; i < data.points.length; i++) {
-            var point = data.points[i];
-            if (point.data.info == null) {
-                return;
-            }
-            point_index = point.pointNumber;
-            //console.log(point);
-            hover_info1.innerHTML = hover_info1.innerHTML + " " +point.data.info[point_index];
-            hover_info1.style.backgroundColor = point.data.marker.color[point_index];
-            //console.log(point.data.info[point_index] + " " + point_index + " " + point.data.marker.color[point_index]);
-        }
-    });
-
-    scatter_plt.on("plotly_unhover", function(data) {
-        hover_info1.innerHTML = "";
-        hover_info1.style.backgroundColor = "#fff";
-    });
-}
-
-
-function CurrencyFormat(s) {
+function CurrencyFormat(s, currency) {
     if (s == "") {
         return "";
     }
-    if (s.indexOf("x")>=0) {
-        return s;
-    }
-    num = Number(s).toLocaleString('en', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 })
-    num = num.replace(",", " ")
-    return num
+    //console.log("Formatting " + s + " as " + currency);
+    num = Number(s).toLocaleString('en', { style: 'currency', currency: currency, maximumFractionDigits: 2 });
+    num = num.replace(",", "&nbsp;");
+    return num;
 }
 
 function NumberFormat(s) {
@@ -935,9 +768,9 @@ function NumberFormat(s) {
     if (s.indexOf("x")>=0) {
         return s;
     }
-    num = Number(s).toLocaleString('en', { style: 'decimal', maximumFractionDigits: 2 })
-    num = num.replace(",", " ")
-    return num
+    num = Number(s).toLocaleString('en', { style: 'decimal', maximumFractionDigits: 2 });
+    num = num.replace(",", " ");
+    return num;
 }
 
 function plotTable() {
@@ -946,14 +779,14 @@ function plotTable() {
     <th rowspan="2" class="quadruple">Offer</th><th class="double">GPU</th><th class="double">CPU</th> \
     <th>Memory</th><th colspan="4" class="quadruple">HDD</th> \
     <th>Network</th>\
-    <th colspan="4" class="quadruple">Pricing (USD) per</th> \
-    <th rowspan="2" class="notes_cell quadruple">Notes</th></tr> \
+    <th colspan="5" class="pentadruple">Pricing</th> \
+    <th rowspan="2" class="pentadruple">Notes</th></tr> \
     <tr><th>model x quantity</th> \
     <th>model x quantity</th> \
     <th>RAM (GB)</th> \
     <th>primary</th><th>vol. (GB)</th><th>secondary</th><th>vol. (GB)</th> \
-    <th>Internet (GB/s)</th> \
-    <th>hour</th><th>week</th><th>month</th><th>year</th> \
+    <th>Internal/External (GB/s)</th> \
+    <th>hourly</th><th>weekly</th><th>monthly</th><th>yearly</th><th title="One time setup price">Setup</th> \
     </tr></thead><tbody>';
     var body="";
     for (var j=0; j < offers.length; j++) {
@@ -972,25 +805,17 @@ function plotTable() {
         <td>'+offers[j].hdd1+'</td><td>'+NumberFormat(offers[j].hdd1_vol)+'</td>\
         <td>'+offers[j].hdd2+'</td><td>'+NumberFormat(offers[j].hdd2_vol)+'</td>\
         <td>'+offers[j].net+'</td>\
-        <td>'+CurrencyFormat(offers[j].hourly)+'</td>\
-        <td>'+CurrencyFormat(offers[j].weekly)+'</td>\
-        <td>'+CurrencyFormat(offers[j].monthly)+'</td>\
-        <td>'+CurrencyFormat(offers[j].yearly)+'</td>\
+        <td>'+CurrencyFormat(offers[j].hourly_native, offers[j].currency)+'</td>\
+        <td>'+CurrencyFormat(offers[j].weekly_native,offers[j].currency)+'</td>\
+        <td>'+CurrencyFormat(offers[j].monthly_native, offers[j].currency)+'</td>\
+        <td>'+CurrencyFormat(offers[j].yearly_native, offers[j].currency)+'</td>\
+        <td>'+CurrencyFormat(offers[j].setup_native, offers[j].currency)+'</td>\
         <td class="notes_cell">'+offers[j].notes+'</td></tr>';
     }
 
     var tail = '</tbody></table>';
 
     document.getElementById("table_div").innerHTML = head + body + tail;
-}
-
-function ButtonOver(button) {
-    if (button.title == "") {
-        return;
-    }
-    var tmp = button.innerHTML;
-    button.innerHTML = button.title;
-    button.title = tmp;
 }
 
 
