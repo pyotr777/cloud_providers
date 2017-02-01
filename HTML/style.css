@@ -107,8 +107,8 @@ div.note {
 
 note, .notes_cell {
     font-family: "Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif;
-    font-size: 10pt;
-    line-height: 4pt;
+    font-size: 8pt;
+    line-height: 8pt;
 }
 
 div.note p {

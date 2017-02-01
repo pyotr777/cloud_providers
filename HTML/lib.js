@@ -12,6 +12,14 @@ var colors=[["#ee8735","#ec7c19","#ff8e1c","#f6a94a","#fcd18c"],  // Amazon
 
 var base_currency="USD";
 
+var offers_all=[];
+var offers=[];
+
+var offers_GPU_filtered = offers_all;
+var GPUgroup_global, optionslist_global;
+
+var processing = false; // prevent onchange event loop for providers filter.
+
 var setRates = function(data) {
     fx.base = base_currency;
     fx.settings = { to: base_currency };
@@ -22,8 +30,8 @@ var setRates = function(data) {
 
     //console.log(fx.rates);
     //console.log(fx.base);
-    //loadData("cost-performance.csv");
-    loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
+    loadData("cost-performance.csv");
+    //loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
 }
 
 
@@ -88,7 +96,7 @@ function processStaticData(results) {
         }
         offers_all.push(offer);
     }
-    continue_proc(filterAll, "");
+    continue_proc(resetFilters, "");
     msg.innerHTML = "";
     printRates();
 }
@@ -106,17 +114,47 @@ function getOfferInfo(j) {
 
 
 // "Filters" offers: save filtered list in "offers" global variable.
-function filterAll(arg) {
-    offers = [];
-    for (j=0; j < offers_all.length; j++) {
-        offers.push(offers_all[j]);
-    }
+function resetFilters(arg) {
+    offers = offers_all;
+    offers_GPU_filtered = offers_all;
+    GPUgroup_global = null;
+    var $selector = $("#providers_select").select2();
+    $selector.val(null).trigger("change");
 }
+
 
 // Filters offers: save filtered list in "offers" global variable.
 // Filter out offers with GPUs in range given by group argument with format string "min-miax".
 function filterByGPU(group) {
-    offers = [];
+    console.log("Filtering by GPU group "+ group);
+    GPUgroup_global = group;
+    applyGPUFilter();
+    applyProvidersFilter();
+}
+
+
+// Filter by provider
+function filterProviders(optionslist) {
+    if (optionslist == null || optionslist.length == 0) {
+        resetFilters("");
+        return;
+    }
+    optionslist_global = optionslist;
+    applyGPUFilter();
+    applyProvidersFilter();
+}
+
+function applyGPUFilter() {
+    var group = GPUgroup_global;
+    console.log("GPUgroup_global:"+GPUgroup_global);
+    if (group == null) {
+        offers = offers_all;
+        offers_GPU_filtered = offers_all;
+        return;
+    }
+    var new_offers = [];
+    var available_offers = offers_all;
+    console.log("Available offers "+available_offers.length)
     min = 0;
     max = 0;
     splits = group.split("-");
@@ -127,41 +165,38 @@ function filterByGPU(group) {
         max = 1000000;
     }
     console.log("Filtering by "+min+" - " + max+ ", "+splits.length+":"+splits);
-    for (j=0; j < offers_all.length; j++) {
-        if (offers_all[j].gpus >= min && offers_all[j].gpus <= max) {
-            offers.push(offers_all[j]);
+    for (j=0; j < available_offers.length; j++) {
+        if (available_offers[j].gpus >= min && available_offers[j].gpus <= max) {
+            new_offers.push(available_offers[j]);
         }
     }
+    offers = new_offers;
+    offers_GPU_filtered = offers;
 }
 
-// Filter by provider
-function filterProvider(prov) {
-    offers = [];
-    //console.log("Filter " + prov.toLowerCase());
-    for (j=0; j < offers_all.length; j++) {
-        //console.log(offers_all[j].provider.toLowerCase());
-        if (offers_all[j].provider.toLowerCase() == prov.toLowerCase()) {
-            offers.push(offers_all[j]);
-        }
-    }
-}
 
-function filterProviders(optionslist) {
-    if (optionslist.length == 0) {
-        filterAll("");
+
+// Must be called after applyGPUFilter()
+function applyProvidersFilter() {
+    console.log("applying providers filter with " + optionslist_global+". Have "+offers_GPU_filtered.length + " GPU-filtered offers.")
+    if (optionslist_global == null || optionslist_global.length == 0) {
+        offers = offers_GPU_filtered;
         return;
     }
-    providerlist = [];
+    var optionslist = optionslist_global;
+    var providerlist = [];
     for (var i=0 ; i < optionslist.length; i++ ) {
         providerlist.push(optionslist[i].value);
     }
-    offers = [];
-    for (j=0; j < offers_all.length; j++) {
-        if ($.inArray(offers_all[j].provider.toLowerCase(), providerlist) != -1) {
+    var new_offers = [];
+    var available_offers = offers_GPU_filtered;
+    for (j=0; j < available_offers.length; j++) {
+        if ($.inArray(available_offers[j].provider.toLowerCase(), providerlist) != -1) {
             //console.log("Accept "+ offers_all[j].provider);
-            offers.push(offers_all[j]);
+            new_offers.push(available_offers[j]);
         }
     }
+    offers = new_offers;
 }
 
 
@@ -249,7 +284,16 @@ function printRates() {
     cur = "EUR";
     rate = fx.convert(1, {from: base_currency,to: cur});
     div.innerHTML += base_currency + "/" + cur+" = 1/"+rate.toFixed(2)+ " &nbsp; ";
-    cur = "RUB";
-    rate = fx.convert(1, {from: base_currency,to: cur});
-    div.innerHTML += base_currency + "/" + cur+" = 1/"+rate.toFixed(2);
+    //cur = "RUB";
+    //rate = fx.convert(1, {from: base_currency,to: cur});
+    //div.innerHTML += base_currency + "/" + cur+" = 1/"+rate.toFixed(2);
+}
+
+// Transform Offer name to simplified form for comparison with other names
+function getSimpleName(name,skip_words) {
+    var simple_name = name.toLowerCase();
+    for (var i=0; i < skip_words.length; i++) {
+        simple_name = simple_name.replace(skip_words[i],"");
+    }
+    return simple_name;
 }

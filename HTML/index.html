@@ -14,14 +14,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 </head>
 <body>
-
 [hoops name="plotting"]
 
-<p>In this post I compiled some data about Cloud providers GPU offerings: CPU and GPU performance, costs. etc. <b>Beware that performance data is a rough estimate, and actual performance may vary greatly between applications.</b>
-For CPUs we used double precision FLOPS and for GPUs &mdash; single presicion FLOPS.</p>
-<p>Using the graphs below you can compare estimate CPU and GPU performance, compare costs and cost/performance values for a particular period. To select the period click on the "Cost per period" graph or use one of the buttons below it. You can also filter offerings by GPU numbers and providers.</p>
+<p>In this post I compiled some data about Cloud providers GPU offerings: CPU and GPU performance**, costs*, memory, etc. </p>
+<p>Using the graphs below you can compare estimate CPU and GPU performance, compare costs and cost/performance values for a particular period. To select the period click on the "Cost per period" graph or use one of the buttons below it. You can also filter offerings by number of GPUs and by providers.</p>
 <p>You can find details for all offerings in the table at the bottom of this post. The data will be updated on (I hope) a regular basis.</p>
-<p>Last update 2017/01/23.</p>
+<p>Last update 2017/01/24.</p>
 
 
 <!--more-->
@@ -30,7 +28,7 @@ For CPUs we used double precision FLOPS and for GPUs &mdash; single presicion FL
 <div class="grouptitle"><h3>Filter all graphs by number of GPUs and by Provider</h3>
     <div class="buttons">
         <div class="groupname">GPUs number</div>
-        <div class="button" id="all" onclick="continue_proc(filterAll,'');">All</div>
+        <div class="button" id="all" onclick="continue_proc(resetFilters,'');">All</div>
         <div class="button" id="gpu1" onclick="continue_proc(filterByGPU,'0-1');">1</div>
         <div class="button" id="gpu2" onclick="continue_proc(filterByGPU,'2-3');">2-3</div>
         <div class="button" id="gpu3" onclick="continue_proc(filterByGPU,'4-7');">4-7</div>
@@ -39,7 +37,7 @@ For CPUs we used double precision FLOPS and for GPUs &mdash; single presicion FL
     </div>
     <div class="buttons">
         <label class="groupname" for="providers-select">Providers</label>
-        <select  class="providers-select js-states form-control" multiple="multiple" id="providers-select" onchange="continue_proc(filterProviders,this.selectedOptions)">
+        <select  class="providers-select js-states form-control" multiple="multiple" id="providers_select" onchange="continue_proc(filterProviders,this.selectedOptions)">
             <option value="amazon">Amazon</option>
             <option value="softlayer">Softlayer</option>
             <option value="nimbix">Nimbix</option>
@@ -52,11 +50,11 @@ For CPUs we used double precision FLOPS and for GPUs &mdash; single presicion FL
 
     <div id="scatter_performance" style="width: 100%; height: 420px;"></div>
     <div id="offer_details1" class="note"></div>
-    <p>The below graph shows rent cost for a period. X-axis is rent period, Y-axis is rent cost.<br/>
-    Clicking on the  graph will change graphs below it to display costs for the selected period. You can also set the period with the buttons below.</p>
+    <p>The below graph shows rent cost for a period. X-axis is rent period, Y-axis is rent cost.</p>
+<p>All offers are charged in time units: hours, weeks, months or years. If an offer is charged by months, for example, using it for 1 day will cost you monthly price. Thus, the below graph can be thought of as the minimum sum you have to pay for using offers for particular period.</p>
+    <p>Clicking on the graph will change graphs below it to display costs for the selected period. You can also set the period with the buttons below.</p>
     <div id="costs_period" style="width: 100%; height: 400px;"></div>
     <div id="offer_details2" class="note"></div>
-    <note>* All offers are charged in time units: hours, weeks, months or years. If an offer is charged by months, for example, using it for 1 day will cost you monthly price. Thus, the above graph can be thought of as the minimum sum you have to pay for using offers for particular period.</note>
 
 
     <div class="grouptitle"><h3>Set period for below graphs</h3>
@@ -82,7 +80,7 @@ For CPUs we used double precision FLOPS and for GPUs &mdash; single presicion FL
     <div id="table_div"></div>
 </div>
 
-<div class="notes">
+<div class="note">
 
     Links:
     <a href="https://www.microway.com/knowledge-center-articles/detailed-specifications-intel-xeon-e5-2600v3-haswell-ep-processors/" target="_blank">www.microway.com/knowledge-center-articles/detailed-specifications-intel-xeon-e5-2600v3-haswell-ep-processors</a>
@@ -94,12 +92,13 @@ For CPUs we used double precision FLOPS and for GPUs &mdash; single presicion FL
 
 <div class="note"><p>* All sums are in USD. Offers based on other currencies are converted using today's rates from <a href=http://www.ecb.europa.eu/stats/exchange/eurofxref/html/index.en.html target=_blank>European Central Bank</a>:<br>
     <div id="rates"></div>
-    </p>
-    <p>** Perfomance data shows single presicion FLOPS for GPUs and double precision FLOPS for CPUs.
+    All prices do not include taxes.</p>
+
+    <p>** Perfomance data shows single precision FLOPS for GPUs and double precision FLOPS for CPUs. <b>Beware that performance data is a rough estimate, and actual performance may vary greatly between applications.</b></p>
     </p>
 </div>
 
-<a href="/cloud-gpu-providers-more-graphs/">Even more graphs</a>
+<a href="/cloud-gpu-providers-more-graphs/">Even more graphs: compare calculation time and cost for a fixed amount of calculations.</a>
 
 </body>
 </html>

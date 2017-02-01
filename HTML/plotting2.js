@@ -13,8 +13,6 @@ function ready() {
 document.addEventListener("DOMContentLoaded", ready);
 
 
-var offers_all=[];
-var offers=[];
 var start_row = 2;
 var dates =[];
 var quotes=[];
@@ -27,19 +25,22 @@ var FLOPsScale;
 
 
 function continue_proc(filter, arg) {
+    if (processing) return; // Prevent onchange event loop for providers filter
+    processing = true;
     var TFLOPS = 1000000000;
     filter(arg);
     quotes=[];
 
     plotTimeCost(TFLOPS);
     plotFLOPsScale(TFLOPS);
+    processing = false;
 }
 
 
 function plotTimeCost(TFLOPS) {
-    console.log("Plotting GPU Time x Cost fot " + TFLOPS/1e+6 + " EFLOP-s 1*e+18 FLOPS");
+    console.log("Plotting GPU Time x Cost fot " + TFLOPS/1e+6 + " EFLOP-s 1*e18 FLOPS");
     var layout = {
-        title:'Calculation Time and Cost for ' + TFLOPS/1e+6 + ' EFLOP-s ('+ TFLOPS/1e+6+' * 10<sup>+18</sup> FLOP-s<sup>*</sup>)',
+        title:'GPU calculation Time and Cost for ' + TFLOPS/1e+6 + ' EFLOP-s ('+ TFLOPS/1e+6+' * 10<sup>18</sup> FLOP-s<sup>***</sup>)',
         hovermode: 'closest',
         xaxis: {
             title: 'Calculation time',
@@ -73,6 +74,8 @@ function plotTimeCost(TFLOPS) {
     var last_prov="";
     var color_i = 0;
     var max_y = 0;
+    var new_trace  = {};
+    //console.log("New trace:" + new_trace+" Not empty? " + (!jQuery.isEmptyObject(new_trace)));
     for (j=0; j < offers.length; j++) {
         var prov = offers[j].provider.toLowerCase();
         //console.log(j+" "+prov)
@@ -81,11 +84,11 @@ function plotTimeCost(TFLOPS) {
             color_i = 0;
             var c = getColor(prov);
             //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
-            if (new_trace) {
+            if (!jQuery.isEmptyObject(new_trace)) {
                 traces.push(new_trace);
                 new_trace=null;
             }
-            var new_trace = {
+            new_trace = {
                 name: offers[j].provider,
                 mode: "markers",
                 type: "scatter",
@@ -117,14 +120,79 @@ function plotTimeCost(TFLOPS) {
         layout.xaxis.ticktext.push(hoursToHuman(time)[1]);
         new_trace.text.push(offers[j].provider + " " + offers[j].name + " ("+offers[j].shortname+")")
         new_trace.marker.color.push(colors[c][color_i]);
-        console.log(offers[j].shortname + " color:" + c + "x"+color_i);
+        //console.log(offers[j].shortname + " color:" + c + "x"+color_i);
     }
     layout.yaxis.range.push(max_y);
-    console.log("MAX Y set to " + max_y);
+    //console.log("MAX Y set to " + max_y);
     if (new_trace) {
         traces.push(new_trace);
     }
-    Plotly.newPlot('time_x_cost', traces, layout);
+    Plotly.newPlot('GPUtime_x_cost', traces, layout);
+
+
+    // Plot CPU time
+    layout.title = 'CPU calculation Time and Cost for ' + TFLOPS/1e+6 + ' EFLOP-s ('+ TFLOPS/1e+6+' * 10<sup>18</sup> FLOP-s<sup>***</sup>)';
+    console.log("Plotting CPU Time x Cost fot " + TFLOPS/1e+6 + " EFLOP-s 1*e18 FLOPS");
+    layout.xaxis.tickvals = [];
+    layout.xaxis.ticktext = [];
+    traces = [];
+    last_prov="";
+    color_i = 0;
+    max_y = 0;
+    new_trace = {};
+
+    for (j=0; j < offers.length; j++) {
+        var prov = offers[j].provider.toLowerCase();
+        //console.log(j+" "+prov)
+        if (last_prov != prov) {
+            last_prov = prov;
+            color_i = 0;
+            var c = getColor(prov);
+            //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
+            if (!jQuery.isEmptyObject(new_trace)) {
+                traces.push(new_trace);
+                new_trace=null;
+            }
+            new_trace = {
+                name: offers[j].provider,
+                mode: "markers",
+                type: "scatter",
+                x: [],
+                y: [],
+                text: [],
+                marker: {
+                    color: [],
+                    size: 15,
+                    opacity: 0.8,
+                    symbol: "square"
+                }
+            }
+        } else {
+            color_i++;
+            if (color_i >= colors[c].length) {
+                color_i = 0;
+            }
+        }
+
+        var time = Math.ceil(TFLOPS / offers[j].cpu_p / 3600); // Calculation time in hours
+        var cost = getQuote4Hours(offers[j], time);
+        new_trace.x.push(time);
+        new_trace.y.push(cost);
+        if (cost > max_y) {
+            max_y = Math.ceil(cost*1.1);
+        }
+        layout.xaxis.tickvals.push(time);
+        layout.xaxis.ticktext.push(hoursToHuman(time)[1]);
+        new_trace.text.push(offers[j].provider + " " + offers[j].name + " ("+offers[j].shortname+")")
+        new_trace.marker.color.push(colors[c][color_i]);
+        //console.log(offers[j].shortname + " color:" + c + "x"+color_i);
+    }
+    layout.yaxis.range.push(max_y);
+    //console.log("MAX Y set to " + max_y);
+    if (new_trace) {
+        traces.push(new_trace);
+    }
+    Plotly.newPlot('CPUtime_x_cost', traces, layout);
 }
 
 
@@ -149,7 +217,7 @@ function hoursToHuman(h) {
             accumulated_days += days_in_month[m];
             accumulated_months_days.push(accumulated_days);
         }
-        console.log(accumulated_months_days);
+        //console.log(accumulated_months_days);
     }
     var init_h = h;
     var hours_day   = 24;

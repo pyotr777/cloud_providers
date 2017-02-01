@@ -11,8 +11,7 @@ function ready() {
 document.addEventListener("DOMContentLoaded", ready);
 
 
-var offers_all=[];
-var offers=[];
+
 var start_row = 2;
 var dates =[];
 var quotes=[];
@@ -23,6 +22,8 @@ var step = 24; // hours step
 var plot_period = 12; // months for plot "cost for rent period"
 
 function continue_proc(filter, arg) {
+    if (processing) return;
+    processing = true;
     // line width on graph
     var thin=0.8
     var thick=3
@@ -41,12 +42,11 @@ function continue_proc(filter, arg) {
     plotPeriod(getHours4Months(plot_period), step, thin, thick);  // Period for top plot
     console.log("Have "+ quotes.length+" quotes.")
 
-
-
     // Display data for 1 month by default
     displaySlice(Math.floor(24 * accumulated_months_days[0] / step));
     displayPerformanceScatter();
     plotTable();
+    processing = false;
 }
 
 
@@ -70,7 +70,7 @@ function displayPerformanceScatter() {
     var scatter_plt = document.getElementById("scatter_performance");
     var hover_info1 = document.getElementById("offer_details1");
     var layout = {
-        title:'CPU and GPU performance (TFlops), memory volume (GB)',
+        title:'CPU and GPU performance** (TFlops), memory volume (GB)',
         xaxis: {title: 'CPU performance (TFlops)'},
         yaxis: {title: 'GPU performance (TFlops)'},
         hovermode: 'closest'
@@ -96,9 +96,17 @@ function displayPerformanceScatter() {
         }
     };
     var last_prov="";
+    var last_offer=""; // For removing offer duplicates hourly/weekly/monthly...
+    var skip_words=["minutely", "hourly", "dayly", "weekly", "monthly", "yearly"];
     var color_i = 0;
     for (j=0; j < offers.length; j++) {
         var prov = offers[j].provider.toLowerCase();
+        var offer_name = getSimpleName(offers[j].name,skip_words);
+        if (last_offer == offer_name) {
+            continue;
+        } else {
+            last_offer = offer_name;
+        }
         //console.log(j+" "+prov)
         if (last_prov != prov) {
             last_prov = prov;
@@ -281,7 +289,7 @@ function plotPeriod(period, step, thin, thick) {
     //console.log("which is " + dates[2][dates[1].length-1]);
 
     var layout = {
-        title: 'Cost for rent period* (USD)',
+        title: 'Cost* for rent period (USD)',
         hovermode:'closest',
         showticklabels: true,
         showlegend: true,
@@ -382,8 +390,8 @@ function plotPeriod(period, step, thin, thick) {
         //console.log(data);
         var pts = '';
         for(var i=0; i < data.points.length; i++) {
-            console.log("Clicked: ");
-            console.log(data.points[i]);
+            //console.log("Clicked: ");
+            //console.log(data.points[i]);
             displaySlice(data.points[i].pointNumber);
             var point = data.points[i];
             newannotations = [
@@ -505,7 +513,7 @@ var gpu_color = {light: "rgba(252, 120, 36, 0.33)", dark: "#fc7824"};
 function displaySlice(n) {
     //console.log(dates[1][n]);
     var months = dates[1][n].years*12 + dates[1][n].months;
-    console.log("Clicked "+n+ " X: "+ dates[0][n] + ", full "+months+"months / " + dates[2][n]);
+    console.log("Clicked "+n+ " X: "+ dates[0][n] + ", full "+months+" months / " + dates[2][n]);
     // rewind to the beginning of the month
     var i = n;
     var point = 0;
