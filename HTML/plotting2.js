@@ -131,15 +131,43 @@ function plotTimeCost(TFLOPS) {
 
 
     // Plot CPU time
-    layout.title = 'CPU calculation Time and Cost for ' + TFLOPS/1e+6 + ' EFLOP-s ('+ TFLOPS/1e+6+' * 10<sup>18</sup> FLOP-s<sup>***</sup>)';
-    console.log("Plotting CPU Time x Cost fot " + TFLOPS/1e+6 + " EFLOP-s 1*e18 FLOPS");
-    layout.xaxis.tickvals = [];
-    layout.xaxis.ticktext = [];
-    traces = [];
+    var cpu_layout = {
+        title:'GPU calculation Time and Cost for ' + TFLOPS/1e+6 + ' EFLOP-s ('+ TFLOPS/1e+6+' * 10<sup>18</sup> FLOP-s<sup>***</sup>)',
+        hovermode: 'closest',
+        xaxis: {
+            title: 'Calculation time',
+            tickangle: 45,
+            tickvals: [],
+            ticktext: [],
+            tickfont: {
+                family: '"Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif',
+                size: 11
+            },
+            showline: true
+        },
+        yaxis: {
+            tickprefix: "$",
+            hoverformat: ',.2f',
+            exponentformat: "none",
+            zeroline: false,
+            range: [0]
+        },
+        legend: {
+            x: 0.98,
+            y: 1,
+            bordercolor: "#eee",
+            borderwidth: 1,
+            font: {
+                size: 16
+            }
+        }
+    };
+
+    var cpu_traces = [];
     last_prov="";
     color_i = 0;
     max_y = 0;
-    new_trace = {};
+    var new_trace_cpu = {};
 
     for (j=0; j < offers.length; j++) {
         var prov = offers[j].provider.toLowerCase();
@@ -149,11 +177,11 @@ function plotTimeCost(TFLOPS) {
             color_i = 0;
             var c = getColor(prov);
             //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
-            if (!jQuery.isEmptyObject(new_trace)) {
-                traces.push(new_trace);
-                new_trace=null;
+            if (!jQuery.isEmptyObject(new_trace_cpu)) {
+                cpu_traces.push(new_trace_cpu);
+                new_trace_cpu=null;
             }
-            new_trace = {
+            new_trace_cpu = {
                 name: offers[j].provider,
                 mode: "markers",
                 type: "scatter",
@@ -176,23 +204,23 @@ function plotTimeCost(TFLOPS) {
 
         var time = Math.ceil(TFLOPS / offers[j].cpu_p / 3600); // Calculation time in hours
         var cost = getQuote4Hours(offers[j], time);
-        new_trace.x.push(time);
-        new_trace.y.push(cost);
+        new_trace_cpu.x.push(time);
+        new_trace_cpu.y.push(cost);
         if (cost > max_y) {
             max_y = Math.ceil(cost*1.1);
         }
-        layout.xaxis.tickvals.push(time);
-        layout.xaxis.ticktext.push(hoursToHuman(time)[1]);
-        new_trace.text.push(offers[j].provider + " " + offers[j].name + " ("+offers[j].shortname+")")
-        new_trace.marker.color.push(colors[c][color_i]);
+        cpu_layout.xaxis.tickvals.push(time);
+        cpu_layout.xaxis.ticktext.push(hoursToHuman(time)[1]);
+        new_trace_cpu.text.push(offers[j].provider + " " + offers[j].name + " ("+offers[j].shortname+")")
+        new_trace_cpu.marker.color.push(colors[c][color_i]);
         //console.log(offers[j].shortname + " color:" + c + "x"+color_i);
     }
-    layout.yaxis.range.push(max_y);
+    cpu_layout.yaxis.range.push(max_y);
     //console.log("MAX Y set to " + max_y);
-    if (new_trace) {
-        traces.push(new_trace);
+    if (new_trace_cpu) {
+        cpu_traces.push(new_trace_cpu);
     }
-    Plotly.newPlot('CPUtime_x_cost', traces, layout);
+    Plotly.newPlot('CPUtime_x_cost', cpu_traces, cpu_layout);
 }
 
 
