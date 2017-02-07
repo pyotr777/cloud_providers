@@ -8,6 +8,7 @@ var colors=[["#ee8735","#ec7c19","#ff8e1c","#f6a94a","#fcd18c"],  // Amazon
            ["#00b1e7","#11ade5","#51c1e4","#88dcef","#86e4fa"],  // Cirrascale
            ["#f0308b","#ec5896","#ff5a9f","#fe7bb0","#fe9ec1"],  // Sakura
            ["#964fb7","#8937a8","#9b49ba","#b970c4","#cb8edf"],  // LeaderTelecom
+           ["#4f48d9","#4341ae","#5560c8","#7182e7","#afbdf5"],  // Tokyo University
            ["#503a1b"]];  // other
 
 var base_currency="USD";
@@ -30,8 +31,8 @@ var setRates = function(data) {
 
     //console.log(fx.rates);
     //console.log(fx.base);
-    //loadData("cost-performance.csv");
-    loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
+    loadData("cost-performance.csv");
+    //loadData("http://comp.photo777.org/cloudproviders/cost-performance.csv");
 }
 
 
@@ -43,14 +44,21 @@ function getRates() {
 
 
 function loadData(filename) {
-    Papa.parse(filename, {
-        download: true,
-        complete: processStaticData
-    });
+    console.log("Loading data");
+    try {
+        Papa.parse(filename, {
+            download: true,
+            complete: processStaticData
+        });
+    } catch (err) {
+        console.log("Exception loding file "+filename+".");
+        console.log(err.message);
+    }
 }
 
 
 function processStaticData(results) {
+    console.log("Processing data");
     console.log("Rows: "+results.data.length);
     //var max_rows = 10000;
 
@@ -95,6 +103,11 @@ function processStaticData(results) {
             notes:     row[23]
         }
         offers_all.push(offer);
+        if (provider=="the university of tokyo") {
+            console.log(offer);
+        } else {
+            console.log(provider);
+        }
     }
     continue_proc(resetFilters, "");
     msg.innerHTML = "";
@@ -191,6 +204,7 @@ function applyProvidersFilter() {
     var new_offers = [];
     var available_offers = offers_GPU_filtered;
     for (j=0; j < available_offers.length; j++) {
+        console.log(available_offers[j].provider.toLowerCase()+" is in "+providerlist+" ?");
         if ($.inArray(available_offers[j].provider.toLowerCase(), providerlist) != -1) {
             //console.log("Accept "+ offers_all[j].provider);
             new_offers.push(available_offers[j]);
@@ -222,7 +236,7 @@ function getQuote4Hours(offer, h) {
         //console.log(period[0]);
     } else if (offer.yearly != "" ) {
         // Year is counted as 365 days
-        var period_y = Math.ceil(period / (24 * 365));
+        var period_y = Math.ceil(h / (24 * 365));
         cost += period_y * offer.yearly;
     }
     return cost;
@@ -231,10 +245,17 @@ function getQuote4Hours(offer, h) {
 
 // Convert SUM in currency to base_currency
 function convert2BaseCurrency(sum, currency) {
+    if (sum == null || sum == "") return "";
     if (currency != base_currency) {
-        var conv = fx.convert(sum, { from: currency});
-        //console.log(sum + " " +currency + " = " + conv + " " + base_currency );
-        return conv;
+        try {
+            var conv = fx.convert(sum, { from: currency});
+            //console.log(sum + " " +currency + " = " + conv + " " + base_currency );
+            return conv;
+        } catch(err) {
+            console.log("Currency convertion exeption for "+sum+ currency+".");
+            console.log(err.message);
+            return 0;
+        }
     }
     return sum;
 }
@@ -261,6 +282,12 @@ function getColor(prov) {
             break;
         case "leadertelecom":
             c = 5;
+            break;
+        case "the university of tokyo":
+            c = 6;
+            break;
+        default:
+            c = 7;
             break;
     };
     return c;
