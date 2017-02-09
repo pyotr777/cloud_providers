@@ -9,6 +9,7 @@ var colors=[["#ee8735","#ec7c19","#ff8e1c","#f6a94a","#fcd18c"],  // Amazon
            ["#f0308b","#ec5896","#ff5a9f","#fe7bb0","#fe9ec1"],  // Sakura
            ["#964fb7","#8937a8","#9b49ba","#b970c4","#cb8edf"],  // LeaderTelecom
            ["#4f48d9","#4341ae","#5560c8","#7182e7","#afbdf5"],  // Tokyo University
+           ["#ff5f51","#f5493c","#ff655c","#ff8a88","#ffb2b4"],  // MS
            ["#503a1b"]];  // other
 
 var base_currency="USD";
@@ -286,8 +287,11 @@ function getColor(prov) {
         case "the university of tokyo":
             c = 6;
             break;
-        default:
+        case "ms azure":
             c = 7;
+            break;
+        default:
+            c = 8;
             break;
     };
     return c;
