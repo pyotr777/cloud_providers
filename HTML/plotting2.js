@@ -27,20 +27,20 @@ var FLOPsScale;
 function continue_proc(filter, arg) {
     if (processing) return; // Prevent onchange event loop for providers filter
     processing = true;
-    var TFLOPS = 1000000000;
+    var TFLOPs = 1000000000;
     filter(arg);
     quotes=[];
 
-    plotTimeCost(TFLOPS);
-    plotFLOPsScale(TFLOPS);
+    plotTimeCost(TFLOPs);
+    plotFLOPsScale(TFLOPs);
     processing = false;
 }
 
 
-function plotTimeCost(TFLOPS) {
-    console.log("Plotting GPU Time x Cost fot " + TFLOPS/1e+6 + " EFLOP-s 1*e18 FLOPS");
+function plotTimeCost(TFLOPs) {
+    console.log("Plotting GPU Time x Cost fot " + TFLOPs/1e+6 + " EFLOP-s 1*e18 FLOPS");
     var layout = {
-        title:'GPU calculation Time and Cost for ' + TFLOPS/1e+6 + ' EFLOP-s ('+ TFLOPS/1e+6+' * 10<sup>18</sup> FLOP-s<sup>***</sup>)',
+        title:'GPU calculation Time and Cost for ' + TFLOPs/1e+6 + ' EFLOP-s ('+ TFLOPs/1e+6+' * 10<sup>18</sup> FLOP-s<sup>***</sup>)',
         hovermode: 'closest',
         xaxis: {
             title: 'Calculation time',
@@ -109,7 +109,7 @@ function plotTimeCost(TFLOPS) {
             }
         }
 
-        var time = Math.ceil(TFLOPS / offers[j].gpu_p / 3600); // Calculation time in hours
+        var time = Math.ceil(TFLOPs / offers[j].gpu_p / 3600); // Calculation time in hours
         var cost = getQuote4Hours(offers[j], time);
         new_trace.x.push(time);
         new_trace.y.push(cost);
@@ -132,7 +132,7 @@ function plotTimeCost(TFLOPS) {
 
     // Plot CPU time
     var cpu_layout = {
-        title:'CPU calculation Time and Cost for ' + TFLOPS/1e+6 + ' EFLOP-s ('+ TFLOPS/1e+6+' * 10<sup>18</sup> FLOP-s<sup>***</sup>)',
+        title:'CPU calculation Time and Cost for ' + TFLOPs/1e+6 + ' EFLOP-s ('+ TFLOPs/1e+6+' * 10<sup>18</sup> FLOP-s<sup>***</sup>)',
         hovermode: 'closest',
         xaxis: {
             title: 'Calculation time',
@@ -202,7 +202,7 @@ function plotTimeCost(TFLOPS) {
             }
         }
 
-        var time = Math.ceil(TFLOPS / offers[j].cpu_p / 3600); // Calculation time in hours
+        var time = Math.ceil(TFLOPs / offers[j].cpu_p / 3600); // Calculation time in hours
         var cost = getQuote4Hours(offers[j], time);
         new_trace_cpu.x.push(time);
         new_trace_cpu.y.push(cost);
@@ -299,6 +299,12 @@ function hoursToHuman(h) {
         }, s ];
 }
 
+function timeForMoney(sum) {
+    for (j=0; j < offers.length; j++) {
+        var hours = getHours4Quote(offer,sum)
+        var FOLPs = getQuote4Hours(offer, hours)
+    }
+}
 
 
 

@@ -243,6 +243,10 @@ function getQuote4Hours(offer, h) {
     return cost;
 }
 
+// Return time in hours for how long can rent an offer for the given sum
+function getHours4Quote(offer, sum) {
+    var cost = 0;
+}
 
 // Convert SUM in currency to base_currency
 function convert2BaseCurrency(sum, currency) {
