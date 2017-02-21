@@ -30,7 +30,7 @@ function continue_proc(filter, arg) {
     var TFLOPs = 1000000000;
     filter(arg);
     quotes=[];
-
+    plotFLOPsMoney(25000);
     plotTimeCost(TFLOPs);
     plotFLOPsScale(TFLOPs);
     processing = false;
@@ -235,77 +235,125 @@ function plotFLOPsScale() {
 }
 
 
-// Convert time in hours to human readable format
-// Return object {years, months, days, text}
-function hoursToHuman(h) {
-    if (accumulated_months_days.length < 1) {
-        //console.log("Calculate accumulated months days");
-        accumulated_days = 0;
-        for (var m = 0; m < 12; m++) {
-            accumulated_days += days_in_month[m];
-            accumulated_months_days.push(accumulated_days);
-        }
-        //console.log(accumulated_months_days);
-    }
-    var init_h = h;
-    var hours_day   = 24;
-    var hours_year  = 24 * accumulated_months_days[11];
-
-
-    var years  = Math.floor(h / hours_year);
-    h = h - (years * hours_year);
-
-    // Months
-    // Have numbers of days in months, so need to know how many full days we have.
-    var days = Math.floor(h / hours_day);
-    var m = 0;
-    for (; m < 12; m++ ) {
-        if (days < accumulated_months_days[m]) {
-            break;
-        }
-    }
-    var months = m;
-    //console.log("Calculating months. days="+days+" m="+m+ " months="+months+ " years="+years);
-
-    if (months > 0) {
-        h = h - accumulated_months_days[months-1] * hours_day;
-    }
-
-    // Days
-    days   = Math.floor(h / hours_day);
-    h = h - days * hours_day;
-
-    // Hours
-    var hours  = h;
-    s = "";
-    if ( years > 0) {
-        s = s + years + "y. ";
-    }
-    if ( months > 0) {
-        s = s + months + "m. ";
-    }
-    if ( days > 0) {
-        s = s + days + "d. ";
-    }
-    if ( hours > 0 || s.length < 2) {
-        s = s + hours + "h.";
-    }
-    //console.log("Count "+init_h+ " hours as "+ s );
-    return [{
-        years: years,
-        months: months,
-        days: days,
-        hours: hours
-        }, s ];
+function flopsForMoney(offer, sum) {
+    var hours = getHours4Quote(offer,sum)
+    var CPU_FOLPs = hours * offer.cpu_p * 3600; // CPU FLOPs for given hours
+    var GPU_FOLPs = hours * offer.gpu_p * 3600;
+    return [CPU_FOLPs, GPU_FOLPs]
 }
 
-function timeForMoney(sum) {
+
+function plotFLOPsMoney(sum) {
+    console.log("EFLOPs for money $"+ sum);
+    //var div_element = document.getElementById("flops_4money");
+    var layout_bar = {
+        title: "ELOPs for $" + sum,
+        barmode: 'group',
+        hovermode:'closest',
+        margin: {
+            b: 120,
+            t: 50
+        },
+        legend: {
+            y: 1.05,
+            orientation: "h",
+            bgcolor: 'rgba(255, 255, 255, 0.5)',
+        },
+        xaxis: {
+            fixedrange: true,
+            tickangle: 45,
+            tickfont: {
+                family: 'Arial Narrow, sans-serif',
+                size: 13,
+                color: 'black'
+            }
+        },
+        yaxis: {
+            title: 'CPU EFLOPs',
+            hoverformat: ',.2f',
+            exponentformat: "none",
+            separatethousands: true,
+            gridcolor: cpu_color.light,
+            gridwidth: 1,
+            linecolor: cpu_color.light
+        },
+        yaxis2: {
+            title: 'GPU EFLOPs',
+            overlaying: 'y',
+            side: 'right',
+            hoverformat: ',.2f',
+            exponentformat: "none",
+            separatethousands: true,
+            gridcolor: gpu_color.light,
+            gridwidth: 1,
+            linecolor: gpu_color.light
+        }
+    };
+    var y_cpu = [];
+    var y_gpu = [];
+    var y_cost = [];
+    var y_cost_monthly = [];
+    var x = [];
+    var c = [];
+    var info = [];
+    console.log("plotFLOPsMoney has " + offers.length+" offers.")
+    var last_prov="";
+    var color_i = 0;
+    var c_max = 0;
+    var color = "";
     for (j=0; j < offers.length; j++) {
-        var hours = getHours4Quote(offer,sum)
-        var FOLPs = getQuote4Hours(offer, hours)
+        var prov = offers[j].provider.toLowerCase();
+        if (last_prov != prov) {
+            last_prov = prov;
+            color_i = 0;
+            c_max = colors[getColor(prov)].length - 1;
+        } else {
+            color_i++;
+            if (color_i > c_max) {
+                color_i = 0;
+            }
+        }
+        color = colors[getColor(prov)][color_i];
+        //console.log("prov="+prov+" color_i="+ color_i + " cmax="+ c_max +" color="+color);
+        flops = flopsForMoney(offers[j], sum)
+        y_cpu.push(flops[0]/1e+6);
+        y_gpu.push(flops[1]/1e+6);
+        x.push(offers[j].shortname);
+        c.push(color);
+        info.push(getOfferInfo(j));
     }
-}
 
+    var trace_cpu = {
+        x: x,
+        y: y_cpu,
+        name: "CPU TFLOPs",
+        offset: -0.35,
+        width: 0.3,
+        type: "bar",
+        marker: {
+            color: cpu_color.dark
+        },
+        info: info,
+        color: c
+    };
+
+    var trace_gpu = {
+        x: x,
+        y: y_gpu,
+        name: "GPU TFLOPs",
+        type: "bar",
+        offset: 0,
+        width: 0.3,
+        yaxis: 'y2',
+        marker: {
+            color: gpu_color.dark
+        },
+        info: info,
+        color: c
+    };
+
+    Plotly.newPlot('flops_4money', [trace_cpu, trace_gpu], layout_bar);
+}
 
 
 

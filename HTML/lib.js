@@ -11,6 +11,8 @@ var colors=[["#ee8735","#ec7c19","#ff8e1c","#f6a94a","#fcd18c"],  // Amazon
            ["#4f48d9","#4341ae","#5560c8","#7182e7","#afbdf5"],  // Tokyo University
            ["#ff5f51","#f5493c","#ff655c","#ff8a88","#ffb2b4"],  // MS
            ["#503a1b"]];  // other
+var cpu_color = {light: "rgba(0, 126, 208, 0.33)", dark: "#007ed0"};
+var gpu_color = {light: "rgba(252, 120, 36, 0.33)", dark: "#fc7824"};
 
 var base_currency="USD";
 
@@ -61,6 +63,13 @@ function loadData(filename) {
 function processStaticData(results) {
     console.log("Processing data");
     console.log("Rows: "+results.data.length);
+
+    // Calculate hours in months
+    accumulated_days = 0;
+    for (var m = 0; m < 12; m++) {
+        accumulated_days += days_in_month[m];
+        accumulated_months_days.push(accumulated_days);
+    }
     //var max_rows = 10000;
 
     var rows = results.data.length
@@ -158,6 +167,7 @@ function filterProviders(optionslist) {
     applyProvidersFilter();
 }
 
+
 function applyGPUFilter() {
     var group = GPUgroup_global;
     console.log("GPUgroup_global:"+GPUgroup_global);
@@ -205,7 +215,7 @@ function applyProvidersFilter() {
     var new_offers = [];
     var available_offers = offers_GPU_filtered;
     for (j=0; j < available_offers.length; j++) {
-        console.log(available_offers[j].provider.toLowerCase()+" is in "+providerlist+" ?");
+        //console.log(available_offers[j].provider.toLowerCase()+" is in "+providerlist+" ?");
         if ($.inArray(available_offers[j].provider.toLowerCase(), providerlist) != -1) {
             //console.log("Accept "+ offers_all[j].provider);
             new_offers.push(available_offers[j]);
@@ -243,9 +253,35 @@ function getQuote4Hours(offer, h) {
     return cost;
 }
 
-// Return time in hours for how long can rent an offer for the given sum
+// Return time in hours for how long one can rent an offer for the given sum
 function getHours4Quote(offer, sum) {
-    var cost = 0;
+
+    if (offer.setup != "" ) {
+        // Subtract setup cost
+        sum = sum - offer.setup;
+    }
+    console.log("hours4quote "+offer.shortname+" sum="+sum);
+    if (sum <=0) {
+        return 0;
+    }
+    var h = 0;
+    if (offer.hourly != "" ) {
+        h = Math.floor(sum / offer.hourly); // max hours can rent for given sum.
+        //console.log("hours4quote "+offer.shortname+" hours="+h);
+    } else if (offer.weekly != "" ) {
+        var period_w = Math.floor(sum  / offer.weekly);
+        //console.log("hours4quote "+offer.shortname+" weeks="+period_w);
+        h = period_w * (24 * 7);
+    } else if (offer.monthly != "" ) {
+        var period_m = Math.floor(sum  / offer.monthly);
+        //console.log("hours4quote "+offer.shortname+" months="+period_m);
+        h = getHours4Months(period_m);
+    } else if (offer.yearly != "" ) {
+        var period_y = Math.floor(sum  / offer.yearly);
+        //console.log("hours4quote "+offer.shortname+" years="+period_y);
+        h = getHours4Months(period_y * 12);
+    }
+    return h;
 }
 
 // Convert SUM in currency to base_currency
@@ -319,9 +355,9 @@ function printRates() {
     cur = "EUR";
     rate = fx.convert(1, {from: base_currency,to: cur});
     div.innerHTML += base_currency + "/" + cur+" = 1/"+rate.toFixed(2)+ " &nbsp; ";
-    //cur = "RUB";
-    //rate = fx.convert(1, {from: base_currency,to: cur});
-    //div.innerHTML += base_currency + "/" + cur+" = 1/"+rate.toFixed(2);
+    cur = "RUB";
+    rate = fx.convert(1, {from: base_currency,to: cur});
+    div.innerHTML += base_currency + "/" + cur+" = 1/"+rate.toFixed(2);
 }
 
 // Transform Offer name to simplified form for comparison with other names
@@ -331,4 +367,84 @@ function getSimpleName(name,skip_words) {
         simple_name = simple_name.replace(skip_words[i],"");
     }
     return simple_name;
+}
+
+
+// Convert time in hours to human readable format
+// Return object {years, months, days, text}
+function hoursToHuman(h) {
+    if (accumulated_months_days.length < 1) {
+        //console.log("Calculate accumulated months days");
+        accumulated_days = 0;
+        for (var m = 0; m < 12; m++) {
+            accumulated_days += days_in_month[m];
+            accumulated_months_days.push(accumulated_days);
+        }
+        //console.log(accumulated_months_days);
+    }
+    var init_h = h;
+    var hours_day   = 24;
+    var hours_year  = 24 * accumulated_months_days[11];
+
+
+    var years  = Math.floor(h / hours_year);
+    h = h - (years * hours_year);
+
+    // Months
+    // Have numbers of days in months, so need to know how many full days we have.
+    var days = Math.floor(h / hours_day);
+    var m = 0;
+    for (; m < 12; m++ ) {
+        if (days < accumulated_months_days[m]) {
+            break;
+        }
+    }
+    var months = m;
+    //console.log("Calculating months. days="+days+" m="+m+ " months="+months+ " years="+years);
+
+    if (months > 0) {
+        h = h - accumulated_months_days[months-1] * hours_day;
+    }
+
+    // Days
+    days   = Math.floor(h / hours_day);
+    h = h - days * hours_day;
+
+    // Hours
+    var hours  = h;
+    s = "";
+    if ( years > 0) {
+        s = s + years + "y. ";
+    }
+    if ( months > 0) {
+        s = s + months + "m. ";
+    }
+    if ( days > 0) {
+        s = s + days + "d. ";
+    }
+    if ( hours > 0 || s.length < 2) {
+        s = s + hours + "h.";
+    }
+    //console.log("Count "+init_h+ " hours as "+ s );
+    return [{
+        years: years,
+        months: months,
+        days: days,
+        hours: hours
+        }, s ];
+}
+
+
+function getHours4Months(months) {
+    var hours = 0;
+    var months_total = months;
+    while (months > 11) {
+        hours += 24*accumulated_months_days[11]; // Should be 24*365 = 8760 (hours in a year).
+        months -= 12;
+    }
+    if (months > 0) {
+        hours += 24*accumulated_months_days[months-1];
+    }
+    console.log("Count " +months_total+ " months as "+hours+" hours.")
+    return hours;
 }

@@ -50,22 +50,6 @@ function continue_proc(filter, arg) {
 }
 
 
-function getHours4Months(months) {
-    var hours = 0;
-    var months_total = months;
-    while (months > 11) {
-        hours += 24*accumulated_months_days[11]; // Should be 24*365 = 8760 (hours in a year).
-        months -= 12;
-    }
-    if (months > 0) {
-        hours += 24*accumulated_months_days[months-1];
-    }
-    console.log("Count " +months_total+ " months as "+hours+" hours.")
-    return hours;
-}
-
-
-
 function displayPerformanceScatter() {
     var scatter_plt = document.getElementById("scatter_performance");
     var hover_info1 = document.getElementById("offer_details1");
@@ -504,9 +488,6 @@ function displayTime(s) {
     removeAnnotations();
     displaySlice(n);
 }
-
-var cpu_color = {light: "rgba(0, 126, 208, 0.33)", dark: "#007ed0"};
-var gpu_color = {light: "rgba(252, 120, 36, 0.33)", dark: "#fc7824"};
 
 
 // Argument is array index
