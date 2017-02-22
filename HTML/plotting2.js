@@ -247,7 +247,7 @@ function plotFLOPsMoney(sum) {
     console.log("EFLOPs for money $"+ sum);
     //var div_element = document.getElementById("flops_4money");
     var layout_bar = {
-        title: "ELOPs for $" + sum,
+        title: "EFLOP-s for $" + sum,
         barmode: 'group',
         hovermode:'closest',
         margin: {
