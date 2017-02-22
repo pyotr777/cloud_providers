@@ -769,6 +769,7 @@ function plotTable() {
     <th>Memory</th><th colspan="4" class="quadruple">HDD</th> \
     <th>Network</th>\
     <th colspan="5" class="pentadruple">Pricing</th> \
+    <th rowspan="2">Time limit (h)</th> \
     <th rowspan="2" class="pentadruple">Notes</th></tr> \
     <tr><th>model x quantity</th> \
     <th>model x quantity</th> \
@@ -799,6 +800,7 @@ function plotTable() {
         <td>'+CurrencyFormat(offers[j].monthly_native, offers[j].currency)+'</td>\
         <td>'+CurrencyFormat(offers[j].yearly_native, offers[j].currency)+'</td>\
         <td>'+CurrencyFormat(offers[j].setup_native, offers[j].currency)+'</td>\
+        <td>'+offers[j].time_limit+'</td>\
         <td class="notes_cell">'+offers[j].notes+'</td></tr>';
     }
 

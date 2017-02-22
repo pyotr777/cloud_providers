@@ -34,8 +34,8 @@ var setRates = function(data) {
 
     //console.log(fx.rates);
     //console.log(fx.base);
-    //loadData("cost-performance.csv");
-    loadData("/cloudproviders/cost-performance.csv");
+    loadData("cost-performance.csv");
+    //loadData("/cloudproviders/cost-performance.csv");
 }
 
 
@@ -110,7 +110,8 @@ function processStaticData(results) {
             hdd2:      row[20],
             hdd2_vol:  row[21],
             net:       row[22],
-            notes:     row[23]
+            time_limit:row[23],
+            notes:     row[24]
         }
         offers_all.push(offer);
         if (provider=="the university of tokyo") {
@@ -278,8 +279,10 @@ function getHours4Quote(offer, sum) {
         h = getHours4Months(period_m);
     } else if (offer.yearly != "" ) {
         var period_y = Math.floor(sum  / offer.yearly);
-        //console.log("hours4quote "+offer.shortname+" years="+period_y);
+        console.log("hours4quote "+offer.shortname+" years="+period_y);
         h = getHours4Months(period_y * 12);
+    } else {
+        console.log(offer);
     }
     return h;
 }
