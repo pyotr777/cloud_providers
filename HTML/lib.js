@@ -32,8 +32,6 @@ var setRates = function(data) {
     //alert("£1 = $" + rate.toFixed(4));
     fx.rates[base_currency] = 1;
 
-    //console.log(fx.rates);
-    //console.log(fx.base);
     loadData("cost-performance.csv");
     //loadData("/cloudproviders/cost-performance.csv");
 }
@@ -42,6 +40,7 @@ var setRates = function(data) {
 // Refer to
 // http://openexchangerates.github.io/money.js/
 function getRates() {
+    console.log("Get rates");
     $.getJSON("http://api.fixer.io/latest?base="+base_currency, setRates);
 }
 
@@ -59,6 +58,7 @@ function loadData(filename) {
     }
 }
 
+var start_row = 2;
 
 function processStaticData(results) {
     console.log("Processing data");
@@ -114,15 +114,8 @@ function processStaticData(results) {
             notes:     row[24]
         }
         offers_all.push(offer);
-        if (provider=="the university of tokyo") {
-            console.log(offer);
-        } else {
-            console.log(provider);
-        }
-    }
-    continue_proc(resetFilters, "");
-    msg.innerHTML = "";
-    printRates();
+    }   
+    dataLoaded(); 
 }
 
 
@@ -451,3 +444,15 @@ function getHours4Months(months) {
     console.log("Count " +months_total+ " months as "+hours+" hours.")
     return hours;
 }
+
+
+function CurrencyFormat(s, currency) {
+    if (s == "") {
+        return "";
+    }
+    //console.log("Formatting " + s + " as " + currency);
+    num = Number(s).toLocaleString('en', { style: 'currency', currency: currency, maximumFractionDigits: 2 });
+    num = num.replace(",", "&nbsp;");
+    return num;
+}
+

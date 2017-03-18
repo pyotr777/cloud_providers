@@ -1,0 +1,352 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"table",
+				"tableGroup"
+			],
+			[
+				"stat",
+				"status_404"
+			],
+			[
+				"year",
+				"yearDim"
+			],
+			[
+				"date",
+				"dateDim"
+			],
+			[
+				"sty",
+				"stylesheet"
+			],
+			[
+				"Remote",
+				"RemoteExec"
+			],
+			[
+				"SSH",
+				"SSH_COM"
+			],
+			[
+				"file",
+				"filename"
+			],
+			[
+				"ou",
+				"output_placeholder"
+			],
+			[
+				"html",
+				"html_template_path"
+			],
+			[
+				"te",
+				"templates_folder"
+			],
+			[
+				"g",
+				"global"
+			],
+			[
+				"all",
+				"allowed_commands"
+			],
+			[
+				"command",
+				"command_instance"
+			],
+			[
+				"templa",
+				"template_folder"
+			],
+			[
+				"templ",
+				"template_folder"
+			],
+			[
+				"comp",
+				"compiled_dic"
+			],
+			[
+				"patte",
+				"pattern_str"
+			],
+			[
+				"com",
+				"compiled_dic"
+			],
+			[
+				"pattern",
+				"pattern_dic"
+			],
+			[
+				"comm",
+				"command"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "indexDC.html",
+			"settings":
+			{
+				"buffer_size": 6562,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "Package",
+		"selected_items":
+		[
+			[
+				"Package",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 449.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/peterbryzgalov/work/JSplot/DC/original.js",
+		"/Users/peterbryzgalov/work/JSplot/DC/myversion.js",
+		"/Users/peterbryzgalov/work/JSplot/DC/index.html",
+		"/Users/peterbryzgalov/Desktop/delos.html",
+		"/Users/peterbryzgalov/work/dc/index_lines.html",
+		"/Users/peterbryzgalov/work/ML/mlframework/check_celery_status.sh",
+		"/Users/peterbryzgalov/Desktop/Maps3D 2017-01-28 03-49pm.gpx",
+		"/Users/peterbryzgalov/work/ML/mlframework/inithost.sh",
+		"/Users/peterbryzgalov/Desktop/sshfs/ML/bowcnn/model_fasttext.py",
+		"/Users/peterbryzgalov/Desktop/sshfs/ML/bowcnn/generate_runfile.py",
+		"/Users/peterbryzgalov/Desktop/sshfs/ML/bowcnn/cv.py",
+		"/Users/peterbryzgalov/Desktop/sshfs/ML/bowcnn/cv_baseline.py",
+		"/Users/peterbryzgalov/Desktop/sshfs/ML/bowcnn/models/model5.py",
+		"/Users/peterbryzgalov/work/ML/predictions/synthetic_move/Dockerfile-jupyter",
+		"/Users/peterbryzgalov/work/ML/predictions/synthetic_move/start_jupyter.sh",
+		"/Users/peterbryzgalov/work/ML/predictions/synthetic_move/image_lib.py",
+		"/Users/peterbryzgalov/work/ML/predictions/synthetic_move/train_NN.py",
+		"/Users/peterbryzgalov/Downloads/top_0.vtk",
+		"/Users/peterbryzgalov/Downloads/ppWall_0.vtk",
+		"/Users/peterbryzgalov/Downloads/ppWall_100.vtk",
+		"/Users/peterbryzgalov/Google Drive/Coursera/machine-learning-ex4/ex4/nnCostFunction.m",
+		"/Users/peterbryzgalov/Downloads/wire3d_demo.py",
+		"/Users/peterbryzgalov/.ssh/config",
+		"/Users/peterbryzgalov/Google Drive/sshconfig",
+		"/Users/peterbryzgalov/Documents/www/AlbumTokyo/start.html",
+		"/Users/peterbryzgalov/Documents/www/AlbumTokyo/AlbumPlugin.html",
+		"/Users/peterbryzgalov/Google Drive/Coursera/machine-learning-ex4/ex4/ex4.m",
+		"/Users/peterbryzgalov/work/python/bashweb/webfiles/index.html",
+		"/Users/peterbryzgalov/work/python/bashweb/webfiles/default.html",
+		"/Users/peterbryzgalov/work/python/bashweb/webint.py",
+		"/Users/peterbryzgalov/work/python/bashweb/templates/style.css",
+		"/Users/peterbryzgalov/work/python/bashweb/templates/init.html",
+		"/Users/peterbryzgalov/work/python/bashweb/templates/index.html",
+		"/Users/peterbryzgalov/Library/Application Support/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/Users/peterbryzgalov/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Users/peterbryzgalov/Library/Application Support/Sublime Text 3/Packages/User/HTML.sublime-settings",
+		"/Users/peterbryzgalov/work/kportal/kportal/src/Makefile",
+		"/Users/peterbryzgalov/work/kportal/kportal/src/default_job_script.sh",
+		"/Users/peterbryzgalov/Google Drive/python/bottle/templates/index.html",
+		"/Users/peterbryzgalov/Google Drive/python/bottle/command.py",
+		"/Users/peterbryzgalov/Library/Application Support/Sublime Text 3/Packages/User/JSON.sublime-settings",
+		"/Users/peterbryzgalov/Google Drive/safari-reader.css",
+		"/Users/peterbryzgalov/Desktop/sshfs/.eclipsesettings/runlml",
+		"/Users/peterbryzgalov/work/dockerIaaSTools/install.sh",
+		"/Users/peterbryzgalov/Library/Application Support/Sublime Text 3/Packages/Package Control/Package Control.sublime-settings"
+	],
+	"find":
+	{
+		"height": 22.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"melt",
+			"bottle",
+			"group"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"webint"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "indexDC.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6562,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 685.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 20.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.5,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "cloud.sublime-project",
+	"replace":
+	{
+		"height": 40.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 1,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

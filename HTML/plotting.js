@@ -1,18 +1,22 @@
 
 function ready() {
+    console.log("ready");
     msg = document.getElementById("messages");
     msg.innerHTML = "Loading data...";
     getRates();
-
     $("select").select2();
     $("select").select2({  theme: "classic" });
 }
 
 document.addEventListener("DOMContentLoaded", ready);
 
+function dataLoaded() {
+    continue_proc(resetFilters, "");
+    msg.innerHTML = "";
+    printRates();
+}
 
 
-var start_row = 2;
 var dates =[];
 var quotes=[];
 var msg;
@@ -739,16 +743,6 @@ function displaySlice(n) {
     });
 }
 
-
-function CurrencyFormat(s, currency) {
-    if (s == "") {
-        return "";
-    }
-    //console.log("Formatting " + s + " as " + currency);
-    num = Number(s).toLocaleString('en', { style: 'currency', currency: currency, maximumFractionDigits: 2 });
-    num = num.replace(",", "&nbsp;");
-    return num;
-}
 
 function NumberFormat(s) {
     if (s == "") {
