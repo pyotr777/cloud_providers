@@ -14,6 +14,7 @@ function dataLoaded() {
     ndx = crossfilter(offers_all);
     plotTable();    
     plotScatter();
+    plotPieGPUs();
 
     dc.renderAll();
     msg.innerHTML = "";
@@ -24,7 +25,7 @@ function plotTable() {
 	console.log("Plot table");
 	//print_filter(offers_all);
 	var providerDim = ndx.dimension( function(d) { return d.provider;});
-	print_filter(providerDim);
+	//print_filter(providerDim);
     // DOM for the table
     var datatable   = dc.dataTable("#dc-data-table");
     //
@@ -35,7 +36,11 @@ function plotTable() {
         .columns([
         	function(d) { return d.name; },
         	function(d) { return d.gpu_model;},
+        	function(d) { return d.gpus;},
+        	function(d) { return d.gpu_p;},
         	function(d) { return d.cpu_model;},
+        	function(d) { return d.cpus;},
+        	function(d) { return d.cpu_p;},
         	function(d) { return CurrencyFormat(d.hourly_native, d.currency); },
         	function(d) { return CurrencyFormat(d.weekly_native, d.currency); },
         	function(d) { return CurrencyFormat(d.monthly_native, d.currency); },
@@ -43,12 +48,26 @@ function plotTable() {
         ]);
 }
 
+function plotPieGPUs() {
+	console.log("Plot GPU numbers pie");
+	var GPUsDim = ndx.dimension( function(d) { return d.gpus;});
+	var gpus_total = GPUsDim.group();
+	var GPUs_pie_chart = dc.pieChart("#dc_pie_gpus");
+	GPUs_pie_chart
+		.width(200).height(200)
+		.dimension(GPUsDim)
+		.group(gpus_total)
+		.innerRadius(60)
+		.legend(dc.legend().x(80).y(70).itemHeight(13).gap(5));
+
+}
+
 function plotScatter() {
 	console.log("plot scatter");
 	var scatterDim = ndx.dimension( function(d) { 
 		var name = d.provider+" "+d.name;
 		console.log(name + ":"+d.cpu_p * d.cpus+" TFlops CPU")
-		return [ d.cpu_p * d.cpus, d.gpu_p*d.gpus, d.provider, d.name];
+		return [ d.cpu_p, d.gpu_p, d.provider, d.name];
 	});
 	var scatterGroup = scatterDim.group();
 
@@ -58,19 +77,12 @@ function plotScatter() {
 	console.log(scatterDim.top(1));
 	//var min_cpu = scatterDim.bottom(1)[0].cpu_p * scatterDim.bottom(1)[0].cpus;
 	var min_cpu = 0;
-	var max_cpu = scatterDim.top(1)[0].cpu_p * scatterDim.top(1)[0].cpus;
+	var max_cpu = scatterDim.top(1)[0].cpu_p;
 	console.log(min_cpu+" - "+max_cpu);
 
-	var subChart = function(c) {
-		return dc.scatterPlot(c)
-	    	.symbolSize(10)
-		    .highlightedSize(15)
-	};
-
-	var chart = dc.scatterPlot("#dc_scatter");
+	
+	var chart = dc.scatterPlot("#dc_scatter_performance");
 	chart
-		//.chart(subChart)
-		//.clipPadding(10)
 		.symbolSize(10)
     	.yAxisLabel("GPU performance")
     	.xAxisLabel("CPU performance")
@@ -78,18 +90,15 @@ function plotScatter() {
 		.group(scatterGroup)
 		.x(d3.scale.linear().domain([min_cpu,max_cpu]))
 		.brushOn(false)
-        .legend(dc.legend().x(70).y(10).itemHeight(13).gap(5))
+        //.legend(dc.legend().x(10).y(10).itemHeight(10).gap(5))
         .colorAccessor(function(d) {
-        	console.log(d);
-    		return d.key[0];
+        	//console.log(d);
+        	if (typeof d === "undefined") return;
+    		return d.key[2];
   		})
   		.existenceAccessor(function(d) {
   			return d.key[2]+" "+d.key[3];
   		})
-  		//.seriesAccessor(function(d) {return d.key[0];})
-    	//.keyAccessor(function(d) {return d.key[1];})
-    	//.valueAccessor(function(d) {return d.value;})
-    	
 }
 
 
