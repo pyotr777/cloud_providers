@@ -18,7 +18,7 @@ function dataLoaded() {
     plotTable();    
     plotScatter();
     plotPieGPUs();
-    plotPeriod(getHours4Months(plot_period), step);  // Period for top plot
+    plotProviders();  
     console.log("Have "+ quotes.length+" quotes.")
 
     dc.renderAll();
@@ -57,15 +57,29 @@ function plotPieGPUs() {
 	console.log("Plot GPU numbers pie");
 	var GPUsDim = ndx.dimension( function(d) { return d.gpus;});
 	var gpus_total = GPUsDim.group();
-	var GPUs_pie_chart = dc.pieChart("#dc_pie_gpus");
+	var GPUs_pie_chart = dc.rowChart("#dc_pie_gpus");
 	GPUs_pie_chart
-		.width(200).height(200)
+		.width(300).height(200)
 		.dimension(GPUsDim)
 		.group(gpus_total)
-		.innerRadius(60)
 		.legend(dc.legend().x(80).y(70).itemHeight(13).gap(5));
-
 }
+
+
+function plotProviders() {
+	console.log("Plot providers");
+	var provider_dim = ndx.dimension( function (d) { return d.provider;});
+	var provider_grp = provider_dim.group();
+	var chart = dc.rowChart("#dc_providers");
+	chart
+		.width(300)
+		.height(200)
+    	.x(d3.scale.linear().domain([6,20]))
+    	.elasticX(true)
+    	.dimension(provider_dim)
+    	.group(provider_grp)
+}
+
 
 function plotScatter() {
 	console.log("plot scatter");
@@ -105,52 +119,6 @@ function plotScatter() {
   			return d.key[2]+" "+d.key[3];
   		})
 }
-
-
-// Plot all offers costs for given period.
-function plotPeriod(period, step) {
-	console.log("Plot period for " + period+ " hours");
-    for (var i=0; i <= period; i+=step) {
-	    for (var j=0; j < offers_all.length; j++) {
-	    	var offer = {
-	    		provider: offers_all[j].provider,
-	    		name: offers_all[j].name,
-	    		shortname: offers_all[j].shortname
-	    	};
-	        cost = getQuote4Hours(offers_all[j], i);
-	        offer["h"] = i;
-	        offer["cost"] = cost;
-	        quotes.push(offer);
-	        console.log(offer);
-	    }
-	}
-	//print_filter(quotes);
-	var cost_chart = dc.seriesChart("#dc_cost");
-	var ndx = crossfilter(quotes);
-	cost_dim = ndx.dimension( function (d) { return [d.h, d.name]; });
-	cost_grp = cost_dim.group().reduceSum( function (d) { return d.cost;});
-	cost_chart
-    	.width(768)
-    	.height(480)
-    	.chart(function(c) { return dc.lineChart(c).interpolate('basis'); })
-    	.x(d3.scale.linear().domain([0,800]))
-    	.brushOn(false)
-    	.yAxisLabel("Cost")
-    	.xAxisLabel("Hours")
-    	.clipPadding(10)
-    	.elasticY(true)
-    	.dimension(cost_dim)
-    	.group(cost_grp)
-    	.seriesAccessor(function(d) {
-	    	console.log(d);
-	    	return "offer: " + d.key[1];
-	    })
-    	.keyAccessor(function(d) {return +d.key[0];})
-    	.valueAccessor(function(d) {return +d.value;})
-    	
-}
-
-
 
 
 function print_filter(filter) {
