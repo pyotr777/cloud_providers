@@ -98,19 +98,18 @@ function plotScatter() {
 	});
 	var scatterGroup = scatterDim.group().reduceSum(function (d) { return d.gpu_p;});
 
+    var chart = dc.seriesChart("#dc_scatter_performance");
     var subChart = function(c) {
-    return dc.scatterPlot(c)
+        return dc.scatterPlot(c)
         .symbol('circle')
         .symbolSize(10)
-        .highlightedSize(13)
-        
-  };
+        .highlightedSize(13)  
+    };
 
 	var max_cpu = 1.5; //scatterDim.top(1)[0].cpu_p;
     var max_gpu = 150; //scatterDim.top(1)[0].gpu_p;
 	
 	
-	var chart = dc.seriesChart("#dc_scatter_performance");
 	chart
         .width(768)
         .height(350)
@@ -135,6 +134,9 @@ function plotScatter() {
   		.valueAccessor(function(d) {
   			return d.value;
   		})
+        .title(function(d) {
+            return d.key[2];
+        })
         .ordinalColors(["#ee8735","#fbee00","#3e9a36","#00b1e7","#f0308b","#964fb7","#4f48d9","#ff5f51","#503a1b"])
         .colorAccessor( function (d) {
             if (typeof d === "undefined") return;
