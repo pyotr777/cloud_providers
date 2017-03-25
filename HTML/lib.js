@@ -302,7 +302,7 @@ function getColor(prov) {
     var c = colors.length-1;
     if (typeof prov === "undefined") return c;
     if (typeof prov !== "string") return c;
-    console.log("Pick color for "+ prov.toLowerCase());
+    //console.log("Pick color for "+ prov.toLowerCase());
     switch (prov.toLowerCase()) {
         case "amazon":
             c = 0;

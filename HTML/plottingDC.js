@@ -78,6 +78,16 @@ function plotProviders() {
     	.elasticX(true)
     	.dimension(provider_dim)
     	.group(provider_grp)
+        .ordinalColors(["#ee8735","#fbee00","#3e9a36","#00b1e7","#f0308b","#964fb7","#4f48d9","#ff5f51","#503a1b"])
+        .colorAccessor( function (d) {
+            if (typeof d === "undefined") return;
+            var c = getColor(d.key);
+            console.log("color Accessor for row: " +c);
+            console.log(d);
+            return +c;
+        })
+        .ordering(function(d) { return getColor(d.key); })
+        //.renderlet(function (chart) { chart.selectAll("g._1 rect").attr("fill","#ff0000"); })
 }
 
 
@@ -92,7 +102,7 @@ function plotScatter() {
     return dc.scatterPlot(c)
         .symbol('circle')
         .symbolSize(10)
-        .highlightedSize(15)
+        .highlightedSize(13)
         
   };
 
@@ -120,23 +130,21 @@ function plotScatter() {
   		})
         .keyAccessor(function(d) {return +d.key[1];})
         .shareColors(true)
-        .renderHorizontalGridLines(true)        
+        .renderHorizontalGridLines(true)
+        .renderVerticalGridLines(true)        
   		.valueAccessor(function(d) {
   			return d.value;
   		})
         .ordinalColors(["#ee8735","#fbee00","#3e9a36","#00b1e7","#f0308b","#964fb7","#4f48d9","#ff5f51","#503a1b"])
         .colorAccessor( function (d) {
             if (typeof d === "undefined") return;
-            console.log("colorAccessor ");
-            console.log(d);
             var c = getColor(d.key[0]);
-            console.log(c);
             return c;
         })
-        .seriesSort(comapreColors)
+        .seriesSort(compareColors)
 }
 
-function comapreColors(a,b) {
+function compareColors(a,b) {
     ca = getColor(a);
     cb = getColor(b);
     if (ca < cb) {return -1; }
