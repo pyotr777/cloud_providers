@@ -87,7 +87,7 @@ function plotProviders() {
             return +c;
         })
         .ordering(function(d) { return getColor(d.key); })
-        //.renderlet(function (chart) { chart.selectAll("g._1 rect").attr("fill","#ff0000"); })
+        //.renderlet(function (chart) { chart.selectAll("g.row text").attr("x","100"); })  // This moves text to the right, but works with delay
 }
 
 

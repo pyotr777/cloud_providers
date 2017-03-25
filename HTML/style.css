@@ -180,3 +180,20 @@ table.wide_table th.pentadruple {
 div.entry-content {
     max-width:790px !important;
 }
+
+
+
+/* 
+DC styles
+*/
+
+.dc-chart g.row rect {
+    fill-opacity: 1;
+}
+
+.dc-chart g.row text {
+    font-family: "Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif;
+    font-size: 9pt;
+    fill: #333;
+    text-shadow: rgba(250, 250, 250, 0.7) 0px -1px 0px , rgba(250, 250, 250, 0.7) 0px 1px 0px;
+}
