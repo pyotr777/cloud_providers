@@ -84,39 +84,50 @@ function plotProviders() {
 function plotScatter() {
 	console.log("plot scatter");
 	var scatterDim = ndx.dimension( function(d) { 
-		var name = d.provider+" "+d.name;
-		//console.log(name + ":"+d.cpu_p * d.cpus+" TFlops CPU")
-		return [ d.cpu_p, d.gpu_p, d.provider, d.name];
+		return [ d.provider, d.cpu_p, d.shortname ];
 	});
-	var scatterGroup = scatterDim.group();
+	var scatterGroup = scatterDim.group().reduceSum(function (d) { return d.gpu_p;});
 
-	console.log("scatterDim: bottom: ");
-	console.log(scatterDim.bottom(1));
-	console.log("scatterDim: top: ");
-	console.log(scatterDim.top(1));
-	//var min_cpu = scatterDim.bottom(1)[0].cpu_p * scatterDim.bottom(1)[0].cpus;
-	var min_cpu = 0;
-	var max_cpu = scatterDim.top(1)[0].cpu_p;
-	console.log(min_cpu+" - "+max_cpu);
+    var subChart = function(c) {
+    return dc.scatterPlot(c)
+        .symbol('circle')
+        .symbolSize(8)
+        .highlightedSize(10)
+  };
 
+	var max_cpu = 2; //scatterDim.top(1)[0].cpu_p;
+    var max_gpu = 150; //scatterDim.top(1)[0].gpu_p;
 	
-	var chart = dc.scatterPlot("#dc_scatter_performance");
+	
+	var chart = dc.seriesChart("#dc_scatter_performance");
 	chart
-		.symbolSize(10)
-    	.yAxisLabel("GPU performance")
+        .width(768)
+        .height(350)
+        .chart(subChart)
+        .ordinalColors(["#ee8735","#fbee00","#3e9a36","#00b1e7","#f0308b","#964fb7","#4f48d9","#ff5f51","#503a1b"])
+		.yAxisLabel("GPU performance")
     	.xAxisLabel("CPU performance")
 		.dimension(scatterDim)
 		.group(scatterGroup)
-		.x(d3.scale.linear().domain([min_cpu,max_cpu]))
+		.x(d3.scale.linear().domain([0,max_cpu]))
+        .y(d3.scale.linear().domain([0,max_gpu]))
 		.brushOn(false)
-        //.legend(dc.legend().x(10).y(10).itemHeight(10).gap(5))
-        .colorAccessor(function(d) {
+        .legend(dc.legend().x(600).y(10).itemHeight(10).gap(5))
+        .seriesAccessor(function(d) {
         	//console.log(d);
         	if (typeof d === "undefined") return;
-    		return d.key[2];
+    		return d.key[0];
   		})
-  		.existenceAccessor(function(d) {
-  			return d.key[2]+" "+d.key[3];
+        .keyAccessor(function(d) {return +d.key[1];})
+        .shareColors(true)
+        .colorAccessor( function (d,i) {
+            console.log("colorAccessor");
+            console.log(d);
+            console.log(i+" " + getColor(d.key[0]));
+            return getColor(d.key[0]);
+        })
+  		.valueAccessor(function(d) {
+  			return d.value;
   		})
 }
 
