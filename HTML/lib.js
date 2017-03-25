@@ -300,8 +300,10 @@ function convert2BaseCurrency(sum, currency) {
 
 function getColor(prov) {
     var c = colors.length-1;
-    //console.log("Pick color for "+ offer.provider.toLowerCase());
-    switch (prov) {
+    if (typeof prov === "undefined") return c;
+    if (typeof prov !== "string") return c;
+    console.log("Pick color for "+ prov.toLowerCase());
+    switch (prov.toLowerCase()) {
         case "amazon":
             c = 0;
             break;

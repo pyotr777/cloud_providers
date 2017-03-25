@@ -91,11 +91,12 @@ function plotScatter() {
     var subChart = function(c) {
     return dc.scatterPlot(c)
         .symbol('circle')
-        .symbolSize(8)
-        .highlightedSize(10)
+        .symbolSize(10)
+        .highlightedSize(15)
+        
   };
 
-	var max_cpu = 2; //scatterDim.top(1)[0].cpu_p;
+	var max_cpu = 1.5; //scatterDim.top(1)[0].cpu_p;
     var max_gpu = 150; //scatterDim.top(1)[0].gpu_p;
 	
 	
@@ -104,8 +105,7 @@ function plotScatter() {
         .width(768)
         .height(350)
         .chart(subChart)
-        .ordinalColors(["#ee8735","#fbee00","#3e9a36","#00b1e7","#f0308b","#964fb7","#4f48d9","#ff5f51","#503a1b"])
-		.yAxisLabel("GPU performance")
+        .yAxisLabel("GPU performance")
     	.xAxisLabel("CPU performance")
 		.dimension(scatterDim)
 		.group(scatterGroup)
@@ -120,15 +120,29 @@ function plotScatter() {
   		})
         .keyAccessor(function(d) {return +d.key[1];})
         .shareColors(true)
-        .colorAccessor( function (d,i) {
-            console.log("colorAccessor");
-            console.log(d);
-            console.log(i+" " + getColor(d.key[0]));
-            return getColor(d.key[0]);
-        })
+        .renderHorizontalGridLines(true)        
   		.valueAccessor(function(d) {
   			return d.value;
   		})
+        .ordinalColors(["#ee8735","#fbee00","#3e9a36","#00b1e7","#f0308b","#964fb7","#4f48d9","#ff5f51","#503a1b"])
+        .colorAccessor( function (d) {
+            if (typeof d === "undefined") return;
+            console.log("colorAccessor ");
+            console.log(d);
+            var c = getColor(d.key[0]);
+            console.log(c);
+            return c;
+        })
+        .seriesSort(comapreColors)
+}
+
+function comapreColors(a,b) {
+    ca = getColor(a);
+    cb = getColor(b);
+    if (ca < cb) {return -1; }
+    else if (ca > cb) { return 1; }
+    else if (ca == cb) { return 0; }
+    else { return NaN; }
 }
 
 
