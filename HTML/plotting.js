@@ -166,8 +166,6 @@ function displayPerformanceScatter() {
 function getQuote(offer, step, period) {
     var costs = [], costs_cpu=[], costs_gpu=[];
     if (offer.time_limit != null && offer.time_limit != "") {
-        console.log(offer.shortname);
-        console.log(offer.time_limit);
         period = offer.time_limit;
     }
     for (var i=0; i <= period; i+=step) {

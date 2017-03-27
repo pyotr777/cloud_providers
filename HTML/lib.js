@@ -32,8 +32,6 @@ var setRates = function(data) {
     //alert("£1 = $" + rate.toFixed(4));
     fx.rates[base_currency] = 1;
 
-    //console.log(fx.rates);
-    //console.log(fx.base);
     loadData("./cost-performance.csv");
     //loadData("/cloudproviders/cost-performance.csv");
 }
@@ -114,11 +112,6 @@ function processStaticData(results) {
             notes:     row[24]
         }
         offers_all.push(offer);
-        if (provider=="the university of tokyo") {
-            console.log(offer);
-        } else {
-            console.log(provider);
-        }
     }
     continue_proc(resetFilters, "");
     msg.innerHTML = "";

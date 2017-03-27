@@ -113,9 +113,8 @@ note, .notes_cell {
 
 div.note p {
     margin-bottom:7px;
-    font-size: 80%;
+    font-size: 8pt;
 }
-
 
 td note {
     color:#888;
