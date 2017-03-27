@@ -163,8 +163,13 @@ function displayPerformanceScatter() {
 
 // Return array of Cost, Cost/CPU FLops, Cost/GPU FLops for given number of hours (period).
 // Period must be in hours.
-function getQuote(offer, step, period, dates) {
+function getQuote(offer, step, period) {
     var costs = [], costs_cpu=[], costs_gpu=[];
+    if (offer.time_limit != null && offer.time_limit != "") {
+        console.log(offer.shortname);
+        console.log(offer.time_limit);
+        period = offer.time_limit;
+    }
     for (var i=0; i <= period; i+=step) {
         cost = getQuote4Hours(offer, i);
         costs.push(cost);
@@ -187,8 +192,8 @@ function prepDates(end, step) {
     for (h = 0; h <= end; h+=step) {
         h_arr.push(h);
         human_time = hoursToHuman(h, false)
-        human.push(human_time[0]);
-        text.push(human_time[1]);
+        human.push(human_time[0]); // Object {years, months, days, hours}.
+        text.push(human_time[1]);  // Human-readable text.
     }
     return [h_arr, human, text];
 }
@@ -250,7 +255,7 @@ function plotPeriod(period, step, thin, thick) {
     var last_prov = ""
     var color_i = 1;
     for (j=0; j < offers.length; j++) {
-        quote = getQuote(offers[j], step, period, dates);
+        quote = getQuote(offers[j], step, period);
         var text = [];
         for (var i=0; i < dates[2].length; i++) {
             text.push(offers[j].provider+" "+offers[j].shortname + "\n" + dates[2][i]);
