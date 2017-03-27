@@ -117,7 +117,7 @@ function plotTimeCost(TFLOPs) {
             max_y = Math.ceil(cost*1.1);
         }
         layout.xaxis.tickvals.push(time);
-        layout.xaxis.ticktext.push(hoursToHuman(time)[1]);
+        layout.xaxis.ticktext.push(hoursToHuman(time, true)[1]);
         new_trace.text.push(offers[j].provider + " " + offers[j].name + " ("+offers[j].shortname+")")
         new_trace.marker.color.push(colors[c][color_i]);
         //console.log(offers[j].shortname + " color:" + c + "x"+color_i);
@@ -210,7 +210,7 @@ function plotTimeCost(TFLOPs) {
             max_y = Math.ceil(cost*1.1);
         }
         cpu_layout.xaxis.tickvals.push(time);
-        cpu_layout.xaxis.ticktext.push(hoursToHuman(time)[1]);
+        cpu_layout.xaxis.ticktext.push(hoursToHuman(time, true)[1]);
         new_trace_cpu.text.push(offers[j].provider + " " + offers[j].name + " ("+offers[j].shortname+")")
         new_trace_cpu.marker.color.push(colors[c][color_i]);
         //console.log(offers[j].shortname + " color:" + c + "x"+color_i);

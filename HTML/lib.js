@@ -374,8 +374,9 @@ function getSimpleName(name,skip_words) {
 
 
 // Convert time in hours to human readable format
-// Return object {years, months, days, text}
-function hoursToHuman(h) {
+// Return object {years, months, days, hours}.
+// Second returned value is text representation.
+function hoursToHuman(h, short) {
     if (accumulated_months_days.length < 1) {
         //console.log("Calculate accumulated months days");
         accumulated_days = 0;
@@ -384,6 +385,28 @@ function hoursToHuman(h) {
             accumulated_months_days.push(accumulated_days);
         }
         //console.log(accumulated_months_days);
+    }
+    var human_text_long = {
+        years:" year ",
+        month: " month ",
+        months: " months ",
+        day: " day ",
+        days: " days ",
+        hours: " hours "
+    }
+    var human_text_short = {
+        years:"y. ",
+        month: "m. ",
+        months: "m. ",
+        day: "d. ",
+        days: "d. ",
+        hours: "h. "
+    }
+    var human_text = null;
+    if (short == true) {
+        human_text = human_text_short;
+    } else {
+        human_text = human_text_long;
     }
     var init_h = h;
     var hours_day   = 24;
@@ -417,16 +440,24 @@ function hoursToHuman(h) {
     var hours  = h;
     s = "";
     if ( years > 0) {
-        s = s + years + "y. ";
+        s = s + years + human_text.years;
     }
     if ( months > 0) {
-        s = s + months + "m. ";
+        if (months == 1) {
+            s = s + months + human_text.month;
+        } else {
+            s = s + months + human_text.months;
+        }
     }
     if ( days > 0) {
-        s = s + days + "d. ";
+        if (days == 1) {
+            s = s + days + human_text.day;
+        } else {
+            s = s + days + human_text.days;
+        }
     }
     if ( hours > 0 || s.length < 2) {
-        s = s + hours + "h.";
+        s = s + hours + human_text.hours;
     }
     //console.log("Count "+init_h+ " hours as "+ s );
     return [{

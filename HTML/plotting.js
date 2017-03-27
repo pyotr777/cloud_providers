@@ -26,7 +26,7 @@ function continue_proc(filter, arg) {
     processing = true;
     // line width on graph
     var thin=0.8
-    var thick=3
+    var thick=2
 
     if (accumulated_months_days.length < 1) {
         //console.log("Calculate accumulated months days");
@@ -177,71 +177,8 @@ function getQuote(offer, step, period, dates) {
 
 
 
-// Convert time in hours to human readable format
-// Return object {years, months, days, text}
-function hoursToHuman(h) {
-    var init_h = h;
-    var hours_day   = 24;
-    var hours_year  = 24 * accumulated_months_days[11];
-
-
-    var years  = Math.floor(h / hours_year);
-    h = h - (years * hours_year);
-
-    // Months
-    // Have numbers of days in months, so need to know how many full days we have.
-    var days = Math.floor(h / hours_day);
-    var m = 0;
-    for (; m < 12; m++ ) {
-        if (days < accumulated_months_days[m]) {
-            break;
-        }
-    }
-    var months = m;
-    //console.log("Calculating months. days="+days+" m="+m+ " months="+months+ " years="+years);
-
-    if (months > 0) {
-        h = h - accumulated_months_days[months-1] * hours_day;
-    }
-
-    // Days
-    days   = Math.floor(h / hours_day);
-    h = h - days * hours_day;
-
-    // Hours
-    var hours  = h;
-    s = "";
-    if ( years > 0) {
-        s = s + years + " year ";
-    }
-    if ( months > 0) {
-        if (months == 1) {
-            s = s + months + " month ";
-        } else {
-            s = s + months + " months ";
-        }
-    }
-    if ( days > 0) {
-        if (days == 1) {
-            s = s + days + " day ";
-        } else {
-            s = s + days + " days ";
-        }
-    }
-    if ( hours > 0 || s.length < 2) {
-        s = s + hours + " hours";
-    }
-    //console.log("Count "+init_h+ " hours as "+ s );
-    return [{
-        years: years,
-        months: months,
-        days: days,
-        hours: hours
-        }, s ];
-}
-
 // Return array of dates from 0 to given period of hours
-// with 1 hour step. Second returned variable – array of years, months, days and hours and human readable labels.
+// with "step" hours step. Second returned variable – array of years, months, days and hours and human readable labels.
 function prepDates(end, step) {
     var h_arr = [];
     var human =[];
@@ -249,7 +186,7 @@ function prepDates(end, step) {
     start_date = 0;
     for (h = 0; h <= end; h+=step) {
         h_arr.push(h);
-        human_time = hoursToHuman(h)
+        human_time = hoursToHuman(h, false)
         human.push(human_time[0]);
         text.push(human_time[1]);
     }
