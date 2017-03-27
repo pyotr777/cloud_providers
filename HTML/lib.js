@@ -34,7 +34,7 @@ var setRates = function(data) {
 
     //console.log(fx.rates);
     //console.log(fx.base);
-    loadData("cost-performance.csv");
+    loadData("./cost-performance.csv");
     //loadData("/cloudproviders/cost-performance.csv");
 }
 

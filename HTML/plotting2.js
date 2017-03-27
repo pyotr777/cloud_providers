@@ -30,7 +30,7 @@ function continue_proc(filter, arg) {
     var TFLOPs = 1000000000;
     filter(arg);
     quotes=[];
-    plotFLOPsMoney(25000);
+    //plotFLOPsMoney(25000);
     plotTimeCost(TFLOPs);
     plotFLOPsScale(TFLOPs);
     processing = false;
