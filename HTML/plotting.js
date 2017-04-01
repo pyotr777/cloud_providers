@@ -752,10 +752,12 @@ function plotTable() {
 }
 
 
+var d3 = Plotly.d3;
+
 // Plot histogram of number of offers for every number of GPUs
 // split by providers.
 function plotGPUsbyProvider() {
-    document.getElementById("providers").innerHTML = "PROVIDERS";
+    providers_div = document.getElementById("providers");
     var gpus_obj = {};
     for (var j=0; j < offers_all.length; j++) {
         var provider = offers_all[j].provider.toLowerCase();
@@ -771,11 +773,10 @@ function plotGPUsbyProvider() {
             gpus_obj[provider][gpus] = 1;
         }   
     }
-    console.log(gpus_obj);
+    //console.log(gpus_obj);
     var traces = [];
     // loop by providers
     for(var key in gpus_obj) {
-        console.log(key);
         var trace = {
             name: key,
             type: 'bar',
@@ -786,17 +787,64 @@ function plotGPUsbyProvider() {
             }
         }
 
-        // convert array of format [[0.5,1], [1,2], [2,4]] into two arrays:
-        // x = [0.5, 1, 2]
-        // y = [  1, 2, 4]
         for (var gpus in gpus_obj[key]) {
-            trace.x.push(gpus.toString()+" GPUs");
+            trace.x.push(gpus);
             trace.y.push(gpus_obj[key][gpus]);
         }
         traces.push(trace);
     }
     console.log("traces:");
     console.log(traces);
-    var layout = { barmode: 'stack'};
-    Plotly.newPlot('providers', traces, layout);
+    var layout = { 
+        barmode: 'stack',
+        title: "Offers by number of GPUs",
+        xaxis: {
+            "type": 'category',
+            "categoryorder": "category ascending"
+        },
+        height: 450,
+        autosize: true
+    };
+    Plotly.newPlot('providers', traces, layout).then(attach);
+
+    providers_div.on('plotly_click', function(data) {
+        console.log("click");
+        console.log(data);
+    });
+    providers_div.on('plotly_doubleclick', function(data) {
+        console.log("plotly_doubleclick");
+        console.log(data);
+    });
+    providers_div.on('plotly_selected', function(data) {
+        console.log("plotly_selected");
+        console.log(data);
+    });
+    providers_div.on('plotly_event', function(data) {
+        console.log("plotly_event");
+        console.log(data);
+    });
+}
+
+function attach() {
+    d3.select('g.legend').selectAll('.traces').each(function() {
+        var item = d3.select(this);
+    
+        item.on('click', function(d) {
+            console.log("Filter by " + d[0].trace.name);
+            continue_proc(filterProv,d[0].trace.name);
+        });
+    });
+    return false;
+}
+
+
+function filterProv(prov) {
+    offers = [];
+    for (var j=0; j < offers_all.length; j++) {
+        if (offers_all[j].provider.toLowerCase() == prov ) {
+            
+        } else {
+            offers.push(offers_all[j]);
+        }
+    }
 }
