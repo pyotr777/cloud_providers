@@ -785,25 +785,13 @@ function plotGPUsbyProvider() {
                 color: colors[getColor(key)][0]
             }
         }
-        // convert object of format {'0.5':1, '1:2',...} into array:
-        // [[0.5,1], [1,2], ... ]
-        var multi_arr = [];
-        for (var gpus in gpus_obj[key]) {
-            multi_arr.push([gpus,gpus_obj[key][gpus]]);
-        }
-        // Sort by key
-        multi_arr.sort( function (a,b) {
-            return parseFloat(a[0]) - parseFloat(b[0]);
-        });
-        console.log(multi_arr);
-
 
         // convert array of format [[0.5,1], [1,2], [2,4]] into two arrays:
         // x = [0.5, 1, 2]
         // y = [  1, 2, 4]
-        for (var i = 0; i < multi_arr.length; i++) {
-            trace.x.push(multi_arr[i][0]+" GPUs");
-            trace.y.push(multi_arr[i][1]);
+        for (var gpus in gpus_obj[key]) {
+            trace.x.push(gpus.toString()+" GPUs");
+            trace.y.push(gpus_obj[key][gpus]);
         }
         traces.push(trace);
     }
