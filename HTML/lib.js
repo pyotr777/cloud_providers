@@ -475,3 +475,4 @@ function getHours4Months(months) {
     console.log("Count " +months_total+ " months as "+hours+" hours.")
     return hours;
 }
+

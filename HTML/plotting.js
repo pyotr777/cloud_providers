@@ -38,6 +38,8 @@ function continue_proc(filter, arg) {
         //console.log(accumulated_months_days);
     }
     filter(arg);
+    plotGPUsbyProvider();
+
     quotes=[];
     plotPeriod(getHours4Months(plot_period), step, thin, thick);  // Period for top plot
     console.log("Have "+ quotes.length+" quotes.")
@@ -750,4 +752,63 @@ function plotTable() {
 }
 
 
+// Plot histogram of number of offers for every number of GPUs
+// split by providers.
+function plotGPUsbyProvider() {
+    document.getElementById("providers").innerHTML = "PROVIDERS";
+    var gpus_obj = {};
+    for (var j=0; j < offers_all.length; j++) {
+        var provider = offers_all[j].provider.toLowerCase();
+        if (!(provider in gpus_obj)) {
+            // Create provider object inside pus_obj
+            gpus_obj[provider] = {};
+        }
+        var gpus = offers_all[j].gpus;
+        if (gpus in gpus_obj[provider]) {
+            gpus_obj[provider][gpus]++;
+        } else {
+            // Create dictionary entry with name = number of gpus
+            gpus_obj[provider][gpus] = 1;
+        }   
+    }
+    console.log(gpus_obj);
+    var traces = [];
+    // loop by providers
+    for(var key in gpus_obj) {
+        console.log(key);
+        var trace = {
+            name: key,
+            type: 'bar',
+            x: [],
+            y: [],
+            marker: {
+                color: colors[getColor(key)][0]
+            }
+        }
+        // convert object of format {'0.5':1, '1:2',...} into array:
+        // [[0.5,1], [1,2], ... ]
+        var multi_arr = [];
+        for (var gpus in gpus_obj[key]) {
+            multi_arr.push([gpus,gpus_obj[key][gpus]]);
+        }
+        // Sort by key
+        multi_arr.sort( function (a,b) {
+            return parseFloat(a[0]) - parseFloat(b[0]);
+        });
+        console.log(multi_arr);
 
+
+        // convert array of format [[0.5,1], [1,2], [2,4]] into two arrays:
+        // x = [0.5, 1, 2]
+        // y = [  1, 2, 4]
+        for (var i = 0; i < multi_arr.length; i++) {
+            trace.x.push(multi_arr[i][0]+" GPUs");
+            trace.y.push(multi_arr[i][1]);
+        }
+        traces.push(trace);
+    }
+    console.log("traces:");
+    console.log(traces);
+    var layout = { barmode: 'stack'};
+    Plotly.newPlot('providers', traces, layout);
+}
