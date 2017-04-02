@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"gpus",
+				"gpus_mapping"
+			],
+			[
+				"pro",
+				"provider"
+			],
+			[
 				"m",
 				"make_ssh_tunnels"
 			],
@@ -506,29 +514,9 @@
 			[
 				"batc",
 				"batch_size"
-			],
-			[
-				"blo",
-				"block_counter"
-			],
-			[
-				"run",
-				"run_flag"
 			]
 		]
 	},
-	"buffers":
-	[
-		{
-			"file": "plotting.js",
-			"settings":
-			{
-				"buffer_size": 24541,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		}
-	],
 	"build_system": "",
 	"build_system_choices":
 	[
@@ -708,10 +696,6 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
-	"expanded_folders":
-	[
-		"/Users/peterbryzgalov/work/ML/cloud_providers/HTML"
-	],
 	"file_history":
 	[
 		"/Users/peterbryzgalov/Library/Application Support/Sublime Text 3/Packages/GoSublime/CHANGELOG.md",
@@ -845,7 +829,7 @@
 	],
 	"find":
 	{
-		"height": 22.0
+		"height": 35.0
 	},
 	"find_in_files":
 	{
@@ -864,6 +848,10 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"getColor",
+			"slice_cost_perf",
+			"offers",
+			"offers_all",
 			"set ",
 			"layout",
 			"traces",
@@ -987,11 +975,7 @@
 			"Loading next block",
 			"]No session",
 			"SESSION",
-			"shutdown",
-			"Exectuing",
-			"OK",
-			"<div",
-			"OK"
+			"shutdown"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1071,49 +1055,6 @@
 		"whole_word": false,
 		"wrap": true
 	},
-	"folders":
-	[
-		{
-			"path": "/Users/peterbryzgalov/work/ML/cloud_providers/HTML"
-		}
-	],
-	"groups":
-	[
-		{
-			"selected": 0,
-			"sheets":
-			[
-				{
-					"buffer": 0,
-					"file": "plotting.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 24541,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				}
-			]
-		}
-	],
 	"incremental_find":
 	{
 		"height": 22.0
@@ -1170,7 +1111,6 @@
 		"height": 186.0
 	},
 	"pinned_build_system": "",
-	"project": "",
 	"replace":
 	{
 		"height": 40.0
@@ -1203,7 +1143,6 @@
 		],
 		"width": 392.0
 	},
-	"selected_group": 0,
 	"settings":
 	{
 	},
