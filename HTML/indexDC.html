@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF8">
+    <meta charset="utf-8"/>
+    <script type="text/javascript" src="http://tvinci.github.io/webs/js/d3.js"></script>
+    <script type="text/javascript" src="https://rawgithub.com/jrideout/melt.js/master/melt.js"></script>
+    <script type="text/javascript" src="http://tvinci.github.io/webs/js/crossfilter.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0/dc.min.js"></script>
+    
+    <script src="PapaParse-4.1.2/papaparse.min.js"></script>
+    <script src="money.min.js"></script>
+    <script src="lib.js"></script>
+    <script src="plottingDC.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0/dc.min.css" media="screen" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cabin+Condensed" />
+   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+</head>
+<body>
+
+<div id="messages"></div>
+<div id="dc_scatter_performance"></div>
+<div id="dc_pie_gpus"></div>
+<div id="dc_providers"></div>
+
+<h1 class="tableTitle">Offer Details</h1>
+<table id="dc-data-table">
+        <thead>
+        <tr class="header" bgcolor="#fff">
+            <th rowspan="2">Offer</th>
+            <th colspan="3">GPU</th>
+            <th colspan="3">CPU</th>
+            <th colspan="4">Pricing</th>
+        </tr>
+        <tr class="header" bgcolor="#fff">
+            <th>model</th>
+            <th>N</th>
+            <th>performance (GFlops)</th>
+            <th>model</th>
+            <th>N</th>
+            <th>performance (GFlops)</th>
+            <th>hourly</th>
+            <th>weekly</th>
+            <th>monthly</th>
+            <th>yearly</th>
+        </tr>
+        </thead>
+    </table>
+
+</body>
+</html>

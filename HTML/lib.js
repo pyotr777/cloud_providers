@@ -58,6 +58,8 @@ function loadData(filename) {
 }
 
 
+var start_row = 2;
+
 function processStaticData(results) {
     console.log("Processing data");
     console.log("Rows: "+results.data.length);
@@ -113,6 +115,7 @@ function processStaticData(results) {
         }
         offers_all.push(offer);
     }
+    plotFilterPlots();
     continue_proc(resetFilters, "");
     msg.innerHTML = "";
     printRates();
@@ -145,8 +148,14 @@ function resetFilters(arg) {
 function filterByGPU(group) {
     console.log("Filtering by GPU group "+ group);
     GPUgroup_global = group;
-    applyGPUFilter();
-    applyProvidersFilter();
+    offers = [];
+    for (var j=0; j < offers_all.length; j++) {
+        if (group.indexOf(offers_all[j].gpus)>=0) {
+            offers.push(offers_all[j]);
+        }
+    }
+    //applyGPUFilter();
+    //applyProvidersFilter();
 }
 
 
@@ -475,4 +484,16 @@ function getHours4Months(months) {
     console.log("Count " +months_total+ " months as "+hours+" hours.")
     return hours;
 }
+
+
+function CurrencyFormat(s, currency) {
+    if (s == "") {
+        return "";
+    }
+    //console.log("Formatting " + s + " as " + currency);
+    num = Number(s).toLocaleString('en', { style: 'currency', currency: currency, maximumFractionDigits: 2 });
+    num = num.replace(",", "&nbsp;");
+    return num;
+}
+
 

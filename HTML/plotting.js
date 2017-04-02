@@ -11,8 +11,6 @@ function ready() {
 document.addEventListener("DOMContentLoaded", ready);
 
 
-
-var start_row = 2;
 var dates =[];
 var quotes=[];
 var msg;
@@ -20,6 +18,14 @@ var msg;
 
 var step = 24; // hours step
 var plot_period = 12; // months for plot "cost for rent period"
+
+function plotFilterPlots() {
+    console.log("Plotting DC plots.");
+    ndx = crossfilter(offers_all);
+    plotPieGPUs();
+    plotProviders();  
+    dc.renderAll();
+}
 
 function continue_proc(filter, arg) {
     if (processing) return;
@@ -38,8 +44,10 @@ function continue_proc(filter, arg) {
         //console.log(accumulated_months_days);
     }
     filter(arg);
-    plotGPUsbyProvider();
-
+    /// plotGPUsbyProvider();  // plotly graph
+    // Use DC instead
+    
+    msg.innerHTML = "";
     quotes=[];
     plotPeriod(getHours4Months(plot_period), step, thin, thick);  // Period for top plot
     console.log("Have "+ quotes.length+" quotes.")
@@ -48,8 +56,56 @@ function continue_proc(filter, arg) {
     displaySlice(Math.floor(24 * accumulated_months_days[0] / step));
     displayPerformanceScatter();
     plotTable();
+
     processing = false;
 }
+
+
+function plotPieGPUs() {
+    console.log("Plot GPU numbers pie");
+    var GPUsDim = ndx.dimension( function(d) { return d.gpus;});
+    var gpus_total = GPUsDim.group();
+    var GPUs_pie_chart = dc.rowChart("#dc_pie_gpus");
+    GPUs_pie_chart
+        .width(300).height(200)
+        .dimension(GPUsDim)
+        .group(gpus_total)
+        .legend(dc.legend().x(80).y(70).itemHeight(13).gap(5));
+
+    GPUs_pie_chart.on('filtered.monitor', function(chart, filter) {
+        // report the filter applied
+        console.log("DC event");
+        console.log(chart.filters());
+        continue_proc(filterByGPU,chart.filters());
+    });
+}
+
+
+function plotProviders() {
+    console.log("Plot providers");
+    var provider_dim = ndx.dimension( function (d) { return d.provider;});
+    var provider_grp = provider_dim.group();
+    var chart = dc.rowChart("#dc_providers");
+    chart
+        .width(300)
+        .height(200)
+        .x(d3.scale.linear().domain([6,20]))
+        .elasticX(true)
+        .dimension(provider_dim)
+        .group(provider_grp)
+        .ordinalColors(["#ee8735","#fbee00","#3e9a36","#00b1e7","#f0308b","#964fb7","#4f48d9","#ff5f51","#503a1b"])
+        .colorAccessor( function (d) {
+            if (typeof d === "undefined") return;
+            var c = getColor(d.key);
+            //console.log("color Accessor for row: " +c);
+            //console.log(d);
+            return +c;
+        })
+        .ordering(function(d) { return getColor(d.key); })
+        //.renderlet(function (chart) { chart.selectAll("g.row text").attr("x","100"); })  // This moves text to the right, but works with delay
+}
+
+
 
 
 function displayPerformanceScatter() {
