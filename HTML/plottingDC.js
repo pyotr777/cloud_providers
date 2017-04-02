@@ -11,7 +11,7 @@ var quotes=[];
 var step = 24; // hours step
 var plot_period = 1; // months for plot "cost for rent period"
 
-function dataLoaded() {
+function continue_proc(filter, arg) {
 	if (processing) return;
     processing = true;
     ndx = crossfilter(offers_all);
