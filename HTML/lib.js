@@ -136,96 +136,49 @@ function getOfferInfo(j) {
 // "Filters" offers: save filtered list in "offers" global variable.
 function resetFilters(arg) {
     offers = offers_all;
-    offers_GPU_filtered = offers_all;
-    GPUgroup_global = null;
-    //var $selector = $("#providers_select").select2();
-    //$selector.val(null).trigger("change");
+    GPU_filters = [];
+    provider_filters = [];
 }
+
+var GPU_filters = [];
+var provider_filters = [];
 
 
 // Filters offers: save filtered list in "offers" global variable.
-// Filter out offers with GPUs in range given by group argument with format string "min-miax".
-function filterByGPU(group) {
-    console.log("Filtering by GPU group "+ group);
-    GPUgroup_global = group;
-    offers = [];
-    for (var j=0; j < offers_all.length; j++) {
-        if (group.indexOf(offers_all[j].gpus)>=0) {
-            offers.push(offers_all[j]);
+// Filter out offers by numbet of GPUs and by providers.
+// Filter settings (selected values) are stored in global variables GPU_filters and provider_filters.
+// Filter offers_all by applying 2 filters one by one.
+function filterByGroup(fieldname, group) {
+    console.log("Filtering by "+fieldname+" : "+ group);
+    switch (fieldname) {
+        case "gpus":
+            GPU_filters = group;
+            break;
+        case "provider":
+            provider_filters = group;
+            break;
+    }
+    offers = applyFilter(offers_all, "gpus", GPU_filters);
+    offers = applyFilter(offers, "provider", provider_filters);
+}
+
+
+// Filter offers_ (input parameter) by leaving only offers
+// with fieldname (input parameter) values from array group (input parameter).
+function applyFilter(offers_, fieldname, group) {
+    if (group.length == 0) {
+        console.log(fieldname+" filter empty");
+        return offers_;
+    }
+    var filtered_offers=[];
+    for (var j=0; j < offers_.length; j++) {
+        if (group.indexOf(offers_[j][fieldname]) >=0 ) {
+            filtered_offers.push(offers[j]);
         }
     }
-    //applyGPUFilter();
-    //applyProvidersFilter();
+    return filtered_offers;
 }
 
-
-// Filter by provider
-function filterProviders(optionslist) {
-    if (optionslist == null || optionslist.length == 0) {
-        resetFilters("");
-        return;
-    }
-    optionslist_global = optionslist;
-    applyGPUFilter();
-    applyProvidersFilter();
-}
-
-
-function applyGPUFilter() {
-    var group = GPUgroup_global;
-    console.log("GPUgroup_global:"+GPUgroup_global);
-    if (group == null) {
-        offers = offers_all;
-        offers_GPU_filtered = offers_all;
-        return;
-    }
-    var new_offers = [];
-    var available_offers = offers_all;
-    console.log("Available offers "+available_offers.length)
-    min = 0;
-    max = 0;
-    splits = group.split("-");
-    min = parseInt(splits[0]);
-    if (splits.length >= 2  && splits[1] != "") {
-        max = parseInt(splits[1]);
-    } else {
-        max = 1000000;
-    }
-    console.log("Filtering by "+min+" - " + max+ ", "+splits.length+":"+splits);
-    for (j=0; j < available_offers.length; j++) {
-        if (available_offers[j].gpus >= min && available_offers[j].gpus <= max) {
-            new_offers.push(available_offers[j]);
-        }
-    }
-    offers = new_offers;
-    offers_GPU_filtered = offers;
-}
-
-
-
-// Must be called after applyGPUFilter()
-function applyProvidersFilter() {
-    console.log("applying providers filter with " + optionslist_global+". Have "+offers_GPU_filtered.length + " GPU-filtered offers.")
-    if (optionslist_global == null || optionslist_global.length == 0) {
-        offers = offers_GPU_filtered;
-        return;
-    }
-    var optionslist = optionslist_global;
-    var providerlist = [];
-    for (var i=0 ; i < optionslist.length; i++ ) {
-        providerlist.push(optionslist[i].value);
-    }
-    var new_offers = [];
-    var available_offers = offers_GPU_filtered;
-    for (j=0; j < available_offers.length; j++) {
-        //console.log(available_offers[j].provider.toLowerCase()+" is in "+providerlist+" ?");
-        if ($.inArray(available_offers[j].provider.toLowerCase(), providerlist) != -1) {
-            //console.log("Accept "+ offers_all[j].provider);
-            new_offers.push(available_offers[j]);
-        }
-    }
-    offers = new_offers;
-}
 
 
 // Return Cost for given number of hours (period).

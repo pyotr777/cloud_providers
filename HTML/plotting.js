@@ -23,11 +23,11 @@ function plotFilterPlots() {
     console.log("Plotting DC plots.");
     ndx = crossfilter(offers_all);
     plotPieGPUs();
-    plotProviders();  
+    plotProviders();
     dc.renderAll();
 }
 
-function continue_proc(filter, arg) {
+function continue_proc(filter, field, group) {
     if (processing) return;
     processing = true;
     // line width on graph
@@ -43,10 +43,8 @@ function continue_proc(filter, arg) {
         }
         //console.log(accumulated_months_days);
     }
-    filter(arg);
-    /// plotGPUsbyProvider();  // plotly graph
-    // Use DC instead
-    
+    filter(field, group);
+
     msg.innerHTML = "";
     quotes=[];
     plotPeriod(getHours4Months(plot_period), step, thin, thick);  // Period for top plot
@@ -76,7 +74,7 @@ function plotPieGPUs() {
         // report the filter applied
         console.log("DC event");
         console.log(chart.filters());
-        continue_proc(filterByGPU,chart.filters());
+        continue_proc(filterByGroup, "gpus", chart.filters());
     });
 }
 
@@ -103,6 +101,13 @@ function plotProviders() {
         })
         .ordering(function(d) { return getColor(d.key); })
         //.renderlet(function (chart) { chart.selectAll("g.row text").attr("x","100"); })  // This moves text to the right, but works with delay
+    chart.on('filtered.monitor', function(chart, filter) {
+        // report the filter applied
+        console.log("DC event");
+        console.log(chart.filters());
+        continue_proc(filterByGroup, "provider", chart.filters());
+    });
+
 }
 
 
@@ -827,7 +832,7 @@ function plotGPUsbyProvider() {
         } else {
             // Create dictionary entry with name = number of gpus
             gpus_obj[provider][gpus] = 1;
-        }   
+        }
     }
     //console.log(gpus_obj);
     var traces = [];
@@ -851,7 +856,7 @@ function plotGPUsbyProvider() {
     }
     console.log("traces:");
     console.log(traces);
-    var layout = { 
+    var layout = {
         barmode: 'stack',
         title: "Offers by number of GPUs",
         xaxis: {
@@ -884,7 +889,7 @@ function plotGPUsbyProvider() {
 function attach() {
     d3.select('g.legend').selectAll('.traces').each(function() {
         var item = d3.select(this);
-    
+
         item.on('click', function(d) {
             console.log("Filter by " + d[0].trace.name);
             continue_proc(filterProv,d[0].trace.name);
@@ -898,7 +903,7 @@ function filterProv(prov) {
     offers = [];
     for (var j=0; j < offers_all.length; j++) {
         if (offers_all[j].provider.toLowerCase() == prov ) {
-            
+
         } else {
             offers.push(offers_all[j]);
         }
