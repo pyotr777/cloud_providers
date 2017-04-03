@@ -4,12 +4,148 @@
 		"selected_items":
 		[
 			[
-				"gpus",
-				"gpus_mapping"
+				"time",
+				"time_limit"
 			],
 			[
-				"pro",
-				"provider"
+				"huma",
+				"human_text"
+			],
+			[
+				"human",
+				"human_text"
+			],
+			[
+				"table",
+				"tableGroup"
+			],
+			[
+				"ce",
+				"cellspacing\tAttr"
+			],
+			[
+				"status",
+				"status_404"
+			],
+			[
+				"status_",
+				"status_302"
+			],
+			[
+				"render",
+				"renderPlot"
+			],
+			[
+				"tota",
+				"total_90"
+			],
+			[
+				"head",
+				"header\tTag"
+			],
+			[
+				"PRIN",
+				"PRINT_IPS"
+			],
+			[
+				"out",
+				"output_dic"
+			],
+			[
+				"de",
+				"debug_print"
+			],
+			[
+				"ou",
+				"output_dic"
+			],
+			[
+				"perio",
+				"period_w"
+			],
+			[
+				"nvidia",
+				"nvidia-smi"
+			],
+			[
+				"key",
+				"key_opt"
+			],
+			[
+				"app",
+				"append"
+			],
+			[
+				"Remote",
+				"RemoteExec"
+			],
+			[
+				"con",
+				"concurrency"
+			],
+			[
+				"worke",
+				"worker_addresses"
+			],
+			[
+				"wor",
+				"worker_addresses"
+			],
+			[
+				"par",
+				"parseOutput"
+			],
+			[
+				"var",
+				"var_value"
+			],
+			[
+				"titl",
+				"title_contents"
+			],
+			[
+				"til",
+				"title_contents"
+			],
+			[
+				"up",
+				"update_hosts"
+			],
+			[
+				"w",
+				"worker_hosts"
+			],
+			[
+				"BROKE",
+				"BROKER_HOST"
+			],
+			[
+				"BRKO",
+				"BROKER_HOST"
+			],
+			[
+				"CSV",
+				"CSV_file"
+			],
+			[
+				"master",
+				"master_host"
+			],
+			[
+				"data",
+				"datasets"
+			],
+			[
+				"ke",
+				"key_opt"
+			],
+			[
+				"inf",
+				"infra_CSV"
+			],
+			[
+				"ho",
+				"hostAddress"
 			],
 			[
 				"m",
@@ -88,10 +224,6 @@
 				"worker_hosts"
 			],
 			[
-				"con",
-				"container"
-			],
-			[
 				"cle",
 				"celery-chainer-worker"
 			],
@@ -134,10 +266,6 @@
 			[
 				"S",
 				"START_MASTER"
-			],
-			[
-				"master",
-				"master_host"
 			],
 			[
 				"LOCAL",
@@ -386,137 +514,12 @@
 			[
 				"sc",
 				"scrollToElm"
-			],
-			[
-				"s",
-				"scrollPos"
-			],
-			[
-				"sco",
-				"scrollTop"
-			],
-			[
-				"pa",
-				"padding"
-			],
-			[
-				"pad",
-				"padding-bottom"
-			],
-			[
-				"padding-",
-				"padding-left"
-			],
-			[
-				"paddin",
-				"padding-left"
-			],
-			[
-				"next",
-				"next_elem"
-			],
-			[
-				"Mini",
-				"Miniconda2-latest-Linux-x86_64"
-			],
-			[
-				"kp",
-				"kportal_conf"
-			],
-			[
-				"b",
-				"b_counter"
-			],
-			[
-				"dict",
-				"dict_name"
-			],
-			[
-				"nex",
-				"next_block"
-			],
-			[
-				"use",
-				"use_saved_block"
-			],
-			[
-				"F",
-				"False"
-			],
-			[
-				"scena",
-				"scenario"
-			],
-			[
-				"sce",
-				"Scenario"
-			],
-			[
-				"allowe",
-				"allowed_vars"
-			],
-			[
-				"all",
-				"allowed_vars"
-			],
-			[
-				"col",
-				"colon_split"
-			],
-			[
-				"ex",
-				"exclude"
-			],
-			[
-				"comma",
-				"command"
-			],
-			[
-				"REMO",
-				"REMOTEDIR"
-			],
-			[
-				"exec",
-				"exec_button_"
-			],
-			[
-				"test",
-				"teststr2"
-			],
-			[
-				"tr",
-				"teststr1"
-			],
-			[
-				"testr",
-				"teststr1"
-			],
-			[
-				"br",
-				"br_counter"
-			],
-			[
-				"block",
-				"block_counter"
-			],
-			[
-				"refre",
-				"refresh_script"
-			],
-			[
-				"bloc",
-				"block_counter"
-			],
-			[
-				"is",
-				"isfile"
-			],
-			[
-				"batc",
-				"batch_size"
 			]
 		]
 	},
+	"buffers":
+	[
+	],
 	"build_system": "",
 	"build_system_choices":
 	[
@@ -696,146 +699,151 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
+	"expanded_folders":
+	[
+		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML"
+	],
 	"file_history":
 	[
-		"/Users/peterbryzgalov/Library/Application Support/Sublime Text 3/Packages/GoSublime/CHANGELOG.md",
-		"/Users/peterbryzgalov/Downloads/event_48746_participants (1).csv",
-		"/Users/peterbryzgalov/work/ML/mlframework/clean_celery_worker.sh",
-		"/Users/peterbryzgalov/work/kportal/release/installkportal_ubuntu.sh",
-		"/Users/peterbryzgalov/work/ML/mlframework/start_celery_master.sh",
-		"/Users/peterbryzgalov/work/ML/mlframework/start_celery_worker.sh",
-		"/Users/peterbryzgalov/work/ML/mlframework/remote_command.sh",
-		"/Users/peterbryzgalov/work/ML/mlframework/config.sh",
-		"/Users/peterbryzgalov/work/kportal/release/install",
-		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML/plotting2.js",
-		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML/lib.js",
-		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML/index2.html",
 		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML/index.html",
+		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML/cloud.sublime-workspace",
+		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML/lib.js",
 		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML/plotting.js",
-		"/Users/peterbryzgalov/work/ML/mlframework/proj/task_fasttext.py",
-		"/Users/peterbryzgalov/work/ML/mlframework/infrainit.sh",
-		"/Users/peterbryzgalov/work/ML/mlframework/proj/baselines/fasttext.py",
-		"/Users/peterbryzgalov/work/ML/mlframework/proj/test_training.py",
-		"/Users/peterbryzgalov/work/ML/mlframework/initinfra.sh",
-		"/Users/peterbryzgalov/work/ML/mlframework/inithost.sh",
-		"/Users/peterbryzgalov/work/ML/mlframework/celery_rabbit.sh",
-		"/Users/peterbryzgalov/work/ML/mlframework/proj/test_echo.py",
-		"/Users/peterbryzgalov/work/ML/mlframework/send-rabbit.py",
-		"/Users/peterbryzgalov/work/ML/mlframework/Dockerfile-worker",
-		"/Users/peterbryzgalov/work/ML/mlframework/Dockerfile-flower",
-		"/Users/peterbryzgalov/work/kportal/release/sync_up.sh",
-		"/Users/peterbryzgalov/work/ML/bowcnn/baselines/fasttext.py",
-		"/Users/peterbryzgalov/work/ML/bowcnn/cv_baseline.py",
-		"/Users/peterbryzgalov/work/ML/New Framework/proj/model_fasttext.py",
-		"/Users/peterbryzgalov/work/ML/New Framework/celeryconfig.py",
-		"/Users/peterbryzgalov/work/ML/New Framework/proj/celery.py",
-		"/Users/peterbryzgalov/work/ML/New Framework/proj/tasks.py",
-		"/Users/peterbryzgalov/work/ML/Cloud Providers/sync.sh",
-		"/Users/peterbryzgalov/work/ML/New Framework/proj/datasets/twenty_ng.py",
-		"/Users/peterbryzgalov/work/ML/bowcnn/model_fasttext.py",
-		"/Users/peterbryzgalov/work/ML/chainer/install_in_docker/Dockerfile",
-		"/Users/peterbryzgalov/work/ML/chainer/install_in_docker/Dockerfile-size",
-		"/Users/peterbryzgalov/work/ML/keras/Dockerfile-keras",
-		"/Users/peterbryzgalov/work/ML/chainer/install_in_docker/Dockerfile-16",
-		"/Users/peterbryzgalov/work/ML/chainer/Dockerfile",
-		"/Users/peterbryzgalov/work/ML/chainer/Dockerfile-time",
-		"/Users/peterbryzgalov/work/ML/chainer/install_in_docker/docker.py",
-		"/Users/peterbryzgalov/work/ML/New Framework/celery_rabbit.sh",
-		"/Users/peterbryzgalov/work/ML/New Framework/proj/task.py",
-		"/Users/peterbryzgalov/work/ML/New Framework/task.py",
-		"/Users/peterbryzgalov/work/ML/bowcnn/celery_rabbit.sh",
-		"/Users/peterbryzgalov/work/ML/bowcnn/datasets/twenty_ng.py",
-		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML/cost-performance.csv",
-		"/Users/peterbryzgalov/work/ML/bowcnn/cv.py",
-		"/Users/peterbryzgalov/work/ML/bowcnn/models/trained_models/cnn.py",
-		"/Users/peterbryzgalov/work/ML/bowcnn/models/model2.py",
-		"/Users/peterbryzgalov/work/ML/bowcnn/models/trained_models/download.sh",
-		"/Users/peterbryzgalov/work/ML/bowcnn/models/trained_models/download_model.py",
-		"/Users/peterbryzgalov/work/ML/bowcnn/trained_models/download_model.py",
-		"/Users/peterbryzgalov/work/ML/bowcnn/models/model3.py",
-		"/Users/peterbryzgalov/work/ML/bowcnn/trained_models/download.sh",
-		"/Users/peterbryzgalov/work/ML/bowcnn/net.py",
+		"/Users/peterbryzgalov/Desktop/untitled.xml",
+		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML/index2.html",
 		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML/style.css",
-		"/Users/peterbryzgalov/work/ML/bowcnn/start_container.sh",
-		"/Users/peterbryzgalov/work/ML/bowcnn/models/mycnn/model2.py",
-		"/Users/peterbryzgalov/work/ML/bowcnn/models/model4.py",
-		"/Users/peterbryzgalov/work/ML/bowcnn/models/model5.py",
-		"/Users/peterbryzgalov/work/ML/bowcnn/models/model6.py",
-		"/Users/peterbryzgalov/work/ML/bowcnn/models/model7.py",
-		"/Users/peterbryzgalov/work/ML/bowcnn/models/model8.py",
-		"/Users/peterbryzgalov/work/ML/bowcnn/models/model9.py",
+		"/Users/peterbryzgalov/work/JSplot/DC/original.js",
+		"/Users/peterbryzgalov/work/JSplot/DC/myversion.js",
+		"/Users/peterbryzgalov/work/ember/script.js",
+		"/Users/peterbryzgalov/work/ember/mycss.css",
+		"/Users/peterbryzgalov/.ipython/profile_ssh/ipcluster_config.py",
+		"/Users/peterbryzgalov/work/ML/ipython/scp_json.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/init.sh",
+		"/Users/peterbryzgalov/work/AWS_CLI/shortcut_commands/awsrun",
+		"/Users/peterbryzgalov/abc/mlframework/cifar_proj/parameters.yml",
+		"/Users/peterbryzgalov/abc/mlframework/cifar_proj/tasks.py",
+		"/Users/peterbryzgalov/abc/mlframework/cifar_proj/default.py",
+		"/Users/peterbryzgalov/abc/mlframework/cifar_proj/celery.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/project_template/default.py",
+		"/Users/peterbryzgalov/work/ML/nvidia-docker/install_nvidia_docker_ubuntu_tests.sh",
+		"/Users/peterbryzgalov/abc/mlframework/cifar_proj/cifar/train_cifar.py",
+		"/Users/peterbryzgalov/abc/chainer/examples/cifar/train_cifar.py",
+		"/Users/peterbryzgalov/work/ML/nvidia-docker/install_nvidia_docker_ubuntu.sh",
+		"/Users/peterbryzgalov/work/ML/nvidia-docker/install_docker_ubuntu.sh",
+		"/Users/peterbryzgalov/work/AWS_CLI/.aws/config",
+		"/Users/peterbryzgalov/abc/mlframework/my_proj/word2vec/train_word2vec.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/config.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer_bow/tasks.py",
+		"/Users/peterbryzgalov/abc/mlframework/my_proj/default.py",
+		"/Users/peterbryzgalov/abc/mlframework/my_proj/celery.py",
+		"/Users/peterbryzgalov/work/AWS_CLI/shortcut_commands/awstag",
+		"/Users/peterbryzgalov/work/AWS_CLI/shortcut_commands/awsls",
+		"/Users/peterbryzgalov/work/AWS_CLI/.aws/credentials",
+		"/Users/peterbryzgalov/work/AWS_CLI/shortcut_commands/awsip",
+		"/Users/peterbryzgalov/work/AWS_CLI/Dockerfile",
+		"/Users/peterbryzgalov/work/AWS_CLI/shortcut_commands/awsstop",
+		"/Users/peterbryzgalov/work/AWS_CLI/shortcut_commands/awsterminate",
+		"/Users/peterbryzgalov/work/AWS_CLI/build_docker_image.sh",
+		"/Users/peterbryzgalov/work/AWS_CLI/shortcut_commands/awshelp",
+		"/Users/peterbryzgalov/work/AWS_CLI/shortcut_commands/awsstart",
+		"/Users/peterbryzgalov/work/AWS_CLI/shortcut_commands/awsassignip",
+		"/Users/peterbryzgalov/work/ML/mlframework/nvdocker_install/install_ubuntu.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/start_celery_worker.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/start_workers.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/infrainit.sh",
+		"/Users/peterbryzgalov/work/AWS_CLI/shortcut_commands/awsipls",
+		"/Users/peterbryzgalov/work/ML/mlframework/nvdocker_install/Dockerfile",
+		"/Users/peterbryzgalov/work/ML/infrainit.copy",
+		"/Users/peterbryzgalov/work/ML/mlframework/nvdocker_install/install_nvidia_docker_ubuntu.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/project_template/tasks.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/Dockerfile",
+		"/Users/peterbryzgalov/work/ML/mlframework/Dockerfile-flower",
+		"/Users/peterbryzgalov/.ipython/profile_ssh/ipcontroller_config.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer-bow/default.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/run_task.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer-bow/tasks.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer-bow/word2vec/train_word2vec.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/project_template/test_echo.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/rsyncinclude_framework.txt",
+		"/Users/peterbryzgalov/work/ML/mlframework/update_files.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer-bow/test_echo.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/rsyncinclude_results.txt",
+		"/Users/peterbryzgalov/work/ML/mlframework/rsyncexclude_task.txt",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer-bow/celery.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/start_celery_master.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/project_template/celery.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/project_template/run_training.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/project_template/parameters.yml",
+		"/Users/peterbryzgalov/work/ML/mlframework/project_template/master_functions.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer_bow/examples/word2vec/train_word2vec.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer_bow/run_training.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer_bow/celery.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer_bow/parameters.yml",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer/master_functions.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer_bow/worker_functions.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer/tasks.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/output.csv",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer/examples/word2vec/train_word2vec.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer/worker_functions.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer/run_training.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/start_jupyter.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/Dockerfile-jupyter",
+		"/Users/peterbryzgalov/work/ML/mlframework/output_esc.csv",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer/parameters.yml",
+		"/Users/peterbryzgalov/work/ML/mlframework/run_tasks.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer/test_echo.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/output2.csv",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer/celery.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/proj/tasks.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/send-rabbit.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/read_parameters.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/check_celery_status.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/clean_celery_master.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer/examples/mnist/train_mnist.py",
+		"/Users/peterbryzgalov/work/ML/nvidia-docker/install_ubuntu.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/infra_clean.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer/id_rsa_com",
+		"/Users/peterbryzgalov/work/ML/mlframework/infra.csv",
+		"/Users/peterbryzgalov/work/AWS_CLI/launch-micro.json",
+		"/Users/peterbryzgalov/work/ML/mlframework/Dockerfile-worker",
+		"/Users/peterbryzgalov/work/ML/mlframework/chainer/paramtest.yml",
+		"/Users/peterbryzgalov/work/ML/mlframework/install_docker_ubuntu.sh",
+		"/Users/peterbryzgalov/work/ML/chainer/install_in_docker/Dockerfile",
+		"/Users/peterbryzgalov/work/ML/chainer/Dockerfile",
+		"/Users/peterbryzgalov/work/ML/mlframework/worker_result.json",
+		"/Users/peterbryzgalov/work/kportal/release/AWS_CLI/shortcut_commands/awsrun",
+		"/Users/peterbryzgalov/work/kportal/release/AWS_CLI/shortcut_commands/awsip",
 		"/Users/peterbryzgalov/work/ML/bowcnn/Dockerfile-jupyter",
-		"/Users/peterbryzgalov/work/ML/bowcnn/datasets/Cade12/download.sh",
-		"/Users/peterbryzgalov/work/ML/bowcnn/preprocessing.py",
-		"/Users/peterbryzgalov/Downloads/image_tutorial-7.py",
-		"/Users/peterbryzgalov/Downloads/J11819365011480999755.sh.o5517107",
-		"/Users/peterbryzgalov/Downloads/J62085247371480998219.sh.o5517058",
-		"/Users/peterbryzgalov/work/kportal/release/sample_application/CMPI/run.sh",
-		"/Users/peterbryzgalov/work/kportal/release/visual_server/start_server_container.sh",
-		"/Users/peterbryzgalov/work/kportal/release/visual_server/vis_server",
-		"/Users/peterbryzgalov/Downloads/J12600190201480924166.sh",
-		"/Users/peterbryzgalov/Downloads/job.e5515132",
-		"/Users/peterbryzgalov/work/ML/keras/run_docker.sh",
-		"/Users/peterbryzgalov/work/kportal/release/sample_application/mixerVessel2D/sample/change_case_pars.sh",
-		"/Users/peterbryzgalov/work/kportal/release/visual_server/Dockerfile",
-		"/Users/peterbryzgalov/work/kportal/release/visual_server/server.py",
-		"/Users/peterbryzgalov/work/kportal/release/visual_server/make_cell_images.py",
-		"/Users/peterbryzgalov/work/kportal/release/visual_server/colors.py",
-		"/Users/peterbryzgalov/work/kportal/release/sample_application/mixerVessel2D/post.sh",
-		"/Users/peterbryzgalov/work/kportal/release/visual_server/Kmake_movie.sh",
-		"/Users/peterbryzgalov/work/kportal/release/sample_application/mixerVessel2D/run_mixer_sample.sh",
-		"/Users/peterbryzgalov/work/kportal/release/sample_application/mixerVessel2D/sample/system/controlDict",
-		"/Users/peterbryzgalov/work/kportal/release/sample_application/mixerVessel2D/sample/constant/fvOptions",
-		"/Users/peterbryzgalov/work/kportal/release/sample_application/mixerVessel2D/sample/constant/polyMesh/blockMeshDict.m4",
-		"/Users/peterbryzgalov/Downloads/J58055100791480072816.sh",
-		"/Users/peterbryzgalov/Downloads/J58055100791480072816.info",
-		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML/plotting..html",
-		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML/C3/c3-0.4.11/c3.css",
-		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML/index 2.html",
+		"/Users/peterbryzgalov/work/ML/mlframework/bowcnn/run_training.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/.gitignore",
+		"/Users/peterbryzgalov/work/ML/mlframework/bowcnn/tasks.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/bowcnn/test_echo.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/bowcnn/cv_baseline.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/bowcnn/worker_functions.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/bowcnn/master_functions.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/bowcnn/mycelery.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/testvars.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/config_ec2.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/clean_celery_worker.sh",
+		"/Users/peterbryzgalov/work/ML/mlframework/bowcnn/paramtest.yml",
 		"/Users/peterbryzgalov/Library/Application Support/Sublime Text 3/Packages/GoSublime/USAGE.md",
-		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML/2016-weather-data-seattle.csv",
-		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML/cost-period.csv",
-		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML/2014_apple_stock.csv",
-		"/Users/peterbryzgalov/work/ML/Cloud Providers/Comparison table updated 2.txt",
-		"/Users/peterbryzgalov/work/OpenFOAM/samples/interFoam/laminar/J29155334941477976881/sample/VTK/sample_46.vtk",
-		"/Users/peterbryzgalov/work/kportal/release/sample_application/tmp/jobinspect/job.o5469532",
-		"/Users/peterbryzgalov/work/kportal/release/sample_application/tmp/jobinspect/J34845364551478254718_post.sh",
-		"/Users/peterbryzgalov/work/kportal/release/sample_application/tmp/jobinspect/job.e5469532",
-		"/Users/peterbryzgalov/work/kportal/release/sample_application/tmp/jobinspect/sample/parameters.txt",
-		"/Users/peterbryzgalov/work/kportal/release/sample_application/tmp/jobinspect/job.e5469528",
-		"/Users/peterbryzgalov/work/kportal/release/sample_application/tmp/jobinspect/job.o5469528",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J72945527361478082697/job.o5466885",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J72945527361478082697/J72945527361478082697.sh",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J72945527361478082697/sample/change_case_pars.sh",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J72945527361478082697/mail_body.txt",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J72945527361478082697/pre.log",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J72945527361478082697/J72945527361478082697.info",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J62435606341478073885/job.o5466643",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J62435606341478073885/J62435606341478073885.sh",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J62435606341478073885/sample/change_case_pars.sh",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J62435606341478073885/J62435606341478073885_post.sh",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J39076085011478058042/job.i5466152",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J39076085011478058042/job.o5466152",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J41126667171478055213/J41126667171478055213.sh",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J41126667171478055213/J41126667171478055213.sh.e5466107",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J84855404161478053002/J84855404161478053002.sh",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J15343284181478046201/J15343284181478046201.sh",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J15343284181478046201/run_mixer_sample.sh",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J15343284181478046201/job.o5465716",
-		"/Users/peterbryzgalov/work/kportal/release/sample_application/mixerVessel2D/change_case_pars.sh",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J81878555691478051263/run_mixer_sample.sh",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J29155334941477976881/J29155334941477976881_post.sh",
-		"/Users/peterbryzgalov/Desktop/sshfs/kportal/jobs/J29155334941477976881/pre.log"
+		"/Users/peterbryzgalov/work/ML/mlframework/proj/test_training.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/proj/task_fasttext.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/paramtest.yml",
+		"/Users/peterbryzgalov/work/ML/mlframework/bowcnn/datasets/twenty_ng.py",
+		"/Users/peterbryzgalov/work/ML/mlframework/show_args.sh",
+		"/Users/peterbryzgalov/work/ML/bowcnn/cv_baseline.py"
 	],
 	"find":
 	{
-		"height": 35.0
+		"height": 24.0
 	},
 	"find_in_files":
 	{
 		"height": 93.0,
 		"where_history":
 		[
+			"/Users/peterbryzgalov/work/ML/mlframework",
 			"/Users/peterbryzgalov/work/docker-fork/docker/",
 			"/Users/peterbryzgalov/work/docker-fork/docker/runconfig",
 			"/Users/peterbryzgalov/work/docker-fork/docker/api/server",
@@ -848,10 +856,57 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"getColor",
-			"slice_cost_perf",
-			"offers",
-			"offers_all",
+			"\\.*[\\.\\d]*",
+			"\\s+",
+			"\\.\\d.*",
+			"\\d\\d\\.\\d",
+			"\"/>",
+			"    <xs:element ref=\"",
+			"\" type=\"REAL-NUMBER\"/>",
+			"    <xs:attribute name=\"",
+			"\\\" type=\\\".*\\\"/>",
+			"    <xs:attribute name=\"",
+			"\" minOccurs=\"0",
+			"\"/>",
+			"      <xs:element ref=\"",
+			"\\\".*\\\"/>",
+			"    <xs:attribute name=\"",
+			"\"/>",
+			"    <xs:element ref=\"",
+			"hoursTo",
+			"hours2",
+			"date",
+			"Date",
+			"date",
+			"Date",
+			"date",
+			"gpu",
+			"c.LocalControllerLauncher.controller_args",
+			"ip",
+			"c.SSHEngineLauncher",
+			"cmd_l",
+			"contol_keys",
+			"self",
+			"Remove",
+			"is in ",
+			"timeForMoney",
+			"days_in_month",
+			"docker",
+			"then",
+			"line",
+			"msg",
+			".\"",
+			"l",
+			"rabbit_cont_name",
+			"set ",
+			"RemoteExec",
+			"init_vars.sh",
+			"init_vars",
+			"Model",
+			"fasttex",
+			"fasttexp",
+			"flower",
+			"cd ",
 			"set ",
 			"layout",
 			"traces",
@@ -928,61 +983,19 @@
 			"glob",
 			"TODO",
 			"SSL",
-			"python-tk",
-			"val hashingTF = new",
-			"echo \"[^\"]+\"",
-			"Writing output to file",
-			"Use raw block",
-			"URL",
-			"Proceed",
-			"/next",
-			"refresh",
-			"git",
-			"image",
-			"Force next",
-			"suppose",
-			"Scrolling to",
-			"Found",
-			"onresize",
-			"Set max-height",
-			"scroll",
-			"resi",
-			"ui",
-			"resize",
-			"div",
-			"conf",
-			"maxHeight",
-			"resizeElm",
-			"displayblock",
-			"smooth",
-			"Raw",
-			"scroll",
-			"COMMAND",
-			"startup",
-			"start_apache",
-			"kp_server",
-			"apply=[websocket]",
-			"/readoutput",
-			"readoutput",
-			"/next",
-			"shutdown",
-			"()\n",
-			"]Get next",
-			"Loading next",
-			"Server address",
-			"Load next",
-			"Refresh",
-			"Loading next block",
-			"]No session",
-			"SESSION",
-			"shutdown"
+			"python-tk"
 		],
 		"highlight": true,
 		"in_selection": false,
 		"preserve_case": false,
-		"regex": false,
+		"regex": true,
 		"replace_history":
 		[
+			"",
+			"\\n",
+			"\\n\\r",
+			"",
+			"init.sh",
 			"/home/ra000007/a03106/OpenFOAM/OpenFOAM-2.4.0/",
 			"<h4>$1</h4>",
 			"<h3>$1</h3>",
@@ -1055,9 +1068,17 @@
 		"whole_word": false,
 		"wrap": true
 	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
 	"incremental_find":
 	{
-		"height": 22.0
+		"height": 24.0
 	},
 	"input":
 	{
@@ -1111,9 +1132,10 @@
 		"height": 186.0
 	},
 	"pinned_build_system": "",
+	"project": "cloud.sublime-project",
 	"replace":
 	{
-		"height": 40.0
+		"height": 44.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1143,6 +1165,7 @@
 		],
 		"width": 392.0
 	},
+	"selected_group": 0,
 	"settings":
 	{
 	},

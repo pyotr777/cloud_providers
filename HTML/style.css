@@ -31,18 +31,12 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.3pt;
     position: relative;
-    top: -11pt;
+    top: -12pt;
     background-color: #fff;
-    height: 6pt;
-    float: left;
+    height: 7pt;
+    display: inline-block;
 }
 
-.groupname {
-    display:inline-block;
-    width: 110px;
-    font: 10pt "Helvetica", "Arial", sans-serif;
-    margin: 0;
-}
 
 .button {
 	background-color:#33bdef;
@@ -197,4 +191,8 @@ DC styles
     font-size: 12pt;
 }
 
+#dc_end {
+    clear:left;
+    width:100%;
+}
 

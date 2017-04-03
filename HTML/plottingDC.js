@@ -11,19 +11,25 @@ var quotes=[];
 var step = 24; // hours step
 var plot_period = 1; // months for plot "cost for rent period"
 
-function continue_proc(filter, arg) {
-	if (processing) return;
+
+function plotFilterPlots() {
+    if (processing) return;
     processing = true;
     ndx = crossfilter(offers_all);
-    plotTable();    
+    plotTable();
     plotScatter();
     plotPieGPUs();
-    plotProviders();  
+    plotProviders();
     console.log("Have "+ quotes.length+" quotes.")
 
     dc.renderAll();
     msg.innerHTML = "";
     processing = false;
+}
+
+
+function continue_proc(filter, arg) {
+
 }
 
 function plotTable() {
@@ -93,7 +99,7 @@ function plotProviders() {
 
 function plotScatter() {
 	console.log("plot scatter");
-	var scatterDim = ndx.dimension( function(d) { 
+	var scatterDim = ndx.dimension( function(d) {
 		return [ d.provider, d.cpu_p, d.shortname ];
 	});
 	var scatterGroup = scatterDim.group().reduceSum(function (d) { return d.gpu_p;});
@@ -103,13 +109,13 @@ function plotScatter() {
         return dc.scatterPlot(c)
         .symbol('circle')
         .symbolSize(10)
-        .highlightedSize(13)  
+        .highlightedSize(13)
     };
 
 	var max_cpu = 1.5; //scatterDim.top(1)[0].cpu_p;
     var max_gpu = 150; //scatterDim.top(1)[0].gpu_p;
-	
-	
+
+
 	chart
         .width(768)
         .height(350)
@@ -130,7 +136,7 @@ function plotScatter() {
         .keyAccessor(function(d) {return +d.key[1];})
         .shareColors(true)
         .renderHorizontalGridLines(true)
-        .renderVerticalGridLines(true)        
+        .renderVerticalGridLines(true)
   		.valueAccessor(function(d) {
   			return d.value;
   		})

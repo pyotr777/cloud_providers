@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF8">
     <meta charset="utf-8"/>
     <script src="plotly-latest.min.js"></script>
     <script type="text/javascript" src="http://tvinci.github.io/webs/js/d3.js"></script>
@@ -14,11 +15,11 @@
     <script src="plotting.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cabin+Condensed" />
     <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0/dc.min.css" media="screen" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
-    
+    <link rel="stylesheet" href="style.css">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 </head>
 <body>
@@ -29,49 +30,29 @@
 <p>You can find details for all offerings in the table at the bottom of this post. The data will be updated on (I hope) a regular basis.</p>
 <p>Last update 2017/03/30.</p>
 
-<div>
-    <div id="messages"></div>
-    <div id="dc_pie_gpus"></div>
-    <div id="dc_providers"></div>
-</div>
+
+<div id="messages"></div>
+
 <!--more-->
 
 
-<div class="grouptitle"><h3>Filter all graphs by number of GPUs and by Provider</h3>
-<div id="providers">
-    <!-- Horisontal graph of number of offers by provider -->
-</div>
+<div class="grouptitle">
+    <h3>Filter all graphs by number of GPUs and by Provider</h3>
+    <div style="float:none;"></div>
+    <div id="dc_pie_gpus"></div>
+    <div id="dc_providers"></div>
+
+    <div id="dc_end"></div>
 
 
-    <div class="buttons">
-        <div class="groupname">GPUs number</div>
-        <div class="button" id="all" onclick="continue_proc(resetFilters,'');">All</div>
-        <div class="button" id="gpu1" onclick="continue_proc(filterByGPU,'0-1');">1</div>
-        <div class="button" id="gpu2" onclick="continue_proc(filterByGPU,'2-3');">2-3</div>
-        <div class="button" id="gpu3" onclick="continue_proc(filterByGPU,'4-7');">4-7</div>
-        <div class="button" id="gpu4" onclick="continue_proc(filterByGPU,'8-15');">8-15</div>
-        <div class="button" id="gpu4" onclick="continue_proc(filterByGPU,'16-');">16 and more</div>
-    </div>
-    <div class="buttons">
-        <label class="groupname" for="providers-select">Providers</label>
-        <select  class="providers-select js-states form-control" multiple="multiple" id="providers_select" onchange="continue_proc(filterProviders,this.selectedOptions)">
-            <option value="amazon">Amazon</option>
-            <option value="softlayer">Softlayer</option>
-            <option value="nimbix">Nimbix</option>
-            <option value="cirrascale">Cirrascale</option>
-            <option value="sakura">Sakura</option>
-            <option value="leadertelecom">LeaderTelecom</option>
-            <option value="ms azure">Microsoft</option>
-            <option value="the university of tokyo">The University of Tokyo</option>
-        </select>
-    </div>
-    
-    
     <div id="scatter_performance" style="width: 100%; height: 420px;"></div>
     <div id="offer_details1" class="note"></div>
     <p>The below graph shows rent cost for a period. X-axis is rent period, Y-axis is rent cost.</p>
 <p>All offers are charged in time units: hours, weeks, months or years. If an offer is charged by months, for example, using it for 1 day will cost you monthly price. Thus, the below graph can be thought of as the minimum sum you have to pay for using offers for particular period.</p>
     <p>Clicking on the graph will change graphs below it to display costs for the selected period. You can also set the period with the buttons below.</p>
+
+
+
     <div id="costs_period" style="width: 100%; height: 400px;"></div>
     <div id="offer_details2" class="note"></div>
 

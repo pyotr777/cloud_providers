@@ -138,8 +138,8 @@ function resetFilters(arg) {
     offers = offers_all;
     offers_GPU_filtered = offers_all;
     GPUgroup_global = null;
-    var $selector = $("#providers_select").select2();
-    $selector.val(null).trigger("change");
+    //var $selector = $("#providers_select").select2();
+    //$selector.val(null).trigger("change");
 }
 
 
