@@ -18,6 +18,7 @@ var msg;
 
 var step = 24; // hours step
 var plot_period = 12; // months for plot "cost for rent period"
+var ndx = null;
 
 function plotFilterPlots() {
     console.log("Plotting DC plots.");
@@ -68,7 +69,12 @@ function plotPieGPUs() {
         .width(300).height(200)
         .dimension(GPUsDim)
         .group(gpus_total)
+        .ordinalColors(["#5fbab1","#a8b898","#f3b58a","#c290ba","#855aae","#004498","#0859a8","#006a95","#0094a3"])
         .legend(dc.legend().x(80).y(70).itemHeight(13).gap(5));
+        //.renderlet(function (chart) {
+        //    chart.selectAll("g.row text")
+        //    .attr("transform", "translate(-30, 0)");
+        //});
 
     GPUs_pie_chart.on('filtered.monitor', function(chart, filter) {
         // report the filter applied
@@ -83,24 +89,25 @@ function plotProviders() {
     console.log("Plot providers");
     var provider_dim = ndx.dimension( function (d) { return d.provider;});
     var provider_grp = provider_dim.group();
-    var chart = dc.rowChart("#dc_providers");
+    var chart = dc.barChart("#dc_providers");
     chart
-        .width(300)
+        .width(400)
         .height(200)
-        .x(d3.scale.linear().domain([6,20]))
+        .x(d3.scale.ordinal())
+        .xUnits(dc.units.ordinal)
+        .yAxisLabel("Number of offers")
         .elasticX(true)
         .dimension(provider_dim)
         .group(provider_grp)
+        .renderHorizontalGridLines(true)
         .ordinalColors(["#ee8735","#fbee00","#3e9a36","#00b1e7","#f0308b","#964fb7","#4f48d9","#ff5f51","#503a1b"])
         .colorAccessor( function (d) {
             if (typeof d === "undefined") return;
-            var c = getColor(d.key);
-            //console.log("color Accessor for row: " +c);
-            //console.log(d);
-            return +c;
+            var c = getColor(d.key.toLowerCase());
+            return c;
         })
         .ordering(function(d) { return getColor(d.key); })
-        //.renderlet(function (chart) { chart.selectAll("g.row text").attr("x","100"); })  // This moves text to the right, but works with delay
+
     chart.on('filtered.monitor', function(chart, filter) {
         // report the filter applied
         console.log("DC event");
