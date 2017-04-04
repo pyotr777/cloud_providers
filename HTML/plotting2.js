@@ -6,8 +6,6 @@ function ready() {
     msg.innerHTML = "Loading data...";
     getRates();
 
-    $("select").select2();
-    $("select").select2({  theme: "classic" });
 }
 
 document.addEventListener("DOMContentLoaded", ready);
@@ -21,14 +19,21 @@ var msg;
 var TimeCost;
 var FLOPsScale;
 
+function plotFilterPlots() {
+    console.log("Plotting DC plots.");
+    ndx = crossfilter(offers_all);
+    plotPieGPUs();
+    plotProviders();
+    dc.renderAll();
+}
 
 
 
-function continue_proc(filter, arg) {
+function continue_proc(filter, field, group) {
     if (processing) return; // Prevent onchange event loop for providers filter
     processing = true;
     var TFLOPs = 1000000000;
-    filter(arg);
+    filter(field, group);
     quotes=[];
     //plotFLOPsMoney(25000);
     plotTimeCost(TFLOPs);

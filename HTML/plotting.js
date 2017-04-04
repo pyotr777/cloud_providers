@@ -3,9 +3,6 @@ function ready() {
     msg = document.getElementById("messages");
     msg.innerHTML = "Loading data...";
     getRates();
-
-    $("select").select2();
-    $("select").select2({  theme: "classic" });
 }
 
 document.addEventListener("DOMContentLoaded", ready);
@@ -18,7 +15,7 @@ var msg;
 
 var step = 24; // hours step
 var plot_period = 12; // months for plot "cost for rent period"
-var ndx = null;
+
 
 function plotFilterPlots() {
     console.log("Plotting DC plots.");
@@ -57,65 +54,6 @@ function continue_proc(filter, field, group) {
     plotTable();
 
     processing = false;
-}
-
-
-function plotPieGPUs() {
-    console.log("Plot GPU numbers pie");
-    var GPUsDim = ndx.dimension( function(d) { return d.gpus;});
-    var gpus_total = GPUsDim.group();
-    var GPUs_pie_chart = dc.rowChart("#dc_pie_gpus");
-    GPUs_pie_chart
-        .width(300).height(200)
-        .dimension(GPUsDim)
-        .group(gpus_total)
-        .ordinalColors(other_colors)
-        .legend(dc.legend().x(80).y(70).itemHeight(13).gap(5));
-        //.renderlet(function (chart) {
-        //    chart.selectAll("g.row text")
-        //    .attr("transform", "translate(-30, 0)");
-        //});
-
-    GPUs_pie_chart.on('filtered.monitor', function(chart, filter) {
-        // report the filter applied
-        console.log("DC event");
-        console.log(chart.filters());
-        continue_proc(filterByGroup, "gpus", chart.filters());
-    });
-}
-
-
-function plotProviders() {
-    console.log("Plot providers");
-    var provider_dim = ndx.dimension( function (d) { return d.provider;});
-    var provider_grp = provider_dim.group();
-    var chart = dc.barChart("#dc_providers");
-    chart
-        .width(400)
-        .height(200)
-        .dimension(provider_dim)
-        .group(provider_grp)
-        .x(d3.scale.ordinal())
-        .xUnits(dc.units.ordinal)
-        .yAxisLabel("Number of offers")
-        .elasticX(true)
-        .renderHorizontalGridLines(true)
-        .colors(d3.scale.ordinal().domain(getArraySizeOfProviders())
-                .range(translateProvColors()))
-        .colorAccessor( function (d) {
-            if (typeof d === "undefined") return colors.length-1;
-            var c = getColor(d.key.toLowerCase());
-            return +c;
-        })
-        .ordering(function(d) { return getColor(d.key.toLowerCase()); })
-
-    chart.on('filtered.monitor', function(chart, filter) {
-        // report the filter applied
-        console.log("DC event");
-        console.log(chart.filters());
-        continue_proc(filterByGroup, "provider", chart.filters());
-    });
-
 }
 
 

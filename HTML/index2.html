@@ -2,48 +2,36 @@
 <html>
 <head>
     <meta charset="utf-8"/>
+    <script type="text/javascript" src="http://tvinci.github.io/webs/js/d3.js"></script>
+    <script type="text/javascript" src="https://rawgithub.com/jrideout/melt.js/master/melt.js"></script>
+    <script type="text/javascript" src="http://tvinci.github.io/webs/js/crossfilter.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0/dc.min.js"></script>
     <script src="plotly-latest.min.js"></script>
     <script src="PapaParse-4.1.2/papaparse.min.js"></script>
     <script src="money.min.js"></script>
     <script src="lib.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="plotting2.js"></script>
-    <link rel="stylesheet" href="style.css">
+
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cabin+Condensed" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0/dc.min.css" media="screen" />
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 [hoops name="plotting2"]
 <p>Continued from <a href="/cloud-gpu-providers-comparison/">the previous post</a>.</p>
 <p>Compare costs and calculation time for a fixed amount of calculations.</p>
-<p>Last update 2017/03/30.</p>
+<p>Last update 2017/04/04.</p>
 <!--more-->
 
-<div class="grouptitle"><h3>Filter all graphs by number of GPUs and by Provider</h3>
-    <div class="buttons">
-        <div class="groupname">GPUs number</div>
-        <div class="button" id="all" onclick="continue_proc(resetFilters,'');">All</div>
-        <div class="button" id="gpu1" onclick="continue_proc(filterByGPU,'0-1');">1</div>
-        <div class="button" id="gpu2" onclick="continue_proc(filterByGPU,'2-3');">2-3</div>
-        <div class="button" id="gpu3" onclick="continue_proc(filterByGPU,'4-7');">4-7</div>
-        <div class="button" id="gpu4" onclick="continue_proc(filterByGPU,'8-15');">8-15</div>
-        <div class="button" id="gpu4" onclick="continue_proc(filterByGPU,'16-');">16 and more</div>
-    </div>
-    <div class="buttons">
-        <label class="groupname" for="providers-select">Providers</label>
-        <select  class="providers-select js-states form-control" multiple="multiple" id="providers_select" onchange="continue_proc(filterProviders,this.selectedOptions)">
-            <option value="amazon">Amazon</option>
-            <option value="softlayer">Softlayer</option>
-            <option value="nimbix">Nimbix</option>
-            <option value="cirrascale">Cirrascale</option>
-            <option value="sakura">Sakura</option>
-            <option value="leadertelecom">LeaderTelecom</option>
-            <option value="ms azure">Microsoft</option>
-            <option value="the university of tokyo">The University of Tokyo</option>
-        </select>
-    </div>
+<div class="grouptitle">
+<h3>Filter all graphs by number of GPUs and by Provider</h3>
+    <div style="float:none;"></div>
+    <div id="dc_pie_gpus"><title>Offers by number of GPUs</title></div>
+    <div id="dc_providers"><title>Offers by provider</title></div>
+
+    <div id="dc_end"></div>
     <div id="messages"></div>
 
     <div id="GPUtime_x_cost" style="width: 100%; height: 600px;"></div>
