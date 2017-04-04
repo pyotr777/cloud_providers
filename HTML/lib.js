@@ -58,14 +58,22 @@ function getColor(prov) {
 // Return porivder colors [0] in one-dimention array
 function translateProvColors() {
     var cols = [];
-    //console.log(colors);
-    //console.log(colors.length);
     for (var j =0; j < colors.length; j++) {
         cols.push(colors[j][0]);
     }
+    //console.log("Translated colors");
+    //console.log(cols);
     return cols;
 }
 
+// Return array [0,1,2,3,...]
+function getArraySizeOfProviders() {
+    var arr = [];
+    for (var j =0; j < colors.length; j++) {
+        arr.push(j);
+    }
+    return arr;
+}
 
 var base_currency="USD";
 

@@ -93,20 +93,21 @@ function plotProviders() {
     chart
         .width(400)
         .height(200)
+        .dimension(provider_dim)
+        .group(provider_grp)
         .x(d3.scale.ordinal())
         .xUnits(dc.units.ordinal)
         .yAxisLabel("Number of offers")
         .elasticX(true)
-        .dimension(provider_dim)
-        .group(provider_grp)
         .renderHorizontalGridLines(true)
-        .ordinalColors(translateProvColors())
+        .colors(d3.scale.ordinal().domain(getArraySizeOfProviders())
+                .range(translateProvColors()))
         .colorAccessor( function (d) {
-            if (typeof d === "undefined") return;
+            if (typeof d === "undefined") return colors.length-1;
             var c = getColor(d.key.toLowerCase());
-            return c;
+            return +c;
         })
-        .ordering(function(d) { return getColor(d.key); })
+        .ordering(function(d) { return getColor(d.key.toLowerCase()); })
 
     chart.on('filtered.monitor', function(chart, filter) {
         // report the filter applied
@@ -329,7 +330,6 @@ function plotPeriod(period, step, thin, thick) {
         var prov = offers[j].provider.toLowerCase();
         var c = getColor(prov);
         if (last_prov != prov) {
-            //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
             last_prov = prov;
             color_i = 0;
             var legend_trace = {
@@ -351,7 +351,7 @@ function plotPeriod(period, step, thin, thick) {
                 color_i = 0;
             }
         }
-        console.log("Color for "+ offers[j].provider+"  offer is "+ color_i+ " ("+colors[c][color_i]+")");
+        //console.log("Color for "+ offers[j].provider+"  offer is "+ color_i+ " ("+colors[c][color_i]+")");
         var trace = {
             showlegend: false,
             legendgroup: prov,
