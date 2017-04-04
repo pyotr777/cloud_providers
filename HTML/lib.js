@@ -294,7 +294,7 @@ function applyFilter(offers_, fieldname, group) {
     var filtered_offers=[];
     for (var j=0; j < offers_.length; j++) {
         if (group.indexOf(offers_[j][fieldname]) >=0 ) {
-            filtered_offers.push(offers[j]);
+            filtered_offers.push(offers_[j]);
         }
     }
     return filtered_offers;
@@ -519,7 +519,7 @@ function getHours4Months(months) {
     if (months > 0) {
         hours += 24*accumulated_months_days[months-1];
     }
-    console.log("Count " +months_total+ " months as "+hours+" hours.")
+    //console.log("Count " +months_total+ " months as "+hours+" hours.")
     return hours;
 }
 
