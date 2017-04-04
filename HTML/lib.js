@@ -2,17 +2,70 @@
 
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
 var accumulated_months_days = [];
-var colors=[["#ee8735","#ec7c19","#ff8e1c","#f6a94a","#fcd18c"],  // Amazon
-           ["#fbee00","#f5e100","#fbee00","#fff57f","#fbf5a0"],  // Softlayer
-           ["#3e9a36","#27bc49","#3bd771","#7fd993","#a7d398"],  // Nimbix
-           ["#00b1e7","#11ade5","#51c1e4","#88dcef","#86e4fa"],  // Cirrascale
-           ["#f0308b","#ec5896","#ff5a9f","#fe7bb0","#fe9ec1"],  // Sakura
-           ["#964fb7","#8937a8","#9b49ba","#b970c4","#cb8edf"],  // LeaderTelecom
-           ["#4f48d9","#4341ae","#5560c8","#7182e7","#afbdf5"],  // Tokyo University
-           ["#ff5f51","#f5493c","#ff655c","#ff8a88","#ffb2b4"],  // MS
+var colors=[["#ffa45e"],  // Amazon
+           ["#ebc215"],  // Softlayer
+           ["#a6df9e"],  // Nimbix
+           ["#92e9ea"],  // Cirrascale
+           ["#ee9fd1"],  // Sakura
+           ["#c9ce7c"],  // LeaderTelecom
+           ["#87ce46"],  // Tokyo University
+           ["#fa7072"],  // MS
+           ["#78c4e5"], // Google
            ["#503a1b"]];  // other
-var cpu_color = {light: "rgba(0, 126, 208, 0.33)", dark: "#007ed0"};
-var gpu_color = {light: "rgba(252, 120, 36, 0.33)", dark: "#fc7824"};
+var cpu_color = {light: "rgba(138, 154, 244, 0.33)", dark: "#8a9af4"};
+var gpu_color = {light: "rgba(250, 196, 176, 0.33)", dark: "#fac4b0"};
+var other_colors = ["#fdd38d","#fac4b0","#f0b7ce","#d4abe2","#b5a4ea","#8a9af4"];
+
+function getColor(prov) {
+    var c = colors.length-1;
+    //console.log("Pick color for "+ offer.provider.toLowerCase());
+    switch (prov) {
+        case "amazon":
+            c = 0;
+            break;
+        case "softlayer":
+            c = 1;
+            break;
+        case "nimbix":
+            c = 2;
+            break;
+        case "cirrascale":
+            c = 3;
+            break;
+        case "sakura":
+            c = 4;
+            break;
+        case "leadertelecom":
+            c = 5;
+            break;
+        case "the university of tokyo":
+            c = 6;
+            break;
+        case "ms azure":
+            c = 7;
+            break;
+        case "google":
+            c = 8;
+            break;
+        default:
+            c = 9;
+            break;
+    };
+    return c;
+}
+
+
+// Return porivder colors [0] in one-dimention array
+function translateProvColors() {
+    var cols = [];
+    //console.log(colors);
+    //console.log(colors.length);
+    for (var j =0; j < colors.length; j++) {
+        cols.push(colors[j][0]);
+    }
+    return cols;
+}
+
 
 var base_currency="USD";
 
@@ -257,42 +310,6 @@ function convert2BaseCurrency(sum, currency) {
         }
     }
     return sum;
-}
-
-
-function getColor(prov) {
-    var c = colors.length-1;
-    //console.log("Pick color for "+ offer.provider.toLowerCase());
-    switch (prov) {
-        case "amazon":
-            c = 0;
-            break;
-        case "softlayer":
-            c = 1;
-            break;
-        case "nimbix":
-            c = 2;
-            break;
-        case "cirrascale":
-            c = 3;
-            break;
-        case "sakura":
-            c = 4;
-            break;
-        case "leadertelecom":
-            c = 5;
-            break;
-        case "the university of tokyo":
-            c = 6;
-            break;
-        case "ms azure":
-            c = 7;
-            break;
-        default:
-            c = 8;
-            break;
-    };
-    return c;
 }
 
 

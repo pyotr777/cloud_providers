@@ -69,7 +69,7 @@ function plotPieGPUs() {
         .width(300).height(200)
         .dimension(GPUsDim)
         .group(gpus_total)
-        .ordinalColors(["#5fbab1","#a8b898","#f3b58a","#c290ba","#855aae","#004498","#0859a8","#006a95","#0094a3"])
+        .ordinalColors(other_colors)
         .legend(dc.legend().x(80).y(70).itemHeight(13).gap(5));
         //.renderlet(function (chart) {
         //    chart.selectAll("g.row text")
@@ -100,7 +100,7 @@ function plotProviders() {
         .dimension(provider_dim)
         .group(provider_grp)
         .renderHorizontalGridLines(true)
-        .ordinalColors(["#ee8735","#fbee00","#3e9a36","#00b1e7","#f0308b","#964fb7","#4f48d9","#ff5f51","#503a1b"])
+        .ordinalColors(translateProvColors())
         .colorAccessor( function (d) {
             if (typeof d === "undefined") return;
             var c = getColor(d.key.toLowerCase());
@@ -116,8 +116,6 @@ function plotProviders() {
     });
 
 }
-
-
 
 
 function displayPerformanceScatter() {
@@ -166,7 +164,6 @@ function displayPerformanceScatter() {
             last_prov = prov;
             color_i = 0;
             var c = getColor(prov);
-            //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
             if (new_trace) {
                 traces.push(new_trace);
                 new_trace=null;
@@ -193,6 +190,7 @@ function displayPerformanceScatter() {
         new_trace.x.push(offers[j].cpu_p);
         new_trace.y.push(offers[j].gpu_p);
         new_trace.text.push(offers[j].provider + " " +offers[j].shortname)
+        //console.log("Color for "+ offers[j].provider+"  offer is "+ color_i+ " ("+colors[c][color_i]+")");
         new_trace.marker.color.push(colors[c][color_i]);
         new_trace.info.push(getOfferInfo(j));
 
@@ -321,7 +319,7 @@ function plotPeriod(period, step, thin, thick) {
     };
 
     var last_prov = ""
-    var color_i = 1;
+    var color_i = 0;
     for (j=0; j < offers.length; j++) {
         quote = getQuote(offers[j], step, period);
         var text = [];
@@ -333,7 +331,7 @@ function plotPeriod(period, step, thin, thick) {
         if (last_prov != prov) {
             //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
             last_prov = prov;
-            color_i = 1;
+            color_i = 0;
             var legend_trace = {
                 showlegend: true,
                 legendgroup: prov,
@@ -349,10 +347,11 @@ function plotPeriod(period, step, thin, thick) {
             traces.push(legend_trace)
         } else {
             color_i++;
-            if (color_i > 3) {
-                color_i = 1;
+            if (color_i >= colors[c].length) {
+                color_i = 0;
             }
         }
+        console.log("Color for "+ offers[j].provider+"  offer is "+ color_i+ " ("+colors[c][color_i]+")");
         var trace = {
             showlegend: false,
             legendgroup: prov,
