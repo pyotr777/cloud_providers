@@ -1,4 +1,6 @@
 // Library functions
+var CSV_file = "./cost-performance.csv";
+//var CSV_file = "/cloudproviders/cost-performance.csv";
 
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
 var accumulated_months_days = [];
@@ -93,8 +95,7 @@ var setRates = function(data) {
     //alert("£1 = $" + rate.toFixed(4));
     fx.rates[base_currency] = 1;
 
-    loadData("./cost-performance.csv");
-    //loadData("/cloudproviders/cost-performance.csv");
+    loadData(CSV_file);
 }
 
 
@@ -138,6 +139,13 @@ function processStaticData(results) {
     var provider_link = "";
     for (var i=start_row; i<rows; i++) {
         row = results.data[i];
+        // skip empty row
+        if (row.length < 2) {
+            continue;
+        }
+        if (row[2] == "" && row[4] == "") {
+            continue;
+        }
         if (provider !=  row[0] && row[0] !="") {
             provider = row[0];
             provider_link = row[1];
