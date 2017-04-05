@@ -203,7 +203,7 @@ function plotPieGPUs() {
     var gpus_total = GPUsDim.group();
     var GPUs_pie_chart = dc.rowChart("#dc_pie_gpus");
     GPUs_pie_chart
-        .width(300).height(200)
+        .width(250).height(200)
         .dimension(GPUsDim)
         .group(gpus_total)
         .ordinalColors(other_colors)
@@ -228,14 +228,13 @@ function plotProviders() {
     var provider_grp = provider_dim.group();
     var chart = dc.barChart("#dc_providers");
     chart
-        .width(400)
+        .width(300)
         .height(200)
         .dimension(provider_dim)
         .group(provider_grp)
         .x(d3.scale.ordinal())
         .xUnits(dc.units.ordinal)
         .yAxisLabel("Number of offers")
-        .elasticX(true)
         .renderHorizontalGridLines(true)
         .colors(d3.scale.ordinal().domain(getArraySizeOfProviders())
                 .range(translateProvColors()))
@@ -244,7 +243,22 @@ function plotProviders() {
             var c = getColor(d.key.toLowerCase());
             return +c;
         })
+        .renderTitle(true).title(function (d) {
+            return d.key;
+        })
+        .renderLabel(true)
+        .label(function (p) {
+            return p.x;
+        })
         .ordering(function(d) { return getColor(d.key.toLowerCase()); })
+        .margins({ bottom: 50})
+        .renderlet(function (chart) {
+            chart.selectAll('g.stack text')
+                .attr('transform', function (d) {
+                    console.log(d);
+                    return "rotate("+(2*d.y)+")";
+                });
+        });
 
     chart.on('filtered.monitor', function(chart, filter) {
         // report the filter applied

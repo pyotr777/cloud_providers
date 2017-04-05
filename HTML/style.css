@@ -212,6 +212,10 @@ div.dc-chart {
     transform: rotate(-30deg);
 }
 
+#dc_providers .stack._0 text {
+    font-family: "Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif;
+    font-size: 10pt;
+}
 
 #dc_end {
     clear:left;
