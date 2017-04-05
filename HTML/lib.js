@@ -2,6 +2,8 @@
 var CSV_file = "./cost-performance.csv";
 //var CSV_file = "/cloudproviders/cost-performance.csv";
 
+var last_update = "Last update: 2017/04/05";
+
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
 var accumulated_months_days = [];
 var colors=[["#ffa45e"],  // Amazon
@@ -102,6 +104,10 @@ var setRates = function(data) {
 // Refer to
 // http://openexchangerates.github.io/money.js/
 function getRates() {
+    msg = document.getElementById("messages");
+    msg.innerHTML = "Loading data...";
+    document.getElementById("updated").innerHTML = last_update;
+
     $.getJSON("http://api.fixer.io/latest?base="+base_currency, setRates);
 }
 

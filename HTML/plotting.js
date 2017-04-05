@@ -1,7 +1,5 @@
 
 function ready() {
-    msg = document.getElementById("messages");
-    msg.innerHTML = "Loading data...";
     getRates();
 }
 

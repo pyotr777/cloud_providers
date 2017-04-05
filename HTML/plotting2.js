@@ -1,11 +1,8 @@
 
 function ready() {
-    msg = document.getElementById("messages");
     TimeCost = document.getElementById('time_x_cost');
     FLOPsScale = document.getElementById('FLOPsScale');
-    msg.innerHTML = "Loading data...";
     getRates();
-
 }
 
 document.addEventListener("DOMContentLoaded", ready);
