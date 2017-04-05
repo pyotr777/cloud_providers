@@ -6,19 +6,19 @@ var last_update = "Last update: 2017/04/05";
 
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
 var accumulated_months_days = [];
-var colors=[["#ffa45e"],  // Amazon
-           ["#ebc215"],  // Softlayer
-           ["#a6df9e"],  // Nimbix
-           ["#92e9ea"],  // Cirrascale
-           ["#ee9fd1"],  // Sakura
-           ["#c9ce7c"],  // LeaderTelecom
-           ["#87ce46"],  // Tokyo University
-           ["#fa7072"],  // MS
-           ["#78c4e5"], // Google
-           ["#503a1b"]];  // other
-var cpu_color = {light: "rgba(138, 154, 244, 0.33)", dark: "#8a9af4"};
-var gpu_color = {light: "rgba(250, 196, 176, 0.33)", dark: "#fac4b0"};
-var other_colors = ["#fdd38d","#fac4b0","#f0b7ce","#d4abe2","#b5a4ea","#8a9af4"];
+var colors=[["#fd7b6e"],  // Amazon
+           ["#de7643"],  // Softlayer
+           ["#eeb85a"],  // Nimbix
+           ["#efda65"],  // Cirrascale
+           ["#eee892"],  // Sakura
+           ["#cddcbf"],  // LeaderTelecom
+           ["#79d0b6"],  // Tokyo University
+           ["#98e2e3"],  // MS
+           ["#6eabda"], // Google
+           ["#6c7abc"]];  // other
+var cpu_color = {light: "#c3d9f7", dark: "#7098d0"};
+var gpu_color = {light: "#ffdfb2", dark: "#f99f46"};
+var other_colors = ["#eca576","#ec9276","#e97e77","#d27486","#8e6bb4","#6766ce"];
 
 function getColor(prov) {
     var c = colors.length-1;
