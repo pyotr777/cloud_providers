@@ -68,8 +68,10 @@ function plotTimeCost(TFLOPs) {
             range: [0]
         },
         legend: {
-            x: 0.98,
+            x: 0.99,
+            xanchor: "right",
             y: 1,
+            bgcolor: "rgba(255,255,255,0.8)",
             bordercolor: "#eee",
             borderwidth: 1,
             font: {
@@ -169,8 +171,10 @@ function plotTimeCost(TFLOPs) {
             range: [0]
         },
         legend: {
-            x: 0.98,
+            x: 0.99,
+            xanchor: "right",
             y: 1,
+            bgcolor: "rgba(255,255,255,0.8)",
             bordercolor: "#eee",
             borderwidth: 1,
             font: {

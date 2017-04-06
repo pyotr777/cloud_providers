@@ -248,7 +248,7 @@ function plotPeriod(period, step, thin, thick) {
                 yanchor: "top",
                 x: 0.01,
                 tracegroupgap: 0,
-                bgcolor: 'rgba(255,255,255,0.1)'
+                bgcolor: 'rgba(255,255,255,0.6)'
             },
             margin: {
                 t: 40,

@@ -27,12 +27,13 @@ body {
     webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
+    background-color: rgba(239, 236, 233, 0.3);
 }
 .grouptitle h3 {
     margin: 0 0 0 12px;
     padding: 0 5px;
     font: 10pt "Helvetica", "Arial", sans-serif;
-    color: #eca576;
+    color: #6d6158;
     text-transform: uppercase;
     letter-spacing: 0.3pt;
     position: relative;
