@@ -22,6 +22,7 @@ function plotFilterPlots() {
     plotGPUperf();
     plotProviders();
     plotGPUmodels();
+    plotCPUperf();
     dc.renderAll();
 }
 

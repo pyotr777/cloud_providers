@@ -174,8 +174,9 @@ function processStaticData(results) {
             setup:     convert2BaseCurrency(row[9],row[10]),
             currency:  row[10],
             cpu_p:     row[11],
+            cpu_perf_group: getPerfGroup(row[11],[0.5,1,1.5,2,2.5]),
             gpu_p:     row[12],
-            gpu_perf_group: getGPUperfGroup(row[12]),
+            gpu_perf_group: getPerfGroup(row[12],[20,40,60,80,100]),
             gpu_model: row[13],
             gpus:      row[14],
             cpu_model: row[15],
@@ -199,6 +200,12 @@ function processStaticData(results) {
 
 
 var margins = { top:10, left:30, right:10, bottom: 21};
+// Plot size for small plots
+var width1 = 210;
+var height1 = 150;
+// Plot size for large plots
+var width2 = 250;
+var height2 = 335;
 
 
 function plotGPUs() {
@@ -207,7 +214,7 @@ function plotGPUs() {
     var gpus_total = GPUsDim.group();
     var GPUs_pie_chart = dc.rowChart("#dc_gpus");
     GPUs_pie_chart
-        .width(210).height(150)
+        .width(width1).height(height1)
         .dimension(GPUsDim)
         .group(gpus_total)
         .ordinalColors([gpu_color.dark])
@@ -232,13 +239,14 @@ function plotGPUperf() {
     var gpu_group = GPU_pefr_dim.group();
     var GPU_perf_chart = dc.rowChart("#dc_gpu_perf");
     GPU_perf_chart
-        .width(210).height(150)
+        .width(width1).height(height1)
         .dimension(GPU_pefr_dim)
         .group(gpu_group)
         .ordinalColors([gpu_color.dark])
         .margins(margins)
+        .label( function (d) { return d.key[0]})
         .legend(dc.legend().x(80).y(70).itemHeight(13).gap(5))
-        .ordering(function(d) { return perf_group_order(d.key); })
+        .ordering(function(d) { console.log(d); return d.key[1]; })
         .xAxis().ticks(4);
 
     GPU_perf_chart.on('filtered.monitor', function(chart, filter) {
@@ -246,6 +254,32 @@ function plotGPUperf() {
         console.log("DC event");
         console.log(chart.filters());
         continue_proc(filterByGroup, "gpu_perf_group", chart.filters());
+    });
+}
+
+function plotCPUperf() {
+    console.log("Plot CPU performance");
+    var CPU_pefr_dim = ndx.dimension( function(d) {
+        return d.cpu_perf_group;
+    });
+    var cpu_group = CPU_pefr_dim.group();
+    var CPU_perf_chart = dc.rowChart("#dc_cpu_perf");
+    CPU_perf_chart
+        .width(width1).height(height1)
+        .dimension(CPU_pefr_dim)
+        .group(cpu_group)
+        .ordinalColors([cpu_color.dark])
+        .margins(margins)
+        .label( function (d) { return d.key[0]})
+        .legend(dc.legend().x(80).y(70).itemHeight(13).gap(5))
+        .ordering(function(d) { console.log(d); return d.key[1]; })
+        .xAxis().ticks(4);
+
+    CPU_perf_chart.on('filtered.monitor', function(chart, filter) {
+        // report the filter applied
+        console.log("DC event");
+        console.log(chart.filters());
+        continue_proc(filterByGroup, "cpu_perf_group", chart.filters());
     });
 }
 
@@ -259,8 +293,7 @@ function plotGPUmodels() {
     var grp = model_dim.group();
     var chart = dc.rowChart("#dc_gpu_models");
     chart
-        .width(250)
-        .height(336)
+        .width(width2).height(height2)
         .dimension(model_dim)
         .group(grp)
         .margins(margins)
@@ -282,8 +315,7 @@ function plotProviders() {
     var provider_grp = provider_dim.group();
     var chart = dc.rowChart("#dc_providers");
     chart
-        .width(250)
-        .height(336)
+        .width(width2).height(height2)
         .dimension(provider_dim)
         .group(provider_grp)
         .margins(margins)
@@ -305,33 +337,19 @@ function plotProviders() {
 }
 
 
-// Return name of GPU performance group for given offer
-function getGPUperfGroup(gpu_p) {
-    var groupSplit = [20,40,60,80,100];
-    var groupNames = ["<20", "20-40", "40-60", "60-80", "80-100", ">100"];
+// Return tuple: first element is a name of performance group,
+// second element is the group ordinal number (0,1,2,3...)
+function getPerfGroup(perf, groupSplit) {
     var i = 0;
-    for (i = 0; i < groupSplit.length; i++ ) {
-        if (gpu_p < groupSplit[i]) {
-            return groupNames[i];
+    if (perf < groupSplit[0]) { return ["<"+groupSplit[0],0]; }
+    for (i = 1; i < groupSplit.length; i++ ) {
+        if (perf < groupSplit[i]) {
+            return [groupSplit[i-1]+"-"+groupSplit[i], i];
         }
     }
-    return groupNames[i];
+    return [">"+groupSplit[i-1], i];
 }
 
-
-// Return order of the group for graphs
-function perf_group_order(group) {
-    if (group.indexOf("<") >= 0) {
-        return 0;
-    }
-    if (group.indexOf(">") >= 0) {
-        group = group.replace(">","");
-        var i = parseInt(group);
-        return i + 1;
-    }
-    var i = parseInt(group);
-    return i;
-}
 
 function getOfferInfo(j) {
     var memory = offers[j].memory;
@@ -347,16 +365,18 @@ function getOfferInfo(j) {
 // "Filters" offers: save filtered list in "offers" global variable.
 function resetFilters(arg) {
     offers = offers_all;
-    GPU_filters = [];
-    provider_filters = [];
-    GPU_perf_filter = [];
-    GPU_modesl_filter = [];
+    for (var k in filters_obj) {
+        filters_obj[k] = [];
+    }
 }
 
-var GPU_filters = [];
-var provider_filters = [];
-var GPU_perf_filter = [];
-var GPU_model_filter = [];
+var filters_obj = {
+        "gpus": [],
+        "provider": [],
+        "gpu_perf_group" : [],
+        "gpu_model": [],
+        "cpu_perf_group": []
+    }
 
 
 // Filters offers: save filtered list in "offers" global variable.
@@ -365,24 +385,11 @@ var GPU_model_filter = [];
 // Filter offers_all by applying 2 filters one by one.
 function filterByGroup(fieldname, group) {
     console.log("Filtering by "+fieldname+" : "+ group);
-    switch (fieldname) {
-        case "gpus":
-            GPU_filters = group;
-            break;
-        case "provider":
-            provider_filters = group;
-            break;
-        case "gpu_perf_group":
-            GPU_perf_filter = group;
-            break;
-        case "gpu_model":
-            GPU_model_filter = group;
-            break;
+    filters_obj[fieldname] = group;
+    offers = offers_all;
+    for (var k in filters_obj) {
+        offers = applyFilter(offers, k, filters_obj[k]);
     }
-    offers = applyFilter(offers_all, "gpus", GPU_filters);
-    offers = applyFilter(offers, "provider", provider_filters);
-    offers = applyFilter(offers, "gpu_perf_group", GPU_perf_filter);
-    offers = applyFilter(offers, "gpu_model", GPU_model_filter);
 }
 
 
