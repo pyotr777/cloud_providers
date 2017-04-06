@@ -203,11 +203,12 @@ function plotPieGPUs() {
     var gpus_total = GPUsDim.group();
     var GPUs_pie_chart = dc.rowChart("#dc_pie_gpus");
     GPUs_pie_chart
-        .width(250).height(200)
+        .width(210).height(200)
         .dimension(GPUsDim)
         .group(gpus_total)
         .ordinalColors(other_colors)
-        .legend(dc.legend().x(80).y(70).itemHeight(13).gap(5));
+        .legend(dc.legend().x(80).y(70).itemHeight(13).gap(5))
+        .xAxis().ticks(4);
         //.renderlet(function (chart) {
         //    chart.selectAll("g.row text")
         //    .attr("transform", "translate(-30, 0)");
@@ -226,16 +227,16 @@ function plotProviders() {
     console.log("Plot providers");
     var provider_dim = ndx.dimension( function (d) { return d.provider;});
     var provider_grp = provider_dim.group();
-    var chart = dc.barChart("#dc_providers");
+    var chart = dc.rowChart("#dc_providers");
     chart
-        .width(300)
-        .height(200)
+        .width(250)
+        .height(300)
         .dimension(provider_dim)
         .group(provider_grp)
-        .x(d3.scale.ordinal())
-        .xUnits(dc.units.ordinal)
-        .yAxisLabel("Number of offers")
-        .renderHorizontalGridLines(true)
+        //.x(d3.scale.ordinal())
+        //.xUnits(dc.units.ordinal)
+        //.yAxisLabel("Number of offers")
+        //.renderHorizontalGridLines(true)
         .colors(d3.scale.ordinal().domain(getArraySizeOfProviders())
                 .range(translateProvColors()))
         .colorAccessor( function (d) {
@@ -243,22 +244,7 @@ function plotProviders() {
             var c = getColor(d.key.toLowerCase());
             return +c;
         })
-        .renderTitle(true).title(function (d) {
-            return d.key;
-        })
-        .renderLabel(true)
-        .label(function (p) {
-            return p.x;
-        })
         .ordering(function(d) { return getColor(d.key.toLowerCase()); })
-        .margins({ bottom: 50})
-        .renderlet(function (chart) {
-            chart.selectAll('g.stack text')
-                .attr('transform', function (d) {
-                    console.log(d);
-                    return "rotate("+(2*d.y)+")";
-                });
-        });
 
     chart.on('filtered.monitor', function(chart, filter) {
         // report the filter applied
