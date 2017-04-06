@@ -318,6 +318,11 @@ function plotPeriod(period, step, thin, thick) {
         traces.push(trace);
         quotes.push(quote);
     }
+    if ( period_plot_layout.annotations ) {
+        console.log("Annotations: " + period_plot_layout.annotations.length);
+        period_plot_layout.annotations = [];
+    }
+
     Plotly.newPlot("costs_period", traces, period_plot_layout);
 
     var myPlot = document.getElementById('costs_period');
@@ -327,6 +332,7 @@ function plotPeriod(period, step, thin, thick) {
         //console.log(data);
         var pts = '';
         var i=0;
+        Plotly.relayout('costs_period', 'annotations[0]', 'remove');
         //console.log("Clicked: ");
         //console.log(data.points[i]);
         displaySlice(data.points[i].pointNumber);
@@ -338,13 +344,13 @@ function plotPeriod(period, step, thin, thick) {
             ax: 0,
             ay: -250,
             arrowwidth: 1,
-            arrowcolor: '#aaaaaa',
+            arrowcolor: '#333333',
             borderwidth: 0,
             borderpad: 0,
             text: ''
         };
 
-        Plotly.relayout('costs_period', 'annotations[0]', 'remove');
+
         Plotly.relayout('costs_period', 'annotations[0]', newannotation);
     });
 
