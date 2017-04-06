@@ -175,6 +175,7 @@ function processStaticData(results) {
             currency:  row[10],
             cpu_p:     row[11],
             gpu_p:     row[12],
+            gpu_perf_group: getGPUperfGroup(row[12]),
             gpu_model: row[13],
             gpus:      row[14],
             cpu_model: row[15],
@@ -197,28 +198,80 @@ function processStaticData(results) {
 }
 
 
+var margins = { top:10, left:30, right:10, bottom: 21};
+
+
 function plotGPUs() {
-    console.log("Plot GPU numbers pie");
+    console.log("Plot GPU numbers");
     var GPUsDim = ndx.dimension( function(d) { return d.gpus;});
     var gpus_total = GPUsDim.group();
-    var GPUs_pie_chart = dc.rowChart("#dc_pie_gpus");
+    var GPUs_pie_chart = dc.rowChart("#dc_gpus");
     GPUs_pie_chart
-        .width(210).height(200)
+        .width(210).height(150)
         .dimension(GPUsDim)
         .group(gpus_total)
-        .ordinalColors(other_colors)
+        .ordinalColors([gpu_color.dark])
+        .margins(margins)
         .legend(dc.legend().x(80).y(70).itemHeight(13).gap(5))
         .xAxis().ticks(4);
-        //.renderlet(function (chart) {
-        //    chart.selectAll("g.row text")
-        //    .attr("transform", "translate(-30, 0)");
-        //});
 
     GPUs_pie_chart.on('filtered.monitor', function(chart, filter) {
         // report the filter applied
         console.log("DC event");
         console.log(chart.filters());
         continue_proc(filterByGroup, "gpus", chart.filters());
+    });
+}
+
+
+function plotGPUperf() {
+    console.log("Plot GPU performance");
+    var GPU_pefr_dim = ndx.dimension( function(d) {
+        return d.gpu_perf_group;
+    });
+    var gpu_group = GPU_pefr_dim.group();
+    var GPU_perf_chart = dc.rowChart("#dc_gpu_perf");
+    GPU_perf_chart
+        .width(210).height(150)
+        .dimension(GPU_pefr_dim)
+        .group(gpu_group)
+        .ordinalColors([gpu_color.dark])
+        .margins(margins)
+        .legend(dc.legend().x(80).y(70).itemHeight(13).gap(5))
+        .ordering(function(d) { return perf_group_order(d.key); })
+        .xAxis().ticks(4);
+
+    GPU_perf_chart.on('filtered.monitor', function(chart, filter) {
+        // report the filter applied
+        console.log("DC event");
+        console.log(chart.filters());
+        continue_proc(filterByGroup, "gpu_perf_group", chart.filters());
+    });
+}
+
+var colorScale = d3.scale.linear()
+  .domain([0, 30])
+  .range(['#6766ce', '#eca576']);
+
+function plotGPUmodels() {
+    console.log("Plot GPU models");
+    var model_dim = ndx.dimension( function (d) { return d.gpu_model;});
+    var grp = model_dim.group();
+    var chart = dc.rowChart("#dc_gpu_models");
+    chart
+        .width(250)
+        .height(336)
+        .dimension(model_dim)
+        .group(grp)
+        .margins(margins)
+        .ordinalColors([gpu_color.dark])
+    chart.xAxis().ticks(5);
+
+    chart.on('filtered.monitor', function(chart, filter) {
+        // report the filter applied
+        console.log("DC event");
+        console.log(chart.filters());
+        continue_proc(filterByGroup, "gpu_model", chart.filters());
     });
 }
 
@@ -230,13 +283,10 @@ function plotProviders() {
     var chart = dc.rowChart("#dc_providers");
     chart
         .width(250)
-        .height(300)
+        .height(336)
         .dimension(provider_dim)
         .group(provider_grp)
-        //.x(d3.scale.ordinal())
-        //.xUnits(dc.units.ordinal)
-        //.yAxisLabel("Number of offers")
-        //.renderHorizontalGridLines(true)
+        .margins(margins)
         .colors(d3.scale.ordinal().domain(getArraySizeOfProviders())
                 .range(translateProvColors()))
         .colorAccessor( function (d) {
@@ -252,10 +302,36 @@ function plotProviders() {
         console.log(chart.filters());
         continue_proc(filterByGroup, "provider", chart.filters());
     });
-
 }
 
 
+// Return name of GPU performance group for given offer
+function getGPUperfGroup(gpu_p) {
+    var groupSplit = [20,40,60,80,100];
+    var groupNames = ["<20", "20-40", "40-60", "60-80", "80-100", ">100"];
+    var i = 0;
+    for (i = 0; i < groupSplit.length; i++ ) {
+        if (gpu_p < groupSplit[i]) {
+            return groupNames[i];
+        }
+    }
+    return groupNames[i];
+}
+
+
+// Return order of the group for graphs
+function perf_group_order(group) {
+    if (group.indexOf("<") >= 0) {
+        return 0;
+    }
+    if (group.indexOf(">") >= 0) {
+        group = group.replace(">","");
+        var i = parseInt(group);
+        return i + 1;
+    }
+    var i = parseInt(group);
+    return i;
+}
 
 function getOfferInfo(j) {
     var memory = offers[j].memory;
@@ -273,10 +349,14 @@ function resetFilters(arg) {
     offers = offers_all;
     GPU_filters = [];
     provider_filters = [];
+    GPU_perf_filter = [];
+    GPU_modesl_filter = [];
 }
 
 var GPU_filters = [];
 var provider_filters = [];
+var GPU_perf_filter = [];
+var GPU_model_filter = [];
 
 
 // Filters offers: save filtered list in "offers" global variable.
@@ -292,9 +372,17 @@ function filterByGroup(fieldname, group) {
         case "provider":
             provider_filters = group;
             break;
+        case "gpu_perf_group":
+            GPU_perf_filter = group;
+            break;
+        case "gpu_model":
+            GPU_model_filter = group;
+            break;
     }
     offers = applyFilter(offers_all, "gpus", GPU_filters);
     offers = applyFilter(offers, "provider", provider_filters);
+    offers = applyFilter(offers, "gpu_perf_group", GPU_perf_filter);
+    offers = applyFilter(offers, "gpu_model", GPU_model_filter);
 }
 
 

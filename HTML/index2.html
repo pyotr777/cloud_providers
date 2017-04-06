@@ -26,21 +26,25 @@
 <!--more-->
 
 <div class="grouptitle">
-<h3>Filter all graphs by number of GPUs and by Provider</h3>
+    <h3>Filter all graphs below using these plots</h3>
     <div style="float:none;"></div>
-    <div id="dc_pie_gpus"><title>Offers by number of GPUs</title></div>
+    <div class="dc_group">
+        <div id="dc_gpus"><title>Offers by number of GPUs</title></div>
+        <div id="dc_gpu_perf"><title>Offers by total GPU performance</title></div>
+    </div>
+    <div id="dc_gpu_models"><title>Offers by GPU model</title></div>
     <div id="dc_providers"><title>Offers by provider</title></div>
 
     <div id="dc_end"></div>
-    <div id="messages"></div>
+</div>
+<div id="messages"></div>
 
-    <div id="GPUtime_x_cost" style="width: 100%; height: 600px;"></div>
-    <div id="CPUtime_x_cost" style="width: 100%; height: 600px;"></div>
+<div id="GPUtime_x_cost" style="width: 100%; height: 600px;"></div>
+<div id="CPUtime_x_cost" style="width: 100%; height: 600px;"></div>
 
-    <div id="FLOPsScale" style="width: 100%;"></div>
+<div id="FLOPsScale" style="width: 100%;"></div>
     <!--div id="flops_4money" style="width: 100%; height: 600px;"></div-->
 
-</div>
 
 <div class="note"><p>* All sums are in USD. Offers based on other currencies are converted using today's rates from <a href=http://www.ecb.europa.eu/stats/exchange/eurofxref/html/index.en.html target=_blank>European Central Bank</a>:<br>
     <div id="rates"></div>

@@ -31,48 +31,53 @@
 <!--more-->
 
 <div class="grouptitle">
-    <h3>Filter all graphs by number of GPUs and by Provider</h3>
+    <h3>Filter all graphs below using these plots</h3>
     <div style="float:none;"></div>
-    <div id="dc_pie_gpus"><title>Offers by number of GPUs</title></div>
+    <div class="dc_group">
+        <div id="dc_gpus"><title>Offers by number of GPUs</title></div>
+        <div id="dc_gpu_perf"><title>Offers by total GPU performance</title></div>
+    </div>
+    <div id="dc_gpu_models"><title>Offers by GPU model</title></div>
     <div id="dc_providers"><title>Offers by provider</title></div>
 
     <div id="dc_end"></div>
-    <div id="messages"></div>
-
-    <div id="scatter_performance" style="width: 100%; height: 420px;"></div>
-    <div id="offer_details1" class="note"></div>
-    <p>The below graph shows rent cost for a period. X-axis is rent period, Y-axis is rent cost.</p>
-<p>All offers are charged in time units: hours, weeks, months or years. If an offer is charged by months, for example, using it for 1 day will cost you monthly price. Thus, the below graph can be thought of as the minimum sum you have to pay for using offers for particular period.</p>
-    <p>Clicking on the graph will change graphs below it to display costs for the selected period. You can also set the period with the buttons below.</p>
-
-
-
-    <div id="costs_period" style="width: 100%; height: 400px;"></div>
-    <div id="offer_details2" class="note"></div>
-
-
-    <div class="grouptitle"><h3>Set period for below graphs</h3>
-        <div class="buttons">
-            <div class="groupname">Display for period</div>
-            <div class="button" id="day" onclick="displayTime('1 day');">1 day</div>
-            <div class="button" id="week" onclick="displayTime('7 days');">1 week</div>
-            <div class="button" id="month" onclick="displayTime('1 month');">1 month</div>
-            <div class="button" id="6months" onclick="displayTime('6 months');">6 months</div>
-            <div class="button" id="12months" onclick="displayTime('1 year');">1 year</div>
-        </div>
-        <p>The below graph shows total costs if rented for given period.</p>
-        <div id="slice_cost" style="width: 100%; height: 500px;"></div>
-        <div id="offer_details3" class="note"></div>
-        <p id="slice_cost_monthly_text">The below graph shows per month costs if rented for <span id="r_period"></span>.</p>
-        <div id="slice_cost_monthly" style="width: 100%; height: 0px;"></div>
-
-        <div id="slice_cost_perf" style="width: 100%; height: 500px;"></div>
-        <div id="offer_details4" class="note"></div>
-    </div>
-
-    <h1 class="tableTitle">Offer Details</h1>
-    <div id="table_div"></div>
 </div>
+<div id="messages"></div>
+
+<div id="scatter_performance" style="width: 100%; height: 420px;"></div>
+<div id="offer_details1" class="note"></div>
+<p>The below graph shows rent cost for a period. X-axis is rent period, Y-axis is rent cost.</p>
+<p>All offers are charged in time units: hours, weeks, months or years. If an offer is charged by months, for example, using it for 1 day will cost you monthly price. Thus, the below graph can be thought of as the minimum sum you have to pay for using offers for particular period.</p>
+<p>Clicking on the graph will change graphs below it to display costs for the selected period. You can also set the period with the buttons below.</p>
+
+
+
+<div id="costs_period" style="width: 100%; height: 400px;"></div>
+<div id="offer_details2" class="note"></div>
+
+
+<div class="grouptitle"><h3>Set period for below graphs</h3>
+    <div class="buttons">
+        <div class="groupname">Display for period</div>
+        <div class="button" id="day" onclick="displayTime('1 day');">1 day</div>
+        <div class="button" id="week" onclick="displayTime('7 days');">1 week</div>
+        <div class="button" id="month" onclick="displayTime('1 month');">1 month</div>
+        <div class="button" id="6months" onclick="displayTime('6 months');">6 months</div>
+        <div class="button" id="12months" onclick="displayTime('1 year');">1 year</div>
+    </div>
+    <p>The below graph shows total costs if rented for given period.</p>
+    <div id="slice_cost" style="width: 100%; height: 500px;"></div>
+    <div id="offer_details3" class="note"></div>
+    <p id="slice_cost_monthly_text">The below graph shows per month costs if rented for <span id="r_period"></span>.</p>
+    <div id="slice_cost_monthly" style="width: 100%; height: 0px;"></div>
+
+    <div id="slice_cost_perf" style="width: 100%; height: 500px;"></div>
+    <div id="offer_details4" class="note"></div>
+</div>
+
+<h1 class="tableTitle">Offer Details</h1>
+<div id="table_div"></div>
+
 
 <div class="note">
 

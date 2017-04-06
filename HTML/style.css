@@ -222,3 +222,11 @@ div.dc-chart {
     width:100%;
 }
 
+.dc_group {
+    float: left;
+}
+
+#dc_gpus {
+    float:none;
+}
+

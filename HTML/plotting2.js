@@ -20,7 +20,9 @@ function plotFilterPlots() {
     console.log("Plotting DC plots.");
     ndx = crossfilter(offers_all);
     plotGPUs();
+    plotGPUperf();
     plotProviders();
+    plotGPUmodels();
     dc.renderAll();
 }
 
