@@ -295,7 +295,7 @@ function plotMemory() {
         .width(width1).height(height1)
         .dimension(memory_dim)
         .group(grp)
-        .ordinalColors([cpu_color.dark])
+        .ordinalColors([other_colors[0]])
         .margins(margins)
         .label( function (d) { return d.key[0]})
         .legend(dc.legend().x(80).y(70).itemHeight(13).gap(5))

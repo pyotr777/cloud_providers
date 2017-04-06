@@ -23,6 +23,8 @@ function plotFilterPlots() {
     plotGPUperf();
     plotProviders();
     plotGPUmodels();
+    plotCPUperf();
+    plotMemory();
     dc.renderAll();
 }
 
@@ -51,6 +53,7 @@ function plotTimeCost(TFLOPs) {
             tickangle: 45,
             tickvals: [],
             ticktext: [],
+            nticks: 5,
             tickfont: {
                 family: '"Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif',
                 size: 11
@@ -78,6 +81,7 @@ function plotTimeCost(TFLOPs) {
     var last_prov="";
     var color_i = 0;
     var max_y = 0;
+    var max_x = 0;
     var new_trace  = {};
     //console.log("New trace:" + new_trace+" Not empty? " + (!jQuery.isEmptyObject(new_trace)));
     for (j=0; j < offers.length; j++) {
@@ -116,17 +120,25 @@ function plotTimeCost(TFLOPs) {
         var time = Math.ceil(TFLOPs / offers[j].gpu_p / 3600); // Calculation time in hours
         var cost = getQuote4Hours(offers[j], time);
         new_trace.x.push(time);
+        if (time > max_x) {
+            max_x = time;
+        }
         new_trace.y.push(cost);
         if (cost > max_y) {
             max_y = Math.ceil(cost*1.1);
         }
-        layout.xaxis.tickvals.push(time);
-        layout.xaxis.ticktext.push(hoursToHuman(time, true)[1]);
+
         new_trace.text.push(offers[j].provider + " " + offers[j].name + " ("+offers[j].shortname+")")
         new_trace.marker.color.push(colors[c][color_i]);
         //console.log(offers[j].shortname + " color:" + c + "x"+color_i);
     }
     layout.yaxis.range.push(max_y);
+    var ticks = 10;
+    var tick_interval = Math.ceil(max_x / ticks);
+    for (var i=0; i <= max_x; i+=tick_interval) {
+        layout.xaxis.tickvals.push(i);
+        layout.xaxis.ticktext.push(hoursToHuman(i, true)[1]);
+    }
     //console.log("MAX Y set to " + max_y);
     if (new_trace) {
         traces.push(new_trace);
@@ -171,6 +183,7 @@ function plotTimeCost(TFLOPs) {
     last_prov="";
     color_i = 0;
     max_y = 0;
+    max_x = 0;
     var new_trace_cpu = {};
 
     for (j=0; j < offers.length; j++) {
@@ -209,18 +222,25 @@ function plotTimeCost(TFLOPs) {
         var time = Math.ceil(TFLOPs / offers[j].cpu_p / 3600); // Calculation time in hours
         var cost = getQuote4Hours(offers[j], time);
         new_trace_cpu.x.push(time);
+        if (time > max_x) {
+            max_x = time;
+        }
         new_trace_cpu.y.push(cost);
         if (cost > max_y) {
             max_y = Math.ceil(cost*1.1);
         }
-        cpu_layout.xaxis.tickvals.push(time);
-        cpu_layout.xaxis.ticktext.push(hoursToHuman(time, true)[1]);
         new_trace_cpu.text.push(offers[j].provider + " " + offers[j].name + " ("+offers[j].shortname+")")
         new_trace_cpu.marker.color.push(colors[c][color_i]);
         //console.log(offers[j].shortname + " color:" + c + "x"+color_i);
     }
     cpu_layout.yaxis.range.push(max_y);
-    //console.log("MAX Y set to " + max_y);
+
+    tick_interval = Math.ceil(max_x / ticks);
+    for (var i=0; i <= max_x; i+=tick_interval) {
+        cpu_layout.xaxis.tickvals.push(i);
+        cpu_layout.xaxis.ticktext.push(hoursToHuman(i, true)[1]);
+    }
+
     if (new_trace_cpu) {
         cpu_traces.push(new_trace_cpu);
     }

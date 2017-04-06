@@ -67,7 +67,20 @@ function displayPerformanceScatter() {
         title:'CPU and GPU performance** (TFlops), memory volume (GB)',
         xaxis: {title: 'CPU performance (TFlops)'},
         yaxis: {title: 'GPU performance (TFlops)'},
-        hovermode: 'closest'
+        hovermode: 'closest',
+        legend: {
+            y: 1,
+            yanchor: "top",
+            x: 0.01,
+            tracegroupgap: 0,
+            bgcolor: 'rgba(255,255,255,0.1)'
+        },
+        margin: {
+            t: 40,
+            r: 10,
+            l: 70,
+            pad: 0
+        }
     };
     console.log("in displayPerformanceScatter has " + offers.length + " filtered offers");
     var traces = [];
@@ -118,7 +131,7 @@ function displayPerformanceScatter() {
                 text: [],
                 marker: {
                     color: [],
-                    size: 12
+                    size: 14
                 },
                 info: []
             }
@@ -231,16 +244,24 @@ function plotPeriod(period, step, thin, thick) {
             showlegend: true,
             legend: {
                 orientation: "v",
-                y: 0,
-                x: 1
+                y: 1,
+                yanchor: "top",
+                x: 0.01,
+                tracegroupgap: 0,
+                bgcolor: 'rgba(255,255,255,0.1)'
             },
             margin: {
                 t: 40,
+                r: 10,
+                l: 80,
                 pad: 0
             },
             xaxis: {
-                tickangle: 45,
-                tickvals: [0, Math.floor(24*7),
+                showline: true,
+                showgrid: true,
+                ticklen: 5,
+                tickangle: -45,
+                tickvals: [Math.floor(24*7),
                     Math.floor(24*accumulated_months_days[0]),
                     Math.floor(24*accumulated_months_days[1]),
                     Math.floor(24*accumulated_months_days[2]),
@@ -253,9 +274,11 @@ function plotPeriod(period, step, thin, thick) {
                     Math.floor(24*accumulated_months_days[9]),
                     Math.floor(24*accumulated_months_days[10]),
                     Math.floor(24*accumulated_months_days[11]) ],
-                ticktext: ["0", "1 week", "1 month", "2 months", "3 months", "4 months", "5 months", "6 months", "7 months", "8 months", "9 months", "10 months", "11 months", "12 months"]
+                ticktext: ["1 week", "1 month", "2 months", "3 months", "4 months", "5 months", "6 months", "7 months", "8 months", "9 months", "10 months", "11 months", "12 months"]
             },
             yaxis: {
+                rangemode: "tozero",
+                showline: true,
                 tickprefix: "$",
                 hoverformat: ',.2f',
                 exponentformat: "none"
