@@ -174,14 +174,15 @@ function processStaticData(results) {
             setup:     convert2BaseCurrency(row[9],row[10]),
             currency:  row[10],
             cpu_p:     row[11],
-            cpu_perf_group: getPerfGroup(row[11],[0.5,1,1.5,2,2.5]),
+            cpu_perf_group: getGroup(row[11],[0.5,1,1.5,2,2.5]),
             gpu_p:     row[12],
-            gpu_perf_group: getPerfGroup(row[12],[20,40,60,80,100]),
+            gpu_perf_group: getGroup(row[12],[20,40,60,80,100]),
             gpu_model: row[13],
             gpus:      row[14],
             cpu_model: row[15],
             cpus:      row[16],
             memory:    row[17],
+            memory_group: getGroup(row[17],[50,100,200,300,500,750,1000]),
             hdd1:      row[18],
             hdd1_vol:  row[19],
             hdd2:      row[20],
@@ -191,6 +192,7 @@ function processStaticData(results) {
             notes:     row[24]
         }
         offers_all.push(offer);
+        console.log(offer);
     }
     plotFilterPlots();
     continue_proc(resetFilters, "");
@@ -199,13 +201,13 @@ function processStaticData(results) {
 }
 
 
-var margins = { top:10, left:30, right:10, bottom: 21};
+var margins = { top:10, left:10, right:10, bottom: 20};
 // Plot size for small plots
-var width1 = 210;
+var width1 = 160;
 var height1 = 150;
 // Plot size for large plots
-var width2 = 250;
-var height2 = 335;
+var width2 = 220;
+var height2 = 330;
 
 
 function plotGPUs() {
@@ -246,7 +248,7 @@ function plotGPUperf() {
         .margins(margins)
         .label( function (d) { return d.key[0]})
         .legend(dc.legend().x(80).y(70).itemHeight(13).gap(5))
-        .ordering(function(d) { console.log(d); return d.key[1]; })
+        .ordering(function(d) { return d.key[1]; })
         .xAxis().ticks(4);
 
     GPU_perf_chart.on('filtered.monitor', function(chart, filter) {
@@ -272,7 +274,7 @@ function plotCPUperf() {
         .margins(margins)
         .label( function (d) { return d.key[0]})
         .legend(dc.legend().x(80).y(70).itemHeight(13).gap(5))
-        .ordering(function(d) { console.log(d); return d.key[1]; })
+        .ordering(function(d) { return d.key[1]; })
         .xAxis().ticks(4);
 
     CPU_perf_chart.on('filtered.monitor', function(chart, filter) {
@@ -280,6 +282,33 @@ function plotCPUperf() {
         console.log("DC event");
         console.log(chart.filters());
         continue_proc(filterByGroup, "cpu_perf_group", chart.filters());
+    });
+}
+
+
+function plotMemory() {
+    console.log("Plot Memory");
+    var memory_dim = ndx.dimension( function(d) {
+        return d.memory_group;
+    });
+    var grp = memory_dim.group();
+    var memory_chart = dc.rowChart("#dc_memory");
+    memory_chart
+        .width(width1).height(height1)
+        .dimension(memory_dim)
+        .group(grp)
+        .ordinalColors([cpu_color.dark])
+        .margins(margins)
+        .label( function (d) { return d.key[0]})
+        .legend(dc.legend().x(80).y(70).itemHeight(13).gap(5))
+        .ordering(function(d) { return d.key[1]; })
+        .xAxis().ticks(4);
+
+    memory_chart.on('filtered.monitor', function(chart, filter) {
+        // report the filter applied
+        console.log("DC event");
+        console.log(chart.filters());
+        continue_proc(filterByGroup, "memory_group", chart.filters());
     });
 }
 
@@ -339,11 +368,12 @@ function plotProviders() {
 
 // Return tuple: first element is a name of performance group,
 // second element is the group ordinal number (0,1,2,3...)
-function getPerfGroup(perf, groupSplit) {
+function getGroup(value, groupSplit) {
     var i = 0;
-    if (perf < groupSplit[0]) { return ["<"+groupSplit[0],0]; }
+    if (value == "") { return ["unknown", groupSplit.length]};
+    if (value < groupSplit[0]) { return ["<"+groupSplit[0],0]; }
     for (i = 1; i < groupSplit.length; i++ ) {
-        if (perf < groupSplit[i]) {
+        if (value < groupSplit[i]) {
             return [groupSplit[i-1]+"-"+groupSplit[i], i];
         }
     }
@@ -375,7 +405,8 @@ var filters_obj = {
         "provider": [],
         "gpu_perf_group" : [],
         "gpu_model": [],
-        "cpu_perf_group": []
+        "cpu_perf_group": [],
+        "memory_group": []
     }
 
 

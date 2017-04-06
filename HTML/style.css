@@ -168,7 +168,7 @@ DC styles
 */
 
 div.dc-chart {
-    padding: 15px 0;
+    padding: 12px 0;
 }
 
 .dc-chart g.row rect {
@@ -189,7 +189,7 @@ div.dc-chart {
 
 .dc-chart text {
     font-family: "Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif;
-    font-size: 12pt;
+    font-size: 10pt;
 }
 
 .dc-chart title {
@@ -197,9 +197,10 @@ div.dc-chart {
     position: relative;
     top: -12pt;
     height:0;
-    padding: 0 0 0 30px;
+    padding: 0 0 0 10px;
     font-family: "Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif;
-    font-size: 12pt;
+    font-size: 10pt;
+    font-weight:bold;
 }
 
 #dc_pie_gpus g.row text {
@@ -227,6 +228,10 @@ div.dc-chart {
 }
 
 #dc_gpus {
+    float:none;
+}
+
+#dc_cpu_perf {
     float:none;
 }
 
