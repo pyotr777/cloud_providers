@@ -168,10 +168,13 @@ DC styles
 */
 
 div.dc-chart {
-    padding: 12px 0;
+    padding: 10.2px 0;
 }
 
 .dc-chart g.row rect {
+    fill-opacity: 0.8;
+}
+.dc-chart g.row rect:hover{
     fill-opacity: 1;
 }
 
@@ -195,7 +198,7 @@ div.dc-chart {
 .dc-chart title {
     display: block;
     position: relative;
-    top: -12pt;
+    top: -8pt;
     height:0;
     padding: 0 0 0 10px;
     font-family: "Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif;
@@ -231,7 +234,7 @@ div.dc-chart {
     float:none;
 }
 
-#dc_cpu_perf {
+#dc_memory {
     float:none;
 }
 

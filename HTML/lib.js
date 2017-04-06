@@ -206,7 +206,7 @@ var width1 = 160;
 var height1 = 150;
 // Plot size for large plots
 var width2 = 220;
-var height2 = 330;
+var height2 = 326;
 
 
 function plotGPUs() {
@@ -220,7 +220,6 @@ function plotGPUs() {
         .group(gpus_total)
         .ordinalColors([gpu_color.dark])
         .margins(margins)
-        .legend(dc.legend().x(80).y(70).itemHeight(13).gap(5))
         .xAxis().ticks(4);
 
     GPUs_pie_chart.on('filtered.monitor', function(chart, filter) {
@@ -253,7 +252,7 @@ function plotGPUperf() {
     GPU_perf_chart.on('filtered.monitor', function(chart, filter) {
         // report the filter applied
         console.log("DC event");
-        console.log(chart.filters());
+        // console.log(chart.filters());
         continue_proc(filterByGroup, "gpu_perf_group", chart.filters());
     });
 }
@@ -414,7 +413,6 @@ var filters_obj = {
 // Filter settings (selected values) are stored in global variables GPU_filters and provider_filters.
 // Filter offers_all by applying 2 filters one by one.
 function filterByGroup(fieldname, group) {
-    console.log("Filtering by "+fieldname+" : "+ group);
     filters_obj[fieldname] = group;
     offers = offers_all;
     for (var k in filters_obj) {

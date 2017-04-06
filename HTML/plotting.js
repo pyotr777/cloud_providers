@@ -27,6 +27,7 @@ function plotFilterPlots() {
     dc.renderAll();
 }
 
+
 function continue_proc(filter, field, group) {
     if (processing) return;
     processing = true;
@@ -68,8 +69,7 @@ function displayPerformanceScatter() {
         yaxis: {title: 'GPU performance (TFlops)'},
         hovermode: 'closest'
     };
-    //offers[j].provider
-    //offers[j].name
+    console.log("in displayPerformanceScatter has " + offers.length + " filtered offers");
     var traces = [];
     var memory_trace = {
         mode: "markers",
@@ -205,7 +205,7 @@ function prepDates(end, step) {
     return [h_arr, human, text];
 }
 
-
+var period_plot_layout = null;
 
 // Plot all offers costs for given period.
 function plotPeriod(period, step, thin, thick) {
@@ -213,7 +213,9 @@ function plotPeriod(period, step, thin, thick) {
     var ticktext = [];
     var traces = [];
 
-    dates = prepDates(period, step);
+    if (dates.length == 0) {
+        dates = prepDates(period, step);
+    }
     //console.log(dates);
     // dates[0] - array of hours: 0,1,2,...,period
     // dates[1] - array of objects
@@ -221,43 +223,45 @@ function plotPeriod(period, step, thin, thick) {
     //console.log("Period is " + period+" (" + dates[0][dates[0].length-1] + ") hours");
     //console.log("which is " + dates[2][dates[1].length-1]);
 
-    var layout = {
-        title: 'Cost* for rent period (USD)',
-        hovermode:'closest',
-        showticklabels: true,
-        showlegend: true,
-        legend: {
-            orientation: "v",
-            y: 0,
-            x: 1
-        },
-        margin: {
-            t: 40,
-            pad: 0
-        },
-        xaxis: {
-            tickangle: 45,
-            tickvals: [0, Math.floor(24*7),
-                Math.floor(24*accumulated_months_days[0]),
-                Math.floor(24*accumulated_months_days[1]),
-                Math.floor(24*accumulated_months_days[2]),
-                Math.floor(24*accumulated_months_days[3]),
-                Math.floor(24*accumulated_months_days[4]),
-                Math.floor(24*accumulated_months_days[5]),
-                Math.floor(24*accumulated_months_days[6]),
-                Math.floor(24*accumulated_months_days[7]),
-                Math.floor(24*accumulated_months_days[8]),
-                Math.floor(24*accumulated_months_days[9]),
-                Math.floor(24*accumulated_months_days[10]),
-                Math.floor(24*accumulated_months_days[11]) ],
-            ticktext: ["0", "1 week", "1 month", "2 months", "3 months", "4 months", "5 months", "6 months", "7 months", "8 months", "9 months", "10 months", "11 months", "12 months"]
-        },
-        yaxis: {
-            tickprefix: "$",
-            hoverformat: ',.2f',
-            exponentformat: "none"
-        }
-    };
+    if (period_plot_layout == null) {
+        period_plot_layout = {
+            title: 'Cost* for rent period (USD)',
+            hovermode:'closest',
+            showticklabels: true,
+            showlegend: true,
+            legend: {
+                orientation: "v",
+                y: 0,
+                x: 1
+            },
+            margin: {
+                t: 40,
+                pad: 0
+            },
+            xaxis: {
+                tickangle: 45,
+                tickvals: [0, Math.floor(24*7),
+                    Math.floor(24*accumulated_months_days[0]),
+                    Math.floor(24*accumulated_months_days[1]),
+                    Math.floor(24*accumulated_months_days[2]),
+                    Math.floor(24*accumulated_months_days[3]),
+                    Math.floor(24*accumulated_months_days[4]),
+                    Math.floor(24*accumulated_months_days[5]),
+                    Math.floor(24*accumulated_months_days[6]),
+                    Math.floor(24*accumulated_months_days[7]),
+                    Math.floor(24*accumulated_months_days[8]),
+                    Math.floor(24*accumulated_months_days[9]),
+                    Math.floor(24*accumulated_months_days[10]),
+                    Math.floor(24*accumulated_months_days[11]) ],
+                ticktext: ["0", "1 week", "1 month", "2 months", "3 months", "4 months", "5 months", "6 months", "7 months", "8 months", "9 months", "10 months", "11 months", "12 months"]
+            },
+            yaxis: {
+                tickprefix: "$",
+                hoverformat: ',.2f',
+                exponentformat: "none"
+            }
+        };
+    }
 
     var last_prov = ""
     var color_i = 0;
@@ -314,7 +318,7 @@ function plotPeriod(period, step, thin, thick) {
         traces.push(trace);
         quotes.push(quote);
     }
-    Plotly.newPlot("costs_period", traces, layout);
+    Plotly.newPlot("costs_period", traces, period_plot_layout);
 
     var myPlot = document.getElementById('costs_period');
     var hover_info2 = document.getElementById("offer_details2");
@@ -322,52 +326,26 @@ function plotPeriod(period, step, thin, thick) {
     myPlot.on('plotly_click', function(data) {
         //console.log(data);
         var pts = '';
-        for(var i=0; i < data.points.length; i++) {
-            //console.log("Clicked: ");
-            //console.log(data.points[i]);
-            displaySlice(data.points[i].pointNumber);
-            var point = data.points[i];
-            newannotations = [
-                {
-                    x: point.xaxis.d2l(point.x),
-                    y: 150,
-                    arrowhead: 0,
-                    ax: 0,
-                    ay: -250,
-                    arrowwidth: 1,
-                    arrowcolor: '#aaaaaa',
-                    borderwidth: 0,
-                    borderpad: 0,
-                    text: ''
-                },
-                {
-                    x: point.xaxis.d2l(point.x),
-                    y: point.yaxis.d2l(point.y),
-                    arrowhead: 7,
-                    ax: 0,
-                    ay: -50,
-                    bgcolor: point.data.line.color,
-                    arrowwidth: 1.2,
-                    arrowcolor: '#303030',
-                    font: {size:12},
-                    bordercolor: '#707070',
-                    borderwidth: 2,
-                    borderpad: 4,
-                    text: '<b>' + dates[2][point.pointNumber]+'</b><br>'+point.data.longname+
-                    '<br>['+point.data.name +']'
-                }
-                ];
-        }
-        an = (myPlot.layout.annotations || []).length;
+        var i=0;
+        //console.log("Clicked: ");
+        //console.log(data.points[i]);
+        displaySlice(data.points[i].pointNumber);
+        var point = data.points[i];
+        newannotation = {
+            x: point.xaxis.d2l(point.x),
+            y: 150,
+            arrowhead: 0,
+            ax: 0,
+            ay: -250,
+            arrowwidth: 1,
+            arrowcolor: '#aaaaaa',
+            borderwidth: 0,
+            borderpad: 0,
+            text: ''
+        };
 
-         // delete instead if clicked twice
-        console.log("Annotations: "+an);
-        for (var i=0; i < 2; i++) {
-            if (an) {
-                Plotly.relayout('costs_period', 'annotations[' + i + ']', 'remove');
-            }
-            Plotly.relayout('costs_period', 'annotations[' + i + ']', newannotations[i]);
-        }
+        Plotly.relayout('costs_period', 'annotations[0]', 'remove');
+        Plotly.relayout('costs_period', 'annotations[0]', newannotation);
     });
 
     myPlot.on('plotly_hover', function(data) {
@@ -379,7 +357,7 @@ function plotPeriod(period, step, thin, thick) {
                 width: thick
             },
             opacity: 1
-        }
+        };
         Plotly.restyle('costs_period', update, [point.curveNumber]);
         if (point.data.info == null) {
             return;
@@ -396,7 +374,7 @@ function plotPeriod(period, step, thin, thick) {
                 width: thin
             },
             opacity: 1
-        }
+        };
         Plotly.restyle('costs_period', update, [data.points[0].curveNumber]);
         hover_info2.innerHTML = "";
         hover_info2.style.backgroundColor = "#fff";
