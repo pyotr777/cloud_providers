@@ -192,7 +192,6 @@ function processStaticData(results) {
             notes:     row[24]
         }
         offers_all.push(offer);
-        console.log(offer);
     }
     plotFilterPlots();
     continue_proc(resetFilters, "");
@@ -428,18 +427,33 @@ function filterByGroup(fieldname, group) {
 // with fieldname (input parameter) values from array group (input parameter).
 function applyFilter(offers_, fieldname, group) {
     if (group.length == 0) {
-        console.log(fieldname+" filter empty");
         return offers_;
     }
     var filtered_offers=[];
     for (var j=0; j < offers_.length; j++) {
-        if (group.indexOf(offers_[j][fieldname]) >=0 ) {
+        var compareto = offers_[j][fieldname];
+        if (objectSearch(group,compareto)) {
             filtered_offers.push(offers_[j]);
         }
     }
     return filtered_offers;
 }
 
+// Search for strings or arrays in an array (obj1).
+// in case of arrays compares 1st elements only.
+function objectSearch(obj1,obj2) {
+    if (typeof obj2 === "object") {
+        obj2 = obj2[0];
+    }
+    for (var k in obj1) {
+        var test = obj1[k]
+        if (typeof test === "object") {
+            test = test[0];
+        }
+        if (test == obj2) { return true; }
+    }
+    return false;
+}
 
 
 // Return Cost for given number of hours (period).

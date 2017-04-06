@@ -92,7 +92,7 @@ function displayPerformanceScatter() {
     var last_offer=""; // For removing offer duplicates hourly/weekly/monthly...
     var skip_words=["minutely", "hourly", "dayly", "weekly", "monthly", "yearly"];
     var color_i = 0;
-    for (j=0; j < offers.length; j++) {
+    for (var j=0; j < offers.length; j++) {
         var prov = offers[j].provider.toLowerCase();
         var offer_name = getSimpleName(offers[j].name,skip_words);
         if (last_offer == offer_name) {
