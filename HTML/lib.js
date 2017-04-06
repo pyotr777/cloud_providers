@@ -197,7 +197,7 @@ function processStaticData(results) {
 }
 
 
-function plotPieGPUs() {
+function plotGPUs() {
     console.log("Plot GPU numbers pie");
     var GPUsDim = ndx.dimension( function(d) { return d.gpus;});
     var gpus_total = GPUsDim.group();

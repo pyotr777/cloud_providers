@@ -18,7 +18,7 @@ var plot_period = 12; // months for plot "cost for rent period"
 function plotFilterPlots() {
     console.log("Plotting DC plots.");
     ndx = crossfilter(offers_all);
-    plotPieGPUs();
+    plotGPUs();
     plotProviders();
     dc.renderAll();
 }

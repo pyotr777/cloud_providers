@@ -19,7 +19,7 @@ var FLOPsScale;
 function plotFilterPlots() {
     console.log("Plotting DC plots.");
     ndx = crossfilter(offers_all);
-    plotPieGPUs();
+    plotGPUs();
     plotProviders();
     dc.renderAll();
 }
