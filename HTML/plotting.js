@@ -73,7 +73,9 @@ function displayPerformanceScatter() {
             yanchor: "top",
             x: 0.01,
             tracegroupgap: 0,
-            bgcolor: 'rgba(255,255,255,0.1)'
+            bgcolor: "rgba(255,255,255,0.8)",
+            bordercolor: "#eee",
+            borderwidth: 1
         },
         margin: {
             t: 40,
@@ -248,7 +250,9 @@ function plotPeriod(period, step, thin, thick) {
                 yanchor: "top",
                 x: 0.01,
                 tracegroupgap: 0,
-                bgcolor: 'rgba(255,255,255,0.6)'
+                bgcolor: "rgba(255,255,255,0.8)",
+                bordercolor: "#eee",
+                borderwidth: 1
             },
             margin: {
                 t: 40,

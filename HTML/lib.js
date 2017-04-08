@@ -182,7 +182,7 @@ function processStaticData(results) {
             cpu_model: row[15],
             cpus:      row[16],
             memory:    row[17],
-            memory_group: getGroup(row[17],[50,100,200,300,500,750,1000]),
+            memory_group: getGroup(row[17],[50,100,200,300,750,1000]),
             hdd1:      row[18],
             hdd1_vol:  row[19],
             hdd2:      row[20],
