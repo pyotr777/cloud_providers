@@ -468,10 +468,10 @@ function displayTime(s) {
 
 // Argument is array index
 function displaySlice(n) {
-    console.log(dates[1][n]);
+    //console.log(dates[1][n]);
     var months = dates[1][n].years*12 + dates[1][n].months;
     var hours = n*step;
-    console.log("Clicked "+n+ " "+ hours+" hours, X: "+ dates[0][n] + ", full "+months+" months / " + dates[2][n]);
+    //console.log("Clicked "+n+ " "+ hours+" hours, X: "+ dates[0][n] + ", full "+months+" months / " + dates[2][n]);
     // rewind to the beginning of the month
     var i = n;
     var point = 0;
