@@ -348,7 +348,7 @@ function plotFLOPsMoney(sum) {
         y_gpu.push(flops[1]/1e+6);
         x.push(offers[j].shortname);
         c.push(color);
-        info.push(getOfferInfo(j));
+        info.push(getOfferInfo(offers[j]));
     }
 
     var trace_cpu = {

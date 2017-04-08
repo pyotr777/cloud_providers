@@ -379,14 +379,14 @@ function getGroup(value, groupSplit) {
 }
 
 
-function getOfferInfo(j) {
-    var memory = offers[j].memory;
+function getOfferInfo(offer) {
+    var memory = offer.memory;
     if (memory == null || memory == "") {
         memory = ""
     } else {
         memory = " | RAM: " + memory + " GB"
     }
-    return offers[j].provider + " "+ offers[j].name + " | CPU: " + offers[j].cpu_model + " x" + offers[j].cpus + " |  GPU: "+ offers[j].gpu_model + " x"+ offers[j].gpus + memory;
+    return offer.provider + " "+ offer.name + " | CPU: " + offer.cpu_model + " x" + offer.cpus + " |  GPU: "+ offer.gpu_model + " x"+ offer.gpus + memory;
 }
 
 
@@ -460,12 +460,12 @@ function getQuote4Hours(offer, h) {
     if (offer.setup != "" ) {
         cost = offer.setup;
     }
-    if (offer.hourly != "" ) {
+    if ("hourly" in offer && offer.hourly != "" ) {
         cost += h * offer.hourly;
-    } else if (offer.weekly != "" ) {
+    } else if ("weekly" in offer && offer.weekly != "" ) {
         var period_w = Math.ceil(h / (24 * 7));
         cost += period_w * offer.weekly;
-    } else if (offer.monthly != "" ) {
+    } else if ("monthly" in offer && offer.monthly != "" ) {
         period = hoursToHuman(h);
         more_than_month = 0;
         if (period[0].days > 0 || period[0].hours > 0) {
@@ -474,7 +474,7 @@ function getQuote4Hours(offer, h) {
         cost += (period[0].years*12 + period[0].months + more_than_month) * offer.monthly;
         //console.log("Monthly: "+ offer.shortname + " "+offer.monthly);
         //console.log(period[0]);
-    } else if (offer.yearly != "" ) {
+    } else if ("yearly" in offer && offer.yearly != "" ) {
         // Year is counted as 365 days
         var period_y = Math.ceil(h / (24 * 365));
         cost += period_y * offer.yearly;
@@ -684,6 +684,52 @@ function CurrencyFormat(s, currency) {
     num = Number(s).toLocaleString('en', { style: 'currency', currency: currency, maximumFractionDigits: 2 });
     num = num.replace(",", "&nbsp;");
     return num;
+}
+
+
+var cost_periods = [
+    ["hourly","h."],
+    ["weekly", "w."],
+    ["monthly", "m."],
+    ["yearly", "y."]
+]
+
+// Split one offer by cost period.
+// Return array of offers.
+function splitByCostPeriod(offer) {
+    split_offers = [];
+    cost_periods.forEach( function (period) {
+        if (offer[period[0]] != "") {
+            var offer_new = cloneOffer(offer);
+            offer_new[period[0]] = offer[period[0]];
+            offer_new["name"] = offer_new["name"] + " " + period[0];
+            offer_new["shortname"] = offer_new["shortname"] + " " + period[1];
+            split_offers.push(offer_new);
+        }
+    });
+    //console.log("Split "+ offer.name+" into "+ split_offers.length);
+    return split_offers;
+}
+
+// Copy all offers fields except for period costs.
+function cloneOffer(offer) {
+    var new_offer = {};
+    for (var key in offer) {
+        var copy_me = true;
+        for (var i=0; i < cost_periods.length; i++ ) {
+            // Do not copy fields listed in cost_periods array.
+            if (key == cost_periods[i][0]) {
+                copy_me = false;
+                break;
+            }
+        }
+        if (copy_me) {
+            new_offer[key] = offer[key];
+        } else {
+            new_offer[key] = "";
+        }
+    }
+    return new_offer;
 }
 
 

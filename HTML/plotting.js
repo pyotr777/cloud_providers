@@ -155,7 +155,7 @@ function displayPerformanceScatter() {
         new_trace.text.push(offers[j].provider + " " +offers[j].shortname)
         //console.log("Color for "+ offers[j].provider+"  offer is "+ color_i+ " ("+colors[c][color_i]+")");
         new_trace.marker.color.push(colors[c][color_i]);
-        new_trace.info.push(getOfferInfo(j));
+        new_trace.info.push(getOfferInfo(offers[j]));
 
         memory_trace.x.push(offers[j].cpu_p);
         memory_trace.y.push(offers[j].gpu_p);
@@ -300,11 +300,7 @@ function plotPeriod(period, step, thin, thick) {
     var last_prov = ""
     var color_i = 0;
     for (j=0; j < offers.length; j++) {
-        quote = getQuote(offers[j], step, period);
-        var text = [];
-        for (var i=0; i < dates[2].length; i++) {
-            text.push(offers[j].provider+" "+offers[j].shortname + "\n" + dates[2][i]);
-        }
+        
         var prov = offers[j].provider.toLowerCase();
         var c = getColor(prov);
         if (last_prov != prov) {
@@ -330,33 +326,46 @@ function plotPeriod(period, step, thin, thick) {
             }
         }
         //console.log("Color for "+ offers[j].provider+"  offer is "+ color_i+ " ("+colors[c][color_i]+")");
-        var trace = {
-            showlegend: false,
-            legendgroup: prov,
-            mode: 'lines',
-            line: {
-                color: colors[c][color_i],
-                width: thin,
-                shape: "linear",
-                smoothing: 0
-            },
-            opacity:1,
-            name: offers[j].shortname,
-            longname: offers[j].provider+" "+offers[j].name,
-            text: text,
-            hoverinfo:"text+y",
-            x: dates[0],
-            info: getOfferInfo(j),
-            y: quote[0] // 0 - Absolute cost
-        };
-        traces.push(trace);
-        quotes.push(quote);
+
+        // Split one offer by cost period
+        splitByCostPeriod(offers[j]).forEach( function (offer) {
+            var text = [];
+            for (var i=0; i < dates[2].length; i++) {
+                text.push(offer.provider+" "+offer.name + "<br>" + dates[2][i]);
+            }
+            var quote = getQuote(offer, step, period);
+            //console.log("quotes for " + offer.name);
+            //console.log(offer);
+            //console.log(quote);
+            var trace = {
+                showlegend: false,
+                legendgroup: prov,
+                mode: 'lines',
+                line: {
+                    color: colors[c][color_i],
+                    width: thin,
+                    shape: "linear",
+                    smoothing: 0
+                },
+                opacity:1,
+                name: offer.shortname,
+                longname: offer.provider+" "+offer.name,
+                text: text,
+                hoverinfo:"text+y",
+                x: dates[0],
+                info: getOfferInfo(offer),
+                y: quote[0] // 0 - Absolute cost
+            };
+            traces.push(trace);
+            quotes.push(quote);
+        });
     }
     if ( period_plot_layout.annotations ) {
         console.log("Annotations: " + period_plot_layout.annotations.length);
         period_plot_layout.annotations = [];
     }
 
+    console.log("traces has "+traces.length + " elements");
     Plotly.newPlot("costs_period", traces, period_plot_layout);
 
     var myPlot = document.getElementById('costs_period');
@@ -459,9 +468,10 @@ function displayTime(s) {
 
 // Argument is array index
 function displaySlice(n) {
-    //console.log(dates[1][n]);
+    console.log(dates[1][n]);
     var months = dates[1][n].years*12 + dates[1][n].months;
-    console.log("Clicked "+n+ " X: "+ dates[0][n] + ", full "+months+" months / " + dates[2][n]);
+    var hours = n*step;
+    console.log("Clicked "+n+ " "+ hours+" hours, X: "+ dates[0][n] + ", full "+months+" months / " + dates[2][n]);
     // rewind to the beginning of the month
     var i = n;
     var point = 0;
@@ -544,14 +554,18 @@ function displaySlice(n) {
             }
         }
         color = colors[getColor(prov)][color_i];
-        //console.log("prov="+prov+" color_i="+ color_i + " cmax="+ c_max +" color="+color);
-        y_cpu.push(quotes[j][1][n]);
-        y_gpu.push(quotes[j][2][n]);
-        y_cost.push(quotes[j][0][n]);
-        y_cost_monthly.push(quotes[j][0][point]/months)
-        x.push(offers[j].shortname);
-        c.push(color);
-        info.push(getOfferInfo(j));
+        
+        // Split one offer by cost period
+        splitByCostPeriod(offers[j]).forEach( function (offer) {
+            var cost = getQuote4Hours(offer,hours);
+            y_cpu.push(cost/offer.cpu_p);
+            y_gpu.push(cost/offer.gpu_p);
+            y_cost.push(cost);
+            y_cost_monthly.push(quotes[j][0][point]/months)
+            x.push(offer.shortname);
+            c.push(color);
+            info.push(getOfferInfo(offer));
+        });
     }
 
     var trace_cpu = {
