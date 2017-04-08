@@ -65,8 +65,15 @@ function displayPerformanceScatter() {
     var hover_info1 = document.getElementById("offer_details1");
     var layout = {
         title:'CPU and GPU performance** (TFlops), memory volume (GB)',
-        xaxis: {title: 'CPU performance (TFlops)'},
-        yaxis: {title: 'GPU performance (TFlops)'},
+        xaxis: {
+            title: 'CPU performance (TFlops)',
+            ticklen: 5,
+            rangemode: "tozero"
+        },
+        yaxis: {
+            title: 'GPU performance (TFlops)',
+            rangemode: "tozero"
+        },
         hovermode: 'closest',
         legend: {
             y: 1,

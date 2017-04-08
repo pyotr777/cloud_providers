@@ -368,14 +368,14 @@ function plotProviders() {
 // second element is the group ordinal number (0,1,2,3...)
 function getGroup(value, groupSplit) {
     var i = 0;
-    if (value == "") { return ["unknown", groupSplit.length]};
-    if (value < groupSplit[0]) { return ["<"+groupSplit[0],0]; }
-    for (i = 1; i < groupSplit.length; i++ ) {
+    if (value == "") { return ["unknown", groupSplit.length+1]};
+    if (value < groupSplit[0]) { return ["<"+groupSplit[0],groupSplit.length]; }
+    for (i = 0; i < groupSplit.length; i++ ) {
         if (value < groupSplit[i]) {
-            return [groupSplit[i-1]+"-"+groupSplit[i], i];
+            return [groupSplit[i-1]+"-"+groupSplit[i], groupSplit.length-i];
         }
     }
-    return [">"+groupSplit[i-1], i];
+    return [">"+groupSplit[i-1], groupSplit.length-i];
 }
 
 
