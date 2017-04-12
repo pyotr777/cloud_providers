@@ -14,15 +14,15 @@
 
 <body>
     <p>
-    ステアラボでは、私たちはクラウドでGPUが載っているマシンを使うことがあります。どのプロバイダーのどういうマシンを借りるか、選択は難しいです。複数のクラウドプロバイダーからの数多くのオファーの性能とコストを比較するため、私たちは各クラウドプロバイダーのウエブサイトから集めた情報を表にまとめ、いくつかインタラクティブグラフを作ってみました。<a href="http://comp.photo777.org/cloud-gpu-providers-comparison/" target="_blank">こちら</a>は各オファーの主なスペックと料金の表の他に、CPUとGPUの性能を比較するグラフ、使う時間によって変動するコストのグラフ、一定の利用期間においてのコストのグラフ、CPUとGPUの1TFlopsあたりのコストを比較するグラフがあります。<a href="http://comp.photo777.org/cloud-gpu-providers-more-graphs/" target="_blank">こちら</a>は計算量を固定した場合、GPUで計算する時間とそれにかかるコストのグラフとCPU計算時間とコストを比較する2つのグラフがあります。<br>
-    また、両方のページの上部にオファーのグループを選択（フィルタリング）するための<a href="#pic1" title="Pic.1を参照">小さめのグラフ</a>もいくつかあります。そのグラフを見れば、プロバイダーごとのオファーの数、GPU数でオファーの分布、メモリー量でオファーの分布など、統計的な情報がわかります。</p>
+    ステアラボでは、私たちはクラウドでGPUが載っているマシンを使うことがあります。どのプロバイダーのどういうマシンを借りるか、選択は難しいです。複数のクラウドプロバイダーからの数多くのオファーの性能とコストを比較するため、私たちは各クラウドプロバイダーのウエブサイトから集めた情報を表にまとめ、いくつかインタラクティブグラフを作ってみました。<a href="http://comp.photo777.org/cloud-gpu-providers-comparison/" target="_blank">こちら</a>は各オファーの主なスペックと料金の表の他に、CPUとGPUの性能を比較するグラフ、使う時間によって変動するコストのグラフ、一定の利用期間においてのコストのグラフ、CPUとGPUの1TFlops<a href="#note1"><sup>1</sup></a>あたりのコストを比較するグラフがあります。<a href="http://comp.photo777.org/cloud-gpu-providers-more-graphs/" target="_blank">こちら</a>は計算量を固定した場合、GPUで計算する時間とそれにかかるコストのグラフとCPU計算時間とコストを比較する2つのグラフがあります。<br>
+    また、両方のページの上部にオファーのグループを選択（フィルタリング）するための<a href="#pic1" title="Fig.1を参照">小さめのグラフ</a>もいくつかあります。そのグラフを見れば、プロバイダーごとのオファーの数、GPU数でオファーの分布、メモリー量でオファーの分布など、統計的な情報がわかります。</p>
     <p>
-        機械学習などの計算をクラウドGPUでしようと思ったら、今はたくさんの選択肢があります。しかし、振り替えてみればわずか一年前は全く違う状況でした。まだ珍しかったクラウドGPUは主に可視化向けのものでした。2016年の9月から機械学習用のクラウドGPUのp2インスタンス<a href="#note1"><sup>1</sup></a>を提供し始めたAmazonに続いて、Softlayer (IBM)、 Nimbix、 MS Azure、 Google Compute Cloudなど、たくさんのプロバイダーから続々とたくさんのオファーが出ました。クラウドGPUオファーの主な用途が機械学習に変わったため、GPUとCPUの性能が上がり、メモリーも増えて：1000GBまでのインスタンスがあります。ストレージはSSDが主流になりました。
+        機械学習などの計算をクラウドGPUでしようと思ったら、今はたくさんの選択肢があります。しかし、振り替えてみればわずか一年前は全く違う状況でした。まだ珍しかったクラウドGPUは主に可視化向けのものでした。2016年の9月から機械学習用のクラウドGPUのp2インスタンス<a href="#note2"><sup>2</sup></a>を提供し始めたAmazonに続いて、Softlayer (IBM)、 Nimbix、 MS Azure、 Google Compute Cloudなど、たくさんのプロバイダーから続々とたくさんのオファーが出ました。クラウドGPUオファーの主な用途が機械学習に変わったため、GPUとCPUの性能が上がり、メモリーも増えて：1000GBまでのインスタンスがあります。ストレージはSSDが主流になりました。
     </p>
         
     <p>
         マイクロソフトAzureクラウド初のGPUインスタンス、Nシリーズは去年の8月に発表されたものの、すべてのユーザに公開されたのは12月でした。AzureクラウドのNシリーズは他のプロバイダーのオファーの中で性能的にもコスト的にも目立ちませんが、マイクロソフトが開発した機械学習フレームワークAzure Machine Learning Studioを使用できるというメリットがあります。
-        アメリカの大手クラウドプロバイダーの中で最も遅くGPUインスタンスの提供を始めたGoogleですが、インスタンスのスペックを細かく設定できるのは大きな特徴です。GPUの種類では、NVIDIA M60を載せたマイクロソフトのNVシリーズ以外は、アマゾン、マイクロソフト、グーグルはNVIDIA K80<a href="#note2"><sup>2</sup></a>を提供しています。
+        アメリカの大手クラウドプロバイダーの中で最も遅くGPUインスタンスの提供を始めたGoogleですが、インスタンスのスペックを細かく設定できるのは大きな特徴です。GPUの種類では、NVIDIA M60を載せたマイクロソフトのNVシリーズ以外は、アマゾン、マイクロソフト、グーグルはNVIDIA K80<a href="#note3"><sup>3</sup></a>を提供しています。
     </p>
      
     <p>
@@ -46,23 +46,33 @@
     </p>
     <figure id="pic1">
         <img src="filtergraphs.png" />
-        <figcaption>Pic.1. プロバイダーでオファーを制限した状態のフィルタリンググラフ。一つのグラフをクリックして制限をかけると、他のグラフで制限されたオファーだけの情報が写ります。</figcaption>
+        <!--
+        <img src="https://stair.center/wp-content/uploads/2017/04/filtergraphs.png" alt="" width="682" height="310" class="aligncenter wp-image-462" style="width:auto !important;" />
+        -->
+        <figcaption>Fig.1. プロバイダーでオファーを制限した状態のフィルタリンググラフ。一つのグラフをクリックして制限をかけると、他のグラフで制限されたオファーだけの情報が写ります。</figcaption>
     </figure>
     
    	<p>
     	アマゾンとさくらインターネットでオファーを制限したら、CPUとGPU性能グラフでオファーを比較しましょう。
     </p>
-<figure>
+	<figure>
         <img src="cpu_gpu_performance.png" />
-        <figcaption>GPUとCPU性能グラフ。CPUとGPUの性能で近いAmazonとのp2.8xlargeオファーとさくらインターネットのQuad GPU modelオファーを比較してみましょう。</figcaption>
+        <!--
+        <img src="https://stair.center/wp-content/uploads/2017/04/cpu_gpu_performance.png" alt="" width="682" height="332" class="alignnone size-full wp-image-461"  style="width:auto !important;" />
+        -->
+        <figcaption>Fig.2. GPUとCPU性能グラフ。CPUとGPUの性能で近いAmazonとのp2.8xlargeオファーとさくらインターネットのQuad GPU modelオファーを比較してみましょう。</figcaption>
     </figure>
     
     <p>
         アマゾンのp2.8xlargeオファーとさくらインターネットのQuad GPU modelオファーはCPUとGPUの性能で近いのですが、どちらが安いでしょうか？さくらインターネットのオファーは月ごとに課金され、初期費用もかかります。一方、アマゾンのオファーは時間単位で課金され、初期費用もありません。下のコストグラフを見ますと、2ヶ月以上を使うならさくらインターネットのオファーの方が安くなることがわかります。
     </p>
+    
     <figure>
         <img src="time_cost.png" />
-        <figcaption>利用期間によって変動するコストのグラフ。Amazonのp2.8xlargeオファーとさくらインターネットのQuad GPU modelオファーのコストの比較。2ヶ月以上使うならさくらインターネットのオファーの方が安くなります。</figcaption>
+        <!--
+        <img src="https://stair.center/wp-content/uploads/2017/04/time_cost.png" alt="" width="682" height="412" class="alignnone size-full wp-image-459"  style="width:auto !important;" />
+        -->
+        <figcaption>Fig.3. 利用期間によって変動するコストのグラフ。Amazonのp2.8xlargeオファーとさくらインターネットのQuad GPU modelオファーのコストの比較。2ヶ月以上使うならさくらインターネットのオファーの方が安くなります。</figcaption>
     </figure>
     
     
@@ -72,8 +82,11 @@
     
         
     <figure>
-    <img src="1tflops_cost.png" />
-        <figcaption>1TFlopsあたりのコストでAmazonとさくらインターネットのオファーの比較。</figcaption>
+    <!--
+        <img src="https://stair.center/wp-content/uploads/2017/04/1tflops_cost.png" alt="" width="683" height="377" class="alignnone size-full wp-image-460"  style="width:auto !important;" />
+        -->
+        <img src="1tflops_cost.png" />
+        <figcaption>Fig.4. 1TFlopsあたりのコストでAmazonとさくらインターネットのオファーの比較。</figcaption>
     </figure>
     <p>
         アマゾンとさくらインターネットのオファーを比較してみると、2ヶ月の利用期間でGPUの1TFlopsあたりのコストでさくらTitanX x4インスタンスが一番安く、CPUの1TFlopsあたりのコストでアマゾンの1年間契約のp2インスタンスが一番安いことがわかります。利用期間を長くしたら、TitanX x4の方がCPU性能のコストでも一番安くなってきますし、GPUの性能ではアマゾンのオファーよりは数倍やすくなります。
@@ -84,8 +97,11 @@
     </p>
     
     <figure>
-    <img src="GPU_cost_time.png" />
-        <figcaption>特定の計算量にかかる費用と時間のグラフ。左下に行くほど有利になります。</figcaption>
+        <!--
+        <img src="https://stair.center/wp-content/uploads/2017/04/GPU_cost_time.png" alt="" width="682" height="465" class="alignnone size-full wp-image-463"  style="width:auto !important;" />
+        -->
+        <img src="GPU_cost_time.png" />
+        <figcaption>Fig.5. 特定の計算量にかかる費用と時間のグラフ。左下に行くほど有利になります。</figcaption>
     </figure>
     
     
@@ -95,14 +111,20 @@
     
     
     
-    <hr>
-    <note>
-        <sup id="note1">1</sup> クラウドコンピューティングでは貸出する仮想マシンのことをインスタンスといいます。このポストでは仮想マシンとベアメタルサーバを比較することがり、その時は、正しくないのですが、ベアメタルサーバのこともインスタンスと呼んだりしています。
-    </note>
-<br>
-    <note>
-        <sup id="note2">2</sup> Amazon、MicrosoftとGoogleがNVIDIA K80のインスタンスを提供していますが、プロバイダーのウエブサイトなどで表示されているGPUの数に注意する必要があります。1枚のK80のカードには2個のTesla GK210 GPUが載っており、プロバイダーが表示している数はGK210の数で、カードの枚数はその半分です。
-    </note>
+    <hr style="height:1px">
+    
+    <p class="note" style="font-size:90%; color:#444;">
+        <sup id="note1">1</sup> ここはCPU性能及びGPU性能のFlopsは全て単精度の数値です。
+    </p>
+
+    
+    <p class="note" style="font-size:90%; color:#444;">
+        <sup id="note2">2</sup> クラウドコンピューティングでは貸出する仮想マシンのことをインスタンスといいます。このポストでは仮想マシンとベアメタルサーバを比較することがり、その時は、正しくないのですが、ベアメタルサーバのこともインスタンスと呼んだりしています。
+    </p>
+
+    <p class="note" style="font-size:90%; color:#444;">
+        <sup id="note3">3</sup> Amazon、MicrosoftとGoogleがNVIDIA K80のインスタンスを提供していますが、プロバイダーのウエブサイトなどで表示されているGPUの数に注意する必要があります。1枚のK80のカードには2個のTesla GK210 GPUが載っており、プロバイダーが表示している数はGK210の数で、カードの枚数はその半分です。
+    </p>
 
 
 </body>
