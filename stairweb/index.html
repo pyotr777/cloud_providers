@@ -13,7 +13,16 @@
 </head>
 
 <body>
-    <p>
+<style type="text/css">
+  figcaption {
+    font-size:90%;
+    line-height:150%;
+    font-weight: bold;
+    margin:0 100px 30px 50px;
+  }
+
+</style>
+<p>
     ステアラボでは、私たちはクラウドでGPUが載っているマシンを使うことがあります。どのプロバイダーのどういうマシンを借りるか、選択は難しいです。複数のクラウドプロバイダーからの数多くのオファーの性能とコストを比較するため、私たちは各クラウドプロバイダーのウエブサイトから集めた情報を表にまとめ、いくつかインタラクティブグラフを作ってみました。<a href="http://comp.photo777.org/cloud-gpu-providers-comparison/" target="_blank">こちら</a>は各オファーの主なスペックと料金の表の他に、CPUとGPUの性能を比較するグラフ、使う時間によって変動するコストのグラフ、一定の利用期間においてのコストのグラフ、CPUとGPUの1TFlops<a href="#note1"><sup>1</sup></a>あたりのコストを比較するグラフがあります。<a href="http://comp.photo777.org/cloud-gpu-providers-more-graphs/" target="_blank">こちら</a>は計算量を固定した場合、GPUで計算する時間とそれにかかるコストのグラフとCPU計算時間とコストを比較する2つのグラフがあります。<br>
     また、両方のページの上部にオファーのグループを選択（フィルタリング）するための<a href="#pic1" title="Fig.1を参照">小さめのグラフ</a>もいくつかあります。そのグラフを見れば、プロバイダーごとのオファーの数、GPU数でオファーの分布、メモリー量でオファーの分布など、統計的な情報がわかります。</p>
     <p>
@@ -44,11 +53,11 @@
     <p>
         インスタンスの性能を比較するために、先ずは性能に大きな影響を与えるGPU性能とCPU性能を比べてみましょう。<a href="http://comp.photo777.org/cloud-gpu-providers-comparison/" target="_blank">こちら</a>はGPUとCPU性能のグラフなど、参考にしたいグラフがあります。例えば、前に触れましたさくらとアマゾンのオファーを比較してみたい場合は、まずはページの上部にある小さめのフィルタリング用のグラフを使って、全てのグラフで表示されるオファーをプロバイダーで制限（フィルタリング）してましょう。
     </p>
+
     <figure id="pic1">
-        <img src="filtergraphs.png" />
-        <!--
-        <img src="https://stair.center/wp-content/uploads/2017/04/filtergraphs.png" alt="" width="682" height="310" class="aligncenter wp-image-462" style="width:auto !important;" />
-        -->
+
+        <img src="https://stair.center/wp-content/uploads/2017/04/filtergraphs.png" alt="" width="682" height="310" class="aligncenter size-full wp-image-462"  style="width:auto !important;" />
+        
         <figcaption>Fig.1. プロバイダーでオファーを制限した状態のフィルタリンググラフ。一つのグラフをクリックして制限をかけると、他のグラフで制限されたオファーだけの情報が写ります。</figcaption>
     </figure>
     
@@ -56,10 +65,10 @@
     	アマゾンとさくらインターネットでオファーを制限したら、CPUとGPU性能グラフでオファーを比較しましょう。
     </p>
 	<figure>
-        <img src="cpu_gpu_performance.png" />
-        <!--
+
+
         <img src="https://stair.center/wp-content/uploads/2017/04/cpu_gpu_performance.png" alt="" width="682" height="332" class="alignnone size-full wp-image-461"  style="width:auto !important;" />
-        -->
+
         <figcaption>Fig.2. GPUとCPU性能グラフ。CPUとGPUの性能で近いAmazonとのp2.8xlargeオファーとさくらインターネットのQuad GPU modelオファーを比較してみましょう。</figcaption>
     </figure>
     
@@ -68,10 +77,9 @@
     </p>
     
     <figure>
-        <img src="time_cost.png" />
-        <!--
+
         <img src="https://stair.center/wp-content/uploads/2017/04/time_cost.png" alt="" width="682" height="412" class="alignnone size-full wp-image-459"  style="width:auto !important;" />
-        -->
+
         <figcaption>Fig.3. 利用期間によって変動するコストのグラフ。Amazonのp2.8xlargeオファーとさくらインターネットのQuad GPU modelオファーのコストの比較。2ヶ月以上使うならさくらインターネットのオファーの方が安くなります。</figcaption>
     </figure>
     
@@ -82,10 +90,8 @@
     
         
     <figure>
-    <!--
         <img src="https://stair.center/wp-content/uploads/2017/04/1tflops_cost.png" alt="" width="683" height="377" class="alignnone size-full wp-image-460"  style="width:auto !important;" />
-        -->
-        <img src="1tflops_cost.png" />
+
         <figcaption>Fig.4. 1TFlopsあたりのコストでAmazonとさくらインターネットのオファーの比較。</figcaption>
     </figure>
     <p>
@@ -97,10 +103,9 @@
     </p>
     
     <figure>
-        <!--
+
         <img src="https://stair.center/wp-content/uploads/2017/04/GPU_cost_time.png" alt="" width="682" height="465" class="alignnone size-full wp-image-463"  style="width:auto !important;" />
-        -->
-        <img src="GPU_cost_time.png" />
+
         <figcaption>Fig.5. 特定の計算量にかかる費用と時間のグラフ。左下に行くほど有利になります。</figcaption>
     </figure>
     
