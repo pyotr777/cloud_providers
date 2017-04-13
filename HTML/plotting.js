@@ -300,7 +300,7 @@ function plotPeriod(period, step, thin, thick) {
     var last_prov = ""
     var color_i = 0;
     for (j=0; j < offers.length; j++) {
-        
+
         var prov = offers[j].provider.toLowerCase();
         var c = getColor(prov);
         if (last_prov != prov) {
@@ -471,7 +471,7 @@ function displaySlice(n) {
     //console.log(dates[1][n]);
     var months = dates[1][n].years*12 + dates[1][n].months;
     var hours = n*step;
-    //console.log("Clicked "+n+ " "+ hours+" hours, X: "+ dates[0][n] + ", full "+months+" months / " + dates[2][n]);
+    console.log("Clicked "+n+ " "+ hours+" hours, X: "+ dates[0][n] + ", full "+months+" months / " + dates[2][n]);
     // rewind to the beginning of the month
     var i = n;
     var point = 0;
@@ -554,14 +554,16 @@ function displaySlice(n) {
             }
         }
         color = colors[getColor(prov)][color_i];
-        
+
         // Split one offer by cost period
         splitByCostPeriod(offers[j]).forEach( function (offer) {
             var cost = getQuote4Hours(offer,hours);
+            var month_start_quote = getQuote4Hours(offer, dates[0][point]);
             y_cpu.push(cost/offer.cpu_p);
             y_gpu.push(cost/offer.gpu_p);
             y_cost.push(cost);
-            y_cost_monthly.push(quotes[j][0][point]/months)
+            y_cost_monthly.push(month_start_quote/months)
+            //console.log(offer.shortname+" cost:" + month_start_quote + " " +months+ " months");
             x.push(offer.shortname);
             c.push(color);
             info.push(getOfferInfo(offer));
