@@ -38,7 +38,7 @@
         同じ2016年にさくらインターネットという日本のプロバイダーがGPUサーバーの提供を始めました。他のプロバイダーの同レベルの性能のオファーと比べたら、月額はとても安いです。特にNVIDIA Titan Xを4枚載せたQuad GPU modelサーバーがコストパフォーマンスで魅力的です。ただ、初期費用があるため短期間で利用する場合は他社のオファーが有利になります。
     </p>
     <p>
-        コストパフォマンスでさくらインターネットといい勝負をしているのはオランダのLeaderTelecomというプロバイダーです。GPUの性能がとても高く、NVIDIA GeForce GTX 1080を8枚載せたインスタンスも提供しています。CPUの性能も高いが、メモリー量は128GBまでという低めのスペックです。ちなみに、そのLeaderTelecomは以前はオファーの数でトップでしたが、最近はウェブサイトでオファーの数が減り、今は3種類のインスタンスだけを提供しているようです。未だにGPU性能で高水準のLeaderTelecomより、さらに高性能のインスタンスを提供するプロバイダーがあります。IBMのクラウドプロバイダーSoftlayerは、NVIDIA P40が8枚を載せたインスタンスとQuadro P6000が8枚の、GPU性能で最も高いインスタンスを提供しています。
+        コストパフォマンスでさくらインターネットといい勝負をしているのはオランダのLeaderTelecomというプロバイダーです。GPUの性能がとても高く、NVIDIA GeForce GTX 1080を8枚載せたインスタンスも提供しています。CPUの性能も高いが、メモリー量は128GBまでという低めのスペックです。GPU性能で高水準のLeaderTelecomより、さらに高性能のインスタンスを提供しているプロバイダーがあります。IBMのクラウドプロバイダーSoftlayerは、NVIDIA P40が8枚を載せたインスタンスとQuadro P6000が8枚のインスタンス、GPU性能で最も高いインスタンスを提供しています。
     </p>
     <p>
         一般的なクラウドプロバイダーではないのですが、東京大学はGPUが載っているスパーコンピュータReedbush-Hを、教育機関はもちろんのこと、一般企業にも審査が通った用途に提供しています。GPUの性能では目立たないスペックなのですが、CPU性能やインターコネクト帯域幅などが最高標準です。値段も割安なので、審査さえクリアできれば、最高のコストパフォマンスのクラウドGPUを利用できます。ただ、一つ注意すべきところがあり、スーパーコンピューターは全てのノードのソフトウェア環境が同じであり、root権限も与えられないので、新しいソフトウェアをインストールできない可能性が高いです。もう一つの注意点としては、1年間のプランなのですが、使用できるノード時間が限られています。複数のノードにまたがるジョブを長時間で走らせていれば1年間足らずでノード時間がなくなってしまい、計算するには追加料金がかかってしまうことがあります。<a href="http://www.cc.u-tokyo.ac.jp/support/application/kitei/hyou5.pdf" target="_blank">東京大学のウエブサイト</a>の備考をよく読んでください。
@@ -56,7 +56,7 @@
 
     <figure id="pic1">
 
-        <img src="https://stair.center/wp-content/uploads/2017/04/filtergraphs.png" alt="" width="682" height="310" class="aligncenter size-full wp-image-462"  style="width:auto !important;" />
+        <img src="https://stair.center/wp-content/uploads/2017/04/filtergraphs.png" alt="" width="682" height="310" class="aligncenter size-full wp-image-462"/>
         
         <figcaption>Fig.1. プロバイダーでオファーを制限した状態のフィルタリンググラフ。一つのグラフをクリックして制限をかけると、他のグラフで制限されたオファーだけの情報が写ります。</figcaption>
     </figure>
@@ -67,7 +67,7 @@
 	<figure>
 
 
-        <img src="https://stair.center/wp-content/uploads/2017/04/cpu_gpu_performance.png" alt="" width="682" height="332" class="alignnone size-full wp-image-461"  style="width:auto !important;" />
+        <img src="https://stair.center/wp-content/uploads/2017/04/cpu_gpu_performance.png" alt="" width="682" height="332" class="alignnone size-full wp-image-461"/>
 
         <figcaption>Fig.2. GPUとCPU性能グラフ。CPUとGPUの性能で近いAmazonとのp2.8xlargeオファーとさくらインターネットのQuad GPU modelオファーを比較してみましょう。</figcaption>
     </figure>
@@ -78,7 +78,7 @@
     
     <figure>
 
-        <img src="https://stair.center/wp-content/uploads/2017/04/time_cost.png" alt="" width="682" height="412" class="alignnone size-full wp-image-459"  style="width:auto !important;" />
+        <img src="https://stair.center/wp-content/uploads/2017/04/time_cost.png" alt="" width="682" height="412" class="alignnone size-full wp-image-459"/>
 
         <figcaption>Fig.3. 利用期間によって変動するコストのグラフ。Amazonのp2.8xlargeオファーとさくらインターネットのQuad GPU modelオファーのコストの比較。2ヶ月以上使うならさくらインターネットのオファーの方が安くなります。</figcaption>
     </figure>
@@ -90,7 +90,7 @@
     
         
     <figure>
-        <img src="https://stair.center/wp-content/uploads/2017/04/1tflops_cost.png" alt="" width="683" height="377" class="alignnone size-full wp-image-460"  style="width:auto !important;" />
+        <img src="https://stair.center/wp-content/uploads/2017/04/1tflops_cost.png" alt="" width="683" height="377" class="alignnone size-full wp-image-460" />
 
         <figcaption>Fig.4. 1TFlopsあたりのコストでAmazonとさくらインターネットのオファーの比較。</figcaption>
     </figure>
@@ -104,7 +104,7 @@
     
     <figure>
 
-        <img src="https://stair.center/wp-content/uploads/2017/04/GPU_cost_time.png" alt="" width="682" height="465" class="alignnone size-full wp-image-463"  style="width:auto !important;" />
+        <img src="https://stair.center/wp-content/uploads/2017/04/GPU_cost_time.png" alt="" width="682" height="465" class="alignnone size-full wp-image-463" />
 
         <figcaption>Fig.5. 特定の計算量にかかる費用と時間のグラフ。左下に行くほど有利になります。</figcaption>
     </figure>
