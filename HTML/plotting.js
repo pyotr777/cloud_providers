@@ -514,7 +514,8 @@ function displaySlice(n) {
             separatethousands: true,
             gridcolor: cpu_color.light,
             gridwidth: 1,
-            linecolor: cpu_color.light
+            linecolor: cpu_color.light,
+            range: [0, 2500]
         },
         yaxis2: {
             title: 'Cost per GPU 1 TFlops (USD/TFlops)',
@@ -526,7 +527,8 @@ function displaySlice(n) {
             separatethousands: true,
             gridcolor: gpu_color.light,
             gridwidth: 1,
-            linecolor: gpu_color.light
+            linecolor: gpu_color.light,
+            range: [0, 2500]
         }
     };
     var y_cpu = [];
