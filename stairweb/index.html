@@ -41,7 +41,7 @@
         さくらインターネットと同じく、コストパフォーマンスの良いオファーを提供しているプロバイダーにオランダのLeaderTelecomがあります。GPUの性能がとても高いNVIDIA GeForce GTX 1080を8枚載せたインスタンスも提供しています。CPUの性能も高いのですが、メモリー量は128GBまでという低めのスペックです。GPU性能で高水準のLeaderTelecomより、さらに高性能なインスタンスを提供しているプロバイダーが、Cirrascaleです。Cirrascaleは、NVIDIA P40が8枚を載せたインスタンスとQuadro P6000が8枚のインスタンス、GPU性能で最も高いインスタンスを提供しています。
     </p>
     <p>
-        一般的なクラウドプロバイダーではないのですが、東京大学がGPU搭載スーパーコンピュータReedbush-Hを、教育機関はもちろんのこと、一般企業にも審査が通った用途に提供しています。GPUの性能では目立たないスペックなのですが、CPU性能やインターコネクト帯域幅などが最高標準です。値段も割安なので、審査さえクリアできれば、最高のコストパフォーマンスのクラウドGPUを利用できます。ただし、注意すべき点として、スーパーコンピューターは全てのノードのソフトウェア環境が同じであり、root権限も与えられないので、新しいソフトウェアをインストールできない可能性が高いです。もう一つの注意点としては、1年間のプランなのですが、使用できるノード時間が限られています。複数のノードにまたがるジョブを長時間で走らせていれば1年間足らずでノード時間がなくなってしまい、計算するには追加料金がかかってしまうことがあります。詳しくは、<a href="http://www.cc.u-tokyo.ac.jp/support/application/kitei/hyou5.pdf" target="_blank">東京大学のウエブサイト</a>の備考を読んでください。
+        一般的なクラウドプロバイダーではないのですが、東京大学がGPU搭載スーパーコンピュータReedbush-Hを、教育機関はもちろんのこと、一般企業にも審査が通った用途に提供しています。GPUの性能では目立たないスペックなのですが、CPU性能やインターコネクト帯域幅などが最高標準です。値段も割安なので、審査さえクリアできれば、最高のコストパフォーマンスのクラウドGPUを利用できます。ただし、注意すべき点として、スーパーコンピューターは全てのノードのソフトウェア環境が同じであり、root権限も与えられないので、新しいソフトウェアをインストールできない可能性が高いです。もう一つの注意点としては、1年間のプランなのですが、使用できるノード時間が限られています。複数のノードにまたがるジョブを長時間で走らせていれば数ヶ月でノード時間を使い切ってしまい、計算するには追加料金がかかってしまうことがあります。詳しくは、<a href="http://www.cc.u-tokyo.ac.jp/support/application/kitei/hyou5.pdf" target="_blank">東京大学のウエブサイト</a>の備考を読んでください。
     </p>
 
 
@@ -64,21 +64,18 @@
     <p>
         オファーをアマゾンとさくらインターネットに制限したら、CPUとGPU性能グラフでオファーを比較しましょう。
     </p>
-    <figure>
-
-
+    <figure id="pic2">
         <img src="https://stair.center/wp-content/uploads/2017/04/cpu_gpu_performance.png" alt="" width="682" height="332" class="alignnone size-full wp-image-461"/>
 
         <figcaption>Fig.2. GPUとCPU性能グラフ。CPUとGPUの性能で近いAmazonとのp2.8xlargeオファーとさくらインターネットのQuad GPU modelオファーを比較してみましょう。</figcaption>
     </figure>
 
     <p>
-        アマゾンのp2.8xlargeオファーとさくらインターネットのQuad GPU modelオファーはCPUとGPUの性能で近いのですが、どちらが安いでしょうか？さくらインターネットのオファーは月ごとに課金され、初期費用もかかります。一方、アマゾンのオファーは時間単位で課金され、初期費用もありません。下のコストグラフを見ますと、2ヶ月以上を使うならさくらインターネットのオファーの方が安くなることがわかります。
+        アマゾンのp2.8xlargeオファーとさくらインターネットの月額課金のQuad GPU modelオファーはCPUとGPUの性能で近いのですが、どちらが安いでしょうか？さくらインターネットのオファーは月ごとに課金され、初期費用もかかります。一方、アマゾンのオファーは時間単位で課金され、初期費用もありません。下のコストグラフを見ますと、2ヶ月以上を使うならさくらインターネットのオファー<a href="#note4"><sup>4</sup></a>の方が安くなることがわかります。
     </p>
 
-    <figure>
-
-        <img src="https://stair.center/wp-content/uploads/2017/04/time_cost.png" alt="" width="682" height="412" class="alignnone size-full wp-image-459"/>
+    <figure id="pic3">
+        <img src="https://stair.center/wp-content/uploads/2017/04/time_cost-1.png" alt="" width="682" height="408" class="alignnone size-full wp-image-588" />
 
         <figcaption>Fig.3. 利用期間によって変動するコストのグラフ。Amazonのp2.8xlargeオファーとさくらインターネットのQuad GPU modelオファーのコストの比較。2ヶ月以上使うならさくらインターネットのオファーの方が安くなります。</figcaption>
     </figure>
@@ -89,7 +86,7 @@
     </p>
 
 
-    <figure>
+    <figure id="pic4">
         <img src="https://stair.center/wp-content/uploads/2017/04/1tflops_cost.png" alt="" width="683" height="377" class="alignnone size-full wp-image-460" />
 
         <figcaption>Fig.4. 1TFlopsあたりのコストでAmazonとさくらインターネットのオファーの比較。</figcaption>
@@ -102,8 +99,7 @@
         利用したい期間は決まっていれば1TFlopsあたりのコストで比較すればいいのですが、もし利用したい期間ではなく、計算したいタスクが決まっている場合はどうすればいいでしょうか。計算が早く終われば、長くクラウドインスタンスを使う必要はありません。計算量が決まっていれば、計算にかかる時間とコストでオファーを比較することができます。性能の高いインスタンスほど計算時間が短くなり、その分コストも安くなりますので、多少コストが高くても性能の高いインスタンスが有利なはずです。<a href="http://comp.photo777.org/cloud-gpu-providers-more-graphs/" target="_blank">こちら</a>にあるグラフを使っておなじみのアマゾンとさくらインターネットのオファーを比較して見ましょう。
     </p>
 
-    <figure>
-
+    <figure id="pic5">
         <img src="https://stair.center/wp-content/uploads/2017/04/GPU_cost_time.png" alt="" width="682" height="465" class="alignnone size-full wp-image-463" />
 
         <figcaption>Fig.5. 特定の計算量にかかる費用と時間のグラフ。左下に行くほど有利になります。</figcaption>
@@ -131,6 +127,9 @@
         <sup id="note3">3</sup> Amazon、MicrosoftとGoogleがNVIDIA K80のインスタンスを提供していますが、プロバイダーのウェブサイトなどで表示されているGPUの数に注意する必要があります。1枚のK80のカードには2個のTesla GK210 GPUが載っており、プロバイダーが表示している数はGK210の数で、カードの枚数はその半分です。
     </p>
 
+    <p class="note" style="font-size:90%; color:#444;">
+        <sup id="note4">4</sup> この記事内にさくらインターネットの月額課金のオファーを取り上げましたが、さくらインターネットには<a href="https://www.sakura.ad.jp/koukaryoku/specification/" target="_blank">時間課金のオファー</a>や<a href="https://www.sakura.ad.jp/education/solution/cloud-teigaku.html?=mail_20170424" target="_blank">年間契約のオファー</a>もあります。
+    </p>
 
 </body>
 </html>
