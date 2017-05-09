@@ -32,8 +32,8 @@ function continue_proc(filter, field, group) {
     if (processing) return;
     processing = true;
     // line width on graph
-    var thin=0.8
-    var thick=2
+    var thin=1.1
+    var thick=3
 
     if (accumulated_months_days.length < 1) {
         //console.log("Calculate accumulated months days");
