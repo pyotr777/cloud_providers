@@ -23,7 +23,12 @@
 
 </style>
 <p>
-    私たちステアラボの研究員は、Amazon Web Services（AWS）などのサービスを利用して、クラウド上のGPUマシンで計算を行うことがあります。現在、複数のクラウドプロバイダーから数多くのオファーが提供されており、どのプロバイダーのどういうマシンを利用するか、は難しい選択です。提供されているオファーの性能とコスト（USD）を比較するため、私たちは各クラウドプロバイダーのウェブサイトから集めた情報を表にまとめ、いくつかインタラクティブなグラフを作ってみました。<a href="http://comp.photo777.org/cloud-gpu-providers-comparison/" target="_blank">こちら</a>には、各オファーの主なスペックと料金の表の他に、CPUとGPUの性能を比較するグラフ、使う時間によって変動するコストのグラフ、一定の利用期間においてのコストのグラフ、CPUとGPUの1TFlops<a href="#note1"><sup>1</sup></a>あたりのコストを比較するグラフがあります。<a href="http://comp.photo777.org/cloud-gpu-providers-more-graphs/" target="_blank">こちら</a>は計算量を固定した場合、GPUで計算する時間とそれにかかるコストのグラフとCPU計算時間とコストを比較する2つのグラフです。<br>
+    私たちステアラボの研究員は、Amazon Web Services（AWS）などのサービスを利用して、クラウド上のGPUマシンで計算を行うことがあります。現在、複数のクラウドプロバイダーから数多くのオファーが提供されており、どのプロバイダーのどういうマシンを利用するか、は難しい選択です。提供されているオファーの性能とコスト（USD）を比較するため、私たちは各クラウドプロバイダーのウェブサイトから集めた情報を表にまとめ、いくつかインタラクティブなグラフを作ってみます。</p>
+    <div style="text-align:center;"><a href="http://comp.photo777.org/cloud-gpu-providers-comparison/" target="_blank">CLOUD GPU PROVIDERS COMPARISON</a></div>
+
+    <div style="text-align:center;"><a href="http://comp.photo777.org/cloud-gpu-providers-more-graphs/" target="_blank">CLOUD GPU PROVIDERS COMPARISON – MORE GRAPHS</a></div>
+    <p>
+    <b>前者</b>には、各オファーの主なスペックと料金の表の他に、CPUとGPUの性能を比較するグラフ、使う時間によって変動するコストのグラフ、一定の利用期間においてのコストのグラフ、CPUとGPUの1TFlops<a href="#note1"><sup>1</sup></a>あたりのコストを比較するグラフがあります。<b>後者</b>は計算量を固定した場合、GPUで計算する時間とそれにかかるコストのグラフとCPU計算時間とコストを比較する2つのグラフです。<br>
     また、両方のページの上部にオファーのグループを選択（フィルタリング）するための<a href="#pic1" title="Fig.1を参照">小さめのグラフ</a>もいくつか併記しました。そのグラフを見れば、プロバイダーごとのオファーの数、GPU数でオファーの分布、メモリー量でオファーの分布など、統計的な情報がわかります。</p>
     <p>
         機械学習などの計算をクラウドGPUでしようと思ったら、今はたくさんの選択肢がありますが、振り返ってみればわずか一年前は全く違う状況でした。当時まだ珍しかったクラウドGPUは主に可視化のためのものでした。2016年の9月から機械学習用のクラウドGPUのp2インスタンス<a href="#note2"><sup>2</sup></a>を提供し始めたAmazonに続いて、Softlayer (IBM)、 Nimbix、 MS Azure、 Google Compute Cloudなど、たくさんのプロバイダーから様々なオファーが続々と登場しました。クラウドGPUオファーの主な用途が機械学習の計算に変わったため、GPUとCPUの性能が上がり、メモリーも増え（1000GBまでのインスタンスがあります）ストレージはSSDが主流になりました。
