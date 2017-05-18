@@ -6,8 +6,8 @@
     <style type="text/css">
 		body {
 			font-family: "小塚明朝 Pr6N L",serif;
-			letter-spacing:0.1em;
-			line-height:170%;
+			letter-spacing:0.25pt;
+			line-height:190%;
 		}
 	</style>
 </head>
@@ -22,12 +22,15 @@
   }
 
 </style>
-<p>
-    私たちステアラボの研究員は、Amazon Web Services（AWS）などのサービスを利用して、クラウド上のGPUマシンで計算を行うことがあります。現在、複数のクラウドプロバイダーから数多くのオファーが提供されており、どのプロバイダーのどういうマシンを利用するか、は難しい選択です。提供されているオファーの性能とコスト（USD）を比較するため、私たちは各クラウドプロバイダーのウェブサイトから集めた情報を表にまとめ、いくつかインタラクティブなグラフを作ってみます。</p>
+    <p>
+    At STAIR laboratory we often use cloud services with GPU like Amazon Web Services (AWS). Nowadays there are a lot of offers from many providers, and to pick the right offer is a difficult choice. In order to compare offers by cost and performance we gathered information from cloud providers websites and summarized it in a table and a number of interactive charts.
+    </p>
     
     <div style="text-align:center;"><a href="http://comp.photo777.org/cloud-gpu-providers-comparison/" target="_blank">CLOUD GPU PROVIDERS COMPARISON</a></div>
     <div style="text-align:center;margin:10px;"><a href="http://comp.photo777.org/cloud-gpu-providers-more-graphs/" target="_blank">CLOUD GPU PROVIDERS COMPARISON – MORE GRAPHS</a></div><br>
     
+    <p>The <b>first page</b> has CPU and GPU performance graph, cost graphs for varying rent period, cost per 1 TFlops of CPU and GPU performance and a table with details for every offer. The <b>second page</b> contains charts with approximate calculation time and cost for a fixed amout of CPU and GPU calculations in floating point operations (FLOPs). A few <a href="#pic1" title="See Fig.1">smaller graphs</a> on the top of both pages are used for selecting (filtering) offers by provider, GPU model, number of GPUs, RAM volume etc.
+    </p>
     <p><b>前者</b>には、各オファーの主なスペックと料金の表の他に、CPUとGPUの性能を比較するグラフ、使う時間によって変動するコストのグラフ、一定の利用期間においてのコストのグラフ、CPUとGPUの1TFlops<a href="#note1"><sup>1</sup></a>あたりのコストを比較するグラフがあります。<b>後者</b>は計算量を固定した場合、GPUで計算する時間とそれにかかるコストのグラフとCPU計算時間とコストを比較する2つのグラフです。<br>
     また、両方のページの上部にオファーのグループを選択（フィルタリング）するための<a href="#pic1" title="Fig.1を参照">小さめのグラフ</a>もいくつか併記しました。そのグラフを見れば、プロバイダーごとのオファーの数、GPU数でオファーの分布、メモリー量でオファーの分布など、統計的な情報がわかります。</p>
     <p>
