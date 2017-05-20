@@ -1,0 +1,286 @@
+<html>
+<head>
+    <style></style>
+    <title>Cloud GPU Providers Comparison</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF8">
+    <style type="text/css">
+        body {
+            font-family: "PingFang SC";
+            letter-spacing:0.25pt;
+            line-height:190%;
+        }
+    </style>
+</head>
+
+<body>
+<style type="text/css">
+  figcaption {
+    font-size:90%;
+    line-height:150%;
+    font-weight: bold;
+    margin:0 100px 30px 50px;
+  }
+  sup {
+    baseline-shift: 0.5pt;
+    font-size: 70%;
+    vertical-align:top;
+  }
+  p.en {
+    display:block !important;
+    margin: 10px 0 px;
+  }
+
+</style>
+
+
+
+
+
+    <p class="ja">
+        私たちステアラボの研究員は、クラウド上のGPUマシンを使って計算を行うことがあります。現在、複数のクラウドプロバイダーから数多くのオファーが提供されており、どのプロバイダーのどういうマシンを利用するか、は難しい選択です。提供されているオファーの性能とコスト（USD）を比較するため、私たちは各クラウドプロバイダーのウェブサイトから集めた情報を表にまとめ、いくつかインタラクティブなグラフを作ってみます。</p>
+
+    <div style="text-align:center;" class="ja"><a href="http://comp.photo777.org/cloud-gpu-providers-comparison/" target="_blank">CLOUD GPU PROVIDERS COMPARISON</a></div>
+    <div style="text-align:center;margin:10px;" class="ja"><a href="http://comp.photo777.org/cloud-gpu-providers-more-graphs/" target="_blank">CLOUD GPU PROVIDERS COMPARISON – MORE GRAPHS</a></div><br>
+
+    <p class="ja">
+        <b>前者</b>には、各オファーの主なスペックと料金の表の他に、CPUとGPUの性能を比較するグラフ、使う時間によって変動するコストのグラフ、一定の利用期間においてのコストのグラフ、CPUとGPUの1TFlops<a href="#note1"><sup>1</sup></a>あたりのコストを比較するグラフがあります。<b>後者</b>は計算量を固定した場合、GPUで計算する時間とそれにかかるコストのグラフとCPU計算時間とコストを比較する2つのグラフです。<br>
+        また、両方のページの上部にオファーのグループを選択（フィルタリング）するための<a href="#pic1" title="Fig.1を参照">小さめのグラフ</a>もいくつか併記しました。そのグラフを見れば、プロバイダーごとのオファーの数、GPU数でオファーの分布、メモリー量でオファーの分布など、統計的な情報がわかります。
+    </p>
+    <p class="ja">
+        機械学習などの計算をクラウドGPUでしようと思ったら、今はたくさんの選択肢がありますが、振り返ってみればわずか一年前は全く違う状況でした。当時まだ珍しかったクラウドGPUは主に可視化のためのものでした。2016年の9月から機械学習用のクラウドGPUのp2インスタンス<a href="#note2"><sup>2</sup></a>を提供し始めたAmazonに続いて、Softlayer (IBM)、 Nimbix、 MS Azure、 Googleなど、たくさんのプロバイダーから様々なオファーが続々と登場しました。クラウドGPUオファーの主な用途が機械学習の計算に変わったため、GPUとCPUの性能が上がり、メモリーも増え（1000GBまでのインスタンスがあります）ストレージはSSDが主流になりました。
+    </p>
+
+    <p class="ja">
+        マイクロソフトAzureクラウド初のGPUインスタンスであるNシリーズは2016年の8月に発表されたものの、すべてのユーザに公開されたのは12月でした。AzureクラウドのNシリーズは他のプロバイダーのオファーと比較して性能的にもコスト的にも目立ちませんが、マイクロソフトが開発した機械学習フレームワークAzure Machine Learning Studioを使用できるというメリットがあります。
+        アメリカの大手クラウドプロバイダーの中で最も遅くGPUインスタンスの提供を始めたGoogleですが、インスタンスのスペックを細かく設定できるのは大きな特徴です。GPUの種類でみると、マイクロソフトのNVシリーズはNVIDIA M60を、アマゾン、マイクロソフト、グーグルはNVIDIA K80<a href="#note3"><sup>3</sup></a>を提供しています。
+    </p>
+
+    <p class="ja">
+        同じく2016年に、日本のプロバイダーであるさくらインターネットがGPUサーバーの提供を始めました。他のプロバイダーが提供している同性能のオファーと比べ、月額料金はとても安くなっています。特にNVIDIA Titan Xを4枚載せたQuad GPU modelサーバーがコストパフォーマンスの点で魅力的です。ただし、初期費用が必要なため短期間で利用する場合は他社のオファーが有利になります。
+    </p>
+    <p class="ja">
+        さくらインターネットと同じく、コストパフォーマンスの良いオファーを提供しているプロバイダーにオランダのLeaderTelecomがあります。GPUの性能がとても高いNVIDIA GeForce GTX 1080を8枚載せたインスタンスも提供しています。CPUの性能も高いのですが、メモリー量は128GBまでという低めのスペックです。GPU性能で高水準のLeaderTelecomより、さらに高性能なインスタンスを提供しているプロバイダーが、Cirrascaleです。Cirrascaleは、NVIDIA P40が8枚を載せたインスタンスとQuadro P6000が8枚のインスタンス、GPU性能で最も高いインスタンスを提供しています。
+    </p>
+    <p class="ja">
+        一般的なクラウドプロバイダーではないのですが、東京大学がGPU搭載スーパーコンピュータReedbush-Hを、教育機関はもちろんのこと、一般企業にも審査が通った用途に提供しています。GPUの性能では目立たないスペックなのですが、CPU性能やインターコネクト帯域幅などが最高標準です。値段も割安なので、審査さえクリアできれば、最高のコストパフォーマンスのクラウドGPUを利用できます。ただし、注意すべき点として、スーパーコンピューターは全てのノードのソフトウェア環境が同じであり、root権限も与えられないので、新しいソフトウェアをインストールできない可能性が高いです。もう一つの注意点としては、1年間のプランなのですが、使用できるノード時間が限られています。複数のノードにまたがるジョブを長時間で走らせていれば数ヶ月でノード時間を使い切ってしまい、計算するには追加料金がかかってしまうことがあります。詳しくは、<a href="http://www.cc.u-tokyo.ac.jp/support/application/kitei/hyou5.pdf" target="_blank">東京大学のウエブサイト</a>の備考を読んでください。
+    </p>
+    <p class="ja">
+        では、私たちが作ったグラフを使っていくつかのオファーを比較してみましょう。
+        それぞれのオファーを比較するためには、たくさんの要素を考慮する必要があります。例えば、GPUとCPUのモデル、メモリーとハードディスクの量、インターコネクトとインターネットの帯域幅などです。また、料金も重要な要素の一つです。ただし、プロバイダーごとに課金の時間単位が異なり、単純な比較は難しいです。分ごとに課金されるプランもあれば、年ごとに課金されるプランもあります。さらに初期費用が必要なプランもあり、使用できるノード時間が制限されるプランもあります。
+    </p>
+    <p class="ja">
+        インスタンスの性能を比較するために、先ずは性能に大きな影響を与えるGPU性能とCPU性能を比べてみましょう。<a href="http://comp.photo777.org/cloud-gpu-providers-comparison/" target="_blank">Cloud GPU providers comparison</a>ページにはGPUとCPU性能を比較したグラフがあります。例えば、さくらインターネットとアマゾンの比較結果だけを見たい場合は、ページの上部にある小さめのフィルタリング用のグラフを使って、全てのグラフ上に表示されるオファーを制限（フィルタリング）してましょう。フィルタリングは、グラフ右側にあるProviderの下の「Amazon」と「Sakura」をクリックすることで完了します。フィルタリングが完了すると下図（Fig.1）が表示されます。
+    </p>
+
+    <figure id="pic1" class="ja">
+
+        <img src="https://stair.center/wp-content/uploads/2017/04/filtergraphs.png" alt="" width="682" height="310" class="aligncenter size-full wp-image-462"/>
+
+        <figcaption>Fig.1. プロバイダー（AmazonとSakura）でオファーを制限した状態のフィルタリンググラフ。一つのグラフをクリックして制限をかけると、他のグラフで制限されたオファーだけの情報が表示されます。</figcaption>
+    </figure>
+
+    <p class="ja">
+        オファーをアマゾンとさくらインターネットに制限したら、CPUとGPU性能グラフでオファーを比較しましょう。
+    </p>
+    <figure id="pic2" class="ja">
+        <img src="https://stair.center/wp-content/uploads/2017/04/cpu_gpu_performance.png" alt="" width="682" height="332" class="alignnone size-full wp-image-461"/>
+
+        <figcaption>Fig.2. GPUとCPU性能グラフ。CPUとGPUの性能で近いAmazonとのp2.8xlargeオファーとさくらインターネットのQuad GPU modelオファーを比較してみましょう。</figcaption>
+    </figure>
+
+    <p class="ja">
+        アマゾンのp2.8xlargeオファーとさくらインターネットの月額課金のQuad GPU modelオファーはCPUとGPUの性能で近いのですが、どちらが安いでしょうか？さくらインターネットのオファーは月ごとに課金され、初期費用もかかります。一方、アマゾンのオファーは時間単位で課金され、初期費用もありません。下のコストグラフを見ますと、2ヶ月以上を使うならさくらインターネットのオファー<a href="#note4"><sup>4</sup></a>の方が安くなることがわかります。
+    </p>
+
+    <figure id="pic3" class="ja">
+        <img src="https://stair.center/wp-content/uploads/2017/04/time_cost-1.png" alt="" width="682" height="408" class="alignnone size-full wp-image-588" />
+
+        <figcaption>Fig.3. 利用期間によって変動するコストのグラフ。Amazonのp2.8xlargeオファーとさくらインターネットのQuad GPU modelオファーのコストの比較。2ヶ月以上使うならさくらインターネットのオファーの方が安くなります。</figcaption>
+    </figure>
+
+
+    <p class="ja">
+        上記のように性能で近いオファーの場合は、コストを比較さえすればどちらが有利かがわかります。性能的に遠いオファーの場合は性能単位であるFlopsあたりのコストで比較することができます。利用期間によってコストが変われば、Flopsあたりのコストも変動しますので、利用期間を変更すれば1TFlopsあたりのコストのグラフも変わります。コストグラフ（Fig.3）をクリックすることで、利用期間を変更できます。
+    </p>
+
+
+    <figure id="pic4" class="ja">
+        <img src="https://stair.center/wp-content/uploads/2017/04/1tflops_cost.png" alt="" width="683" height="377" class="alignnone size-full wp-image-460" />
+
+        <figcaption>Fig.4. 1TFlopsあたりのコストでAmazonとさくらインターネットのオファーの比較。</figcaption>
+    </figure>
+    <p class="ja">
+        アマゾンとさくらインターネットのオファーを比較してみると、2ヶ月の利用期間でGPUの1TFlopsあたりのコストでさくらTitanX x4インスタンスが一番安く、CPUの1TFlopsあたりのコストでアマゾンの1年間契約のp2インスタンスが一番安いことがわかります。利用期間を長くしたら、TitanX x4の方がCPU性能のコストでも一番安くなってきますし、GPUの性能ではアマゾンのオファーよりは数倍やすくなります。
+    </p>
+    <p class="ja">
+        利用したい期間は決まっていれば1TFlopsあたりのコストで比較すればいいのですが、もし利用したい期間ではなく、計算したいタスクが決まっている場合はどうすればいいでしょうか。計算が早く終われば、長くクラウドインスタンスを使う必要はありません。計算量が決まっていれば、計算にかかる時間とコストでオファーを比較することができます。性能の高いインスタンスほど計算時間が短くなり、その分コストも安くなりますので、多少コストが高くても性能の高いインスタンスが有利なはずです。
+        <a href="http://comp.photo777.org/cloud-gpu-providers-more-graphs/" target="_blank">Calculation Time and Cost</a>グラフを使っておなじみのアマゾンとさくらインターネットのオファーを比較して見ましょう。
+    </p>
+
+    <figure id="pic5" class="ja">
+        <img src="https://stair.center/wp-content/uploads/2017/04/GPU_cost_time.png" alt="" width="682" height="465" class="alignnone size-full wp-image-463" />
+
+        <figcaption>Fig.5. 特定の計算量にかかる費用と時間のグラフ。左下に行くほど有利になります。</figcaption>
+    </figure>
+
+
+    <p class="ja">
+        計算量を変えたりして計算にかかるコストと時間でオファーを比較しましょう。計算量が200EFlopsまで上がるあたりでさくらインターネットとAmazonのオファーが接戦しています。計算量がさらに増えれば増えるほどさくらインターネットのオファーが有利になります。CPUの場合は早くも50EFlopsあたりでさくらはアマゾンを追い越します。 計算量の大きいタスクほど、さくらインターネットが有利なることがわかります。</p>
+    <p class="ja">
+        最後に注意しておきたいのですが、CPUとGPU性能以外にも計算時間を左右する要素がたくさんあるので、今まで比較に使っていたFlopsは一つの目安にすぎないことを忘れずに上記のグラフを使ってください。 </p>
+    <p class="ja">&nbsp;</p>
+
+
+    <hr style="height:1px" class="ja">
+
+    <p class="note ja" style="font-size:90%; color:#444;">
+        <sup id="note1">1</sup> 1秒あたりの浮動小数点演算（Flops）です。 浮動小数点演算の数の単位であるFLOPと混同しないように気をつけてください。CPU性能及びGPU性能は全て単精度の数値です。
+    </p>
+
+
+    <p class="note ja" style="font-size:90%; color:#444;">
+        <sup id="note2">2</sup> クラウドコンピューティングでは貸出する仮想マシンのことをインスタンスといいます。このブログ記事では、仮想マシンとベアメタルサーバを比較することがあり、その時は、便宜上ベアメタルサーバのこともインスタンスと呼んだりしています。
+    </p>
+
+    <p class="note ja" style="font-size:90%; color:#444;">
+        <sup id="note3">3</sup> Amazon、MicrosoftとGoogleがNVIDIA K80のインスタンスを提供していますが、プロバイダーのウェブサイトなどで表示されているGPUの数に注意する必要があります。1枚のK80のカードには2個のTesla GK210 GPUが載っており、プロバイダーが表示している数はGK210の数で、カードの枚数はその半分です。
+    </p>
+
+    <p class="note ja" style="font-size:90%; color:#444;">
+        <sup id="note4">4</sup> この記事内にさくらインターネットの月額課金のオファーを取り上げましたが、さくらインターネットには<a href="https://www.sakura.ad.jp/koukaryoku/specification/" target="_blank">時間課金のオファー</a>や<a href="https://www.sakura.ad.jp/education/solution/cloud-teigaku.html?=mail_20170424" target="_blank">年間契約のオファー</a>もあります。
+    </p>
+
+
+
+
+
+
+
+    <p class="en">
+        At STAIR laboratory we often use cloud GPUs for calculations. There are a lot of offers from many providers, and to pick the right offer is a difficult choice. In order to compare cloud GPU offers by cost and performance we gathered information from cloud providers' websites and summarized it in a table and created a number of interactive charts.
+    </p>
+
+    <div style="text-align:center;" class="en"><a href="http://comp.photo777.org/cloud-gpu-providers-comparison/" target="_blank">CLOUD GPU PROVIDERS COMPARISON</a></div>
+    <div style="text-align:center;margin:10px;" class="en"><a href="http://comp.photo777.org/cloud-gpu-providers-more-graphs/" target="_blank">CLOUD GPU PROVIDERS COMPARISON – MORE GRAPHS</a></div><br>
+
+    <p class="en">
+        The <b>first page</b> has CPU and GPU performance graph, cost graph for varying rent period, a graph of cost per 1 TFlops<a href="#note1"><sup>1</sup></a> of CPU and GPU performance and a table with details for each offer. The <b>second page</b> contains graphs with approximate calculation time and cost for a fixed amount of CPU and GPU floating point operations (FLOPs). A few <a href="#pic1" title="See Fig.1">smaller charts</a> on the top of both pages are used for selecting (filtering) offers by provider, GPU model, number of GPUs, etc. These charts also provide statistical information like offers distribution  by providers, by numbers of GPUs and by amount of RAM.
+    </p>
+
+
+    <p class="en">
+        Nowadays, there are many options for using cloud GPUs for machine learning, but if we look back, only a year ago the situation was completely different: the cloud GPUs were still rare and was mainly used for visualization.  Following Amazon, which began offering p2 instance<a href="#note2"><sup>2</sup></a> for machine learning in September 2016, other providers such as Softlayer (IBM), Nimbix, MS Azure and Google offered options for machine learning in the cloud. Because the main use of cloud GPUs has shifted towards machine learning calculations, more powerful GPUs and CPUs were offered, amount of memory have been increased (there are offers with up to 1000 GB), SSDs have become the main option for storage.
+    </p>
+
+    <p class="en">
+        Microsoft Azure cloud's first GPU offer, namely N series, was announced in August 2016, but it was in December of the same year that it actually became available to the public. Although the N series of Azure Cloud is not conspicuous both in terms of performance and cost compared with other providers' offers, it has an advantage that you can use Azure Machine Learning Studio, a machine learning framework developed by Microsoft.
+    </p>
+    <p class="en">
+        Although Google was the last of the major cloud providers in the United States that started offering GPU instances, it's distinctive feature is that it is possible to finely set the specifications of an instance. Looking at the types of GPUs, Microsoft's NV series offers NVIDIA M60, and Amazon, Microsoft and Google provide NVIDIA K80<a href="#note3"><sup>3</sup></a>.
+    </p>
+
+    <p class="en">
+        In the same year of 2016 a Japanese cloud provider Sakura Internet began offering GPU servers.
+        Monthly fee is much cheaper than offers with similar performance from other providers. Especially "Quad GPU model" server with 4 NVIDIA Titan X-s is attractive in terms of cost-performance. However, the initial cost apply, so if you plan to use it for a short period of time, other companies' offer will be advantageous.
+    </p>
+
+    <p class="en">
+        Another provider with high cost-performance ratio is LeaderTelecom from the Netherlands. It offers instances with 8 NVIDIA GeForce GTX 1080 GPUs with very high performance. CPU performance is also very good, but the amount of memory is comparatively small: up to 128 GB. Cirrascale is a provider that offers instances with even higher GPU performance than LeaderTelecom. Cirrascale offers instances with 8 NVIDIA P40 and with 8 NVIDIA Quadro P6000 GPUs. It is the highest GPU performance available in the cloud.
+    </p>
+    <p class="en">
+        Though not a general cloud provider, the University of Tokyo provides GPU-equipped supercomputer Reedbush-H not only to educational institutions, but also to general private companies and individuals for particular tasks that passed a peer review. GPU performance is not conspicuous, but CPU performance and interconnect are of the highest standards. The price is cheap, so if you are able to pass a peer review, you can use the best cost-performance cloud GPU offer. However, it is worth noting that you will probably not be able to install a new software, because supercomputers have the same software environment on all nodes, and users are not granted root permissions. Another important point to note is that for a one-year plan available node time is limited. If you run jobs that span multiple nodes for a long time, you may run out of node time in a few months, and continued usage will incur additional charges. For details, please read the remarks on <a href="http://www.cc.u-tokyo.ac.jp/support/application/kitei/hyou5.pdf" title="in Japanese only" target="_blank">the University of Tokyo website</a> (if you are fluent in Japanese).
+    </p>
+
+    <p class="en">
+        Let us actually compare some offers using the interactive charts.     In order to compare offers we need to consider a lot of factors: GPU and CPU models, amount of memory and hard disk volume, interconnect and Internet bandwidth to name a few. The price is also an important factor. However, different offers charged by different time units. There are offers that charged per minute and there are yearly charged plans. Some require initial costs and some plans limit available node time, so even cost comparison is not easy.
+    </p>
+
+    <p class="en">
+        In order to compare the performance of instances, let's first compare GPU and CPU performance which have a big influence on performance.  On <a href="http://comp.photo777.org/cloud-gpu-providers-comparison/" target="_blank">Cloud GPU providers comparison</a>  page there is a graph for comparing GPU and CPU performance. For example, if you want to see comparison results between Sakura Internet and Amazon offers, use a small filtering graph at the top of the page to filter offers displayed on all graphs. The filtering is done by clicking "Amazon" and "Sakura" on the Provider chart. The following figure (Fig.1) shows filtering charts with offers filtered by providers.
+    </p>
+
+    <figure id="pic1" class="en">
+        <img src="https://stair.center/wp-content/uploads/2017/04/filtergraphs.png" alt="" width="682" height="310" class="aligncenter size-full wp-image-462"/>
+
+        <figcaption>Fig.1. Filtering charts in the state of filtering offers by provider (Amazon and Sakura). Other charts display information only for the filtered offers.</figcaption>
+    </figure>
+
+    <p class="en">
+        After we filtered offers and only Amazon and Sakura Internet offers are displayed, let's compare them using the CPU and GPU performance graph.
+    </p>
+    <figure id="pic2" class="en">
+        <img src="https://stair.center/wp-content/uploads/2017/04/cpu_gpu_performance.png" alt="" width="682" height="332" class="alignnone size-full wp-image-461"/>
+
+        <figcaption>Fig.2. GPU and CPU performance graph comparing Amazon p2.8xlarge offer with a close by CPU and GPU performance Quad GPU model offer from Sakura Internet.</figcaption>
+    </figure>
+
+    <p class="en">
+        Amazon's p2.8xlarge offer and Sakura Internet's Quad GPU model offer are close by CPU and GPU performance, but which is cheaper? Sakura Internet offer is charged monthly and has an initial cost. On the other hand, the offer from Amazon is charged by hours and there is no initial cost. Looking at the cost graph below you can see that if you plan to use for more than two months Sakura Internet offer<a href="#note4"><sup>4</sup></a> would be cheaper.
+    </p>
+
+    <figure id="pic3" class="en">
+        <img src="https://stair.center/wp-content/uploads/2017/04/time_cost-1.png" alt="" width="682" height="408" class="alignnone size-full wp-image-588" />
+
+        <figcaption>Fig.3. The cost graph with period of use on the x-axis. Comparison of Amazon's p2.8xlarge offer and Sakura Internet's Quad GPU model offer. For more than two months Sakura Internet offer will be cheaper.</figcaption>
+    </figure>
+
+
+    <p class="en">
+        In such cases of comparing offers with close performance parameters you can see, which one is better if you compare costs. To compare offers that are far-off on performance graph you can use cost per 1 TFlops<a href="#note1"><sup>1</sup></a>. Cost per TFlops parameter changes depending on the usage period, if you change the usage period on the cost graph on fig.3, cost per 1 TFlops will also change. You can change usage period by clicking on the cost graph.
+    </p>
+
+
+    <figure id="pic4" class="en">
+        <img src="https://stair.center/wp-content/uploads/2017/04/1tflops_cost.png" alt="" width="683" height="377" class="alignnone size-full wp-image-460" />
+
+        <figcaption>Fig.4. Comparison of Amazon and Sakura Internet offers by cost per 1 TFlops for two months use period.</figcaption>
+    </figure>
+
+    <p class="en">
+        Comparing Amazon and Sakura Internet offers for two months use you can see, that Sakura's TitanX x4 instance (which is the familiar "Quad GPU model") is the cheapest by GPU TFlops cost and Amazon's p2 dedicated instance with 1 year contract is the cheapest by CPU TFlops cost. For a longer use periods TitanX x4 will be the cheapest even at the cost of CPU performance, and GPU performance will be several times cheaper than the Amazon's offer.
+    </p>
+
+    <p class="en">
+        You can see, that if the period of use is fixed, you can compare offers by the cost per 1 TFlops. But what if you do not know the use period and what you have is a task that you need to calculate? If calculation is done quickly you do not need to use the cloud for a long time. If the amount of calculation is fixed, you can compare offers by the time and the cost needed to complete the calculation task. The higher the performance, the shorter the computation time becomes, and the less expensive it is, so even if the price is somewhat high, an instance with higher performance should be advantageous. Let's compare the same two offers from Amazon and Sakura Internet using <a href="http://comp.photo777.org/cloud-gpu-providers-more-graphs/" target="_blank">Calculation Time and Cost graph</a>.
+    </p>
+
+
+    <figure id="pic5" class="en">
+        <img src="https://stair.center/wp-content/uploads/2017/04/GPU_cost_time.png" alt="" width="682" height="465" class="alignnone size-full wp-image-463" />
+
+        <figcaption>Fig.5. Graph of cost and time for a fixed amount of GPU calculations in floating point operations. Offers closer to the lower left corner are more advantageous.</figcaption>
+    </figure>
+
+
+    <p class="en">
+        Let's compare offers by calculation cost and time while changing the calculation amount for GPUs. Sakura Internet and Amazon offers are in close contact as the calculation volume rises to 200 EFLOPs. The further the amount of computation increases, the more Sakura's offer will be advantageous. In case of CPU calculations, Sakura will overtake Amazon at around 50 EFLOPs. You can see that Sakura Internet is more advantageous for tasks with larger computational complexity.
+    </p>
+
+    <p class="en">
+        Finally, we would like you to keep in mind, while using the aforementioned graphs, that there are lots of other factors that affect computation time besides CPU and GPU performance, and floating point operations (FLOPs) we were using for comparison in this review is only one of indicating parameters.
+    </p>
+
+    <p class="en">&nbsp;</p>
+
+
+    <hr style="height:1px" class="en">
+
+    <p class="note" style="font-size:90%; color:#444;">
+        <sup id="note1">1</sup> Floating point operations per second (Flops). Do not confuse with FOLPs, which is a number floating point operations. Here and throughout this article, CPU and GPU performance are all single precision numbers.
+    </p>
+
+
+    <p class="note en" style="font-size:90%; color:#444;">
+        <sup id="note2">2</sup> In cloud computing, a virtual machine to be lent is called an instance. In this article, however, we sometimes compare virtual machines and bare metal servers, calling them all "instances" for convenience.
+    </p>
+
+    <p class="note en" style="font-size:90%; color:#444;">
+        <sup id="note3">3</sup> Amazon, Microsoft and Google provide instances with NVIDIA K80-s, but you need to pay attention to the number of GPUs displayed on provider's website. There are two Tesla GK 210 GPUs on one K80 card, and the numbers on provider's websites are the numbers of GK 210-s; the number of cards is half of that.
+    </p>
+
+    <p class="note en" style="font-size:90%; color:#444;">
+        <sup id="note4">4</sup> I picked up a monthly charged offer from Sakura Internet in this article, but Sakura Internet also has <a href="https://www.sakura.ad.jp/koukaryoku/specification/" target="_blank">hourly charged offers</a> and <a href="https://www.sakura.ad.jp/education/solution/cloud-teigaku.html?=mail_20170424" target="_blank">annual contract offers</a>.
+    </p>
+
+</body>
+</html>
