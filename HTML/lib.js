@@ -1,8 +1,8 @@
 // Library functions
-//var CSV_file = "./cost-performance.csv";
-var CSV_file = "/cloudproviders/cost-performance.csv";
+var CSV_file = "./cost-performance.csv";
+//var CSV_file = "/cloudproviders/cost-performance.csv";
 
-var last_update = "Last update: 2017/05/09";
+var last_update = "Last update: 2017/05/23";
 
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
 var accumulated_months_days = [];
@@ -162,34 +162,38 @@ function processStaticData(results) {
             name: row[2],
             name_link: row[3],
             shortname: row[4],
-            hourly_native: row[5],
-            weekly_native: row[6],
-            monthly_native: row[7],
-            yearly_native: row[8],
-            setup_native: row[9],
-            hourly:    convert2BaseCurrency(row[5],row[10]),
-            weekly:    convert2BaseCurrency(row[6],row[10]),
-            monthly:   convert2BaseCurrency(row[7],row[10]),
-            yearly:    convert2BaseCurrency(row[8],row[10]),
-            setup:     convert2BaseCurrency(row[9],row[10]),
-            currency:  row[10],
-            cpu_p:     row[11],
-            cpu_perf_group: getGroup(row[11],[0.5,1,1.5,2,2.5]),
-            gpu_p:     row[12],
-            gpu_perf_group: getGroup(row[12],[20,40,60,80,100]),
-            gpu_model: row[13],
-            gpus:      row[14],
-            cpu_model: row[15],
-            cpus:      row[16],
-            memory:    row[17],
-            memory_group: getGroup(row[17],[50,100,200,300,750,1000]),
-            hdd1:      row[18],
-            hdd1_vol:  row[19],
-            hdd2:      row[20],
-            hdd2_vol:  row[21],
-            net:       row[22],
-            time_limit:row[23],
-            notes:     row[24]
+            minutely_native: row[5],
+            hourly_native: row[6],
+            weekly_native: row[7],
+            monthly_native: row[8],
+            yearly_native: row[9],
+            month_limit_native: row[10],
+            setup_native: row[11],
+            currency:   row[12],
+            minutely:   convert2BaseCurrency(row[5],row[12]),
+            hourly:     convert2BaseCurrency(row[6],row[12]),
+            weekly:     convert2BaseCurrency(row[7],row[12]),
+            monthly:    convert2BaseCurrency(row[8],row[12]),
+            yearly:     convert2BaseCurrency(row[9],row[12]),
+            month_limit:convert2BaseCurrency(row[10],row[12]),
+            setup:      convert2BaseCurrency(row[11],row[12]),
+            cpu_p:      row[13],
+            cpu_perf_group: getGroup(row[13],[0.5,1,1.5,2,2.5]),
+            gpu_p:     row[14],
+            gpu_perf_group: getGroup(row[14],[20,40,60,80,100]),
+            gpu_model: row[15],
+            gpus:      row[16],
+            cpu_model: row[17],
+            cpus:      row[18],
+            memory:    row[19],
+            memory_group: getGroup(row[19],[50,100,200,300,750,1000]),
+            hdd1:      row[20],
+            hdd1_vol:  row[21],
+            hdd2:      row[22],
+            hdd2_vol:  row[23],
+            net:       row[24],
+            time_limit:row[25],
+            notes:     row[26]
         }
         offers_all.push(offer);
     }
