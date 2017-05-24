@@ -131,25 +131,28 @@ table.wide_table {
 	table-layout: fixed;
 	border: 1px solid #ccc;
 	box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
-}
-table.wide_table th {
-	width: 60px;
+    width: 1600px;
 }
 
+table.wide_table th {
+    width: 60px;
+}
+
+
 table.wide_table th.double {
-	width: 120px;
+	width: 100px;
 }
 
 table.wide_table th.triple {
-	width: 180px;
+	width: 150px;
 }
 
 table.wide_table th.quadruple {
-	width: 240px;
+	width: 200px;
 }
 
-table.wide_table th.pentadruple {
-    width: 350px;
+table.wide_table th.largest {
+    width: 420px;
 }
 
 .scale_number {
@@ -163,7 +166,7 @@ table.wide_table th.pentadruple {
 
 
 #table_div {
-    overflow: scroll;
+    overflow-x: auto;
 }
 
 

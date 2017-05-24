@@ -745,15 +745,35 @@ function NumberFormat(s) {
     return num;
 }
 
+function shortFormat(s) {
+    if (s == "") {
+        return "";
+    }
+    if (s.indexOf("x")>=0) {
+        return s;
+    }
+    num = Number(s).toLocaleString('en', { style: 'decimal', maximumFractionDigits: 1 });
+    num = num.replace(",", " ");
+    return num;
+}
+
+function formatCPUs(offer) {
+    var str = "";
+    if (offer.cpu_model != "" ) {
+        str = offer.cpu_model + " x" + shortFormat(offer.cpus);
+    }
+    return str;
+}
+
 function plotTable() {
     var head = '<table class="wide_table">\
     <thead><tr><th rowspan="2" class="double">Provider</th> \
     <th rowspan="2" class="quadruple">Offer</th><th class="double">GPU</th><th class="double">CPU</th> \
     <th>Memory</th><th colspan="4" class="quadruple">HDD</th> \
     <th>Network</th>\
-    <th colspan="7" class="pentadruple">Pricing</th> \
+    <th colspan="7" class="largest">Pricing</th> \
     <th rowspan="2">Time limit (h)</th> \
-    <th rowspan="2" class="pentadruple">Notes</th></tr> \
+    <th rowspan="2" class="largest">Notes</th></tr> \
     <tr><th>model x quantity</th> \
     <th>model x quantity</th> \
     <th>RAM (GB)</th> \
@@ -772,8 +792,8 @@ function plotTable() {
         }
         body += "<br><note>"+offers[j].shortname+"</note>";
         body += '</td> \
-        <td>'+offers[j].gpu_model+' x '+offers[j].gpus+'</td>\
-        <td>'+offers[j].cpu_model+' x '+offers[j].cpus+'</td>\
+        <td>'+offers[j].gpu_model+' x'+shortFormat(offers[j].gpus)+'</td>\
+        <td>'+formatCPUs(offers[j])+'</td>\
         <td>'+NumberFormat(offers[j].memory)+'</td>\
         <td>'+offers[j].hdd1+'</td><td>'+NumberFormat(offers[j].hdd1_vol)+'</td>\
         <td>'+offers[j].hdd2+'</td><td>'+NumberFormat(offers[j].hdd2_vol)+'</td>\
