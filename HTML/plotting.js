@@ -91,7 +91,7 @@ function displayPerformanceScatter() {
             pad: 0
         }
     };
-    console.log("in displayPerformanceScatter has " + offers.length + " filtered offers");
+    //console.log("in displayPerformanceScatter has " + offers.length + " filtered offers");
     var traces = [];
     var memory_trace = {
         mode: "markers",
@@ -365,7 +365,7 @@ function plotPeriod(period, step, thin, thick) {
         period_plot_layout.annotations = [];
     }
 
-    console.log("traces has "+traces.length + " elements");
+    //console.log("traces has "+traces.length + " elements");
     Plotly.newPlot("costs_period", traces, period_plot_layout);
 
     var myPlot = document.getElementById('costs_period');
@@ -751,7 +751,7 @@ function plotTable() {
     <th rowspan="2" class="quadruple">Offer</th><th class="double">GPU</th><th class="double">CPU</th> \
     <th>Memory</th><th colspan="4" class="quadruple">HDD</th> \
     <th>Network</th>\
-    <th colspan="5" class="pentadruple">Pricing</th> \
+    <th colspan="7" class="pentadruple">Pricing</th> \
     <th rowspan="2">Time limit (h)</th> \
     <th rowspan="2" class="pentadruple">Notes</th></tr> \
     <tr><th>model x quantity</th> \
@@ -759,7 +759,7 @@ function plotTable() {
     <th>RAM (GB)</th> \
     <th>primary</th><th>vol. (GB)</th><th>secondary</th><th>vol. (GB)</th> \
     <th>Internal/External (GB/s)</th> \
-    <th>hourly</th><th>weekly</th><th>monthly</th><th>yearly</th><th title="One time setup price">Setup</th> \
+    <th>minutely</th><th>hourly</th><th>weekly</th><th>monthly</th><th>yearly</th><th title="One time setup price">Setup</th><th>Monthly limit</th> \
     </tr></thead><tbody>';
     var body="";
     for (var j=0; j < offers.length; j++) {
@@ -778,11 +778,13 @@ function plotTable() {
         <td>'+offers[j].hdd1+'</td><td>'+NumberFormat(offers[j].hdd1_vol)+'</td>\
         <td>'+offers[j].hdd2+'</td><td>'+NumberFormat(offers[j].hdd2_vol)+'</td>\
         <td>'+offers[j].net+'</td>\
+        <td>'+CurrencyFormat(offers[j].minutely_native, offers[j].currency)+'</td>\
         <td>'+CurrencyFormat(offers[j].hourly_native, offers[j].currency)+'</td>\
         <td>'+CurrencyFormat(offers[j].weekly_native,offers[j].currency)+'</td>\
         <td>'+CurrencyFormat(offers[j].monthly_native, offers[j].currency)+'</td>\
         <td>'+CurrencyFormat(offers[j].yearly_native, offers[j].currency)+'</td>\
         <td>'+CurrencyFormat(offers[j].setup_native, offers[j].currency)+'</td>\
+        <td>'+CurrencyFormat(offers[j].month_limit_native, offers[j].currency)+'</td>\
         <td>'+offers[j].time_limit+'</td>\
         <td class="notes_cell">'+offers[j].notes+'</td></tr>';
     }

@@ -156,6 +156,12 @@ function processStaticData(results) {
             provider = row[0];
             provider_link = row[1];
         }
+        // Use for selecting providers
+        /*var providers = ["leadertelecom"];
+        if (!providers.includes(provider.toLowerCase())) {
+            console.log("Skip "+ provider);
+            continue;
+        }*/
         var offer = {
             provider: provider,
             provider_link: provider_link,
@@ -458,31 +464,81 @@ function objectSearch(obj1,obj2) {
 }
 
 
+// Return:
+// Array of full months in period and
+// leftover time in hours.
+// Period is in hours.
+function getMonths4Hours(h) {
+    var period = hoursToHuman(h);
+    var leftover = 0;
+    if (period[0].days > 0 ) {
+        leftover +=  period[0].days *24;
+    }
+    if (period[0].hours > 0) {
+        leftover += period[0].hours;
+    }
+    var months = period[0].years*12 + period[0].months;
+    return [months, leftover];
+}
+
+
 // Return Cost for given number of hours (period).
 function getQuote4Hours(offer, h) {
     var cost = 0;
     if (offer.setup != "" ) {
-        cost = offer.setup;
+        cost += offer.setup;
     }
-    if ("hourly" in offer && offer.hourly != "" ) {
-        cost += h * offer.hourly;
+    // Apply monthly limit
+    if ("month_limit" in offer && offer.month_limit != "" ) {
+        //console.log("Month limit for "+offer.shortname+" is " + offer.month_limit);
+        var months = getMonths4Hours(h);
+        cost += offer.month_limit * months[0];
+        h = months[1]; // use leftover time to calculate additional cost
+    }
+    if ("minutely" in offer && offer.minutely != "") {
+        var cost1 = 60 * h * offer.minutely;
+        // Apply monthly limit
+        if ("month_limit" in offer && offer.month_limit != "" ) {
+            if (cost1 > offer.month_limit) {
+                cost1 = offer.month_limit;
+            }
+        }
+        cost += cost1;
+    }
+    else if ("hourly" in offer && offer.hourly != "" ) {
+        var cost1 = h * offer.hourly;
+        // Apply monthly limit
+        if ("month_limit" in offer && offer.month_limit != "" ) {
+            if (cost1 > offer.month_limit) {
+                cost1 = offer.month_limit;
+            }
+        }
+        cost += cost1;
     } else if ("weekly" in offer && offer.weekly != "" ) {
         var period_w = Math.ceil(h / (24 * 7));
-        cost += period_w * offer.weekly;
-    } else if ("monthly" in offer && offer.monthly != "" ) {
-        period = hoursToHuman(h);
-        more_than_month = 0;
-        if (period[0].days > 0 || period[0].hours > 0) {
-            more_than_month = 1;
+        cost1 = period_w * offer.weekly;
+        // Apply monthly limit
+        if ("month_limit" in offer && offer.month_limit != "" ) {
+            if (cost1 > offer.month_limit) {
+                cost1 = offer.month_limit;
+            }
         }
-        cost += (period[0].years*12 + period[0].months + more_than_month) * offer.monthly;
+        cost += cost1;
+    } else if ("monthly" in offer && offer.monthly != "" ) {
+        var months = getMonths4Hours(h);
+        var more_than_a_month = 0;
+        if (months[1] > 0) {
+            more_than_a_month = 1;
+        }
+        cost +=  (months[0] + more_than_a_month)* offer.monthly;
         //console.log("Monthly: "+ offer.shortname + " "+offer.monthly);
-        //console.log(period[0]);
+        //console.log(months);
     } else if ("yearly" in offer && offer.yearly != "" ) {
         // Year is counted as 365 days
         var period_y = Math.ceil(h / (24 * 365));
         cost += period_y * offer.yearly;
     }
+
     return cost;
 }
 
@@ -692,6 +748,7 @@ function CurrencyFormat(s, currency) {
 
 
 var cost_periods = [
+    ["minutely","min."],
     ["hourly","h."],
     ["weekly", "w."],
     ["monthly", "m."],
@@ -712,6 +769,11 @@ function splitByCostPeriod(offer) {
         }
     });
     //console.log("Split "+ offer.name+" into "+ split_offers.length);
+    /*if (split_offers.length > 2) {
+        for (var i=0; i < split_offers.length; i++) {
+            console.log(split_offers[i]);
+        }
+    }*/
     return split_offers;
 }
 
