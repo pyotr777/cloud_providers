@@ -69,15 +69,13 @@ function displayPerformanceScatter() {
             title: 'CPU performance (TFlops)',
             ticklen: 5,
             rangemode: "tozero",
-            showline: true,
-            fixedrange: true
+            showline: true
         },
         yaxis: {
             title: 'GPU performance (TFlops)',
             ticklen: 5,
             rangemode: "tozero",
-            showline: true,
-            fixedrange: true
+            showline: true
         },
         hovermode: 'closest',
         legend: {
@@ -268,7 +266,7 @@ function plotPeriod(period, step, thin, thick) {
             margin: {
                 t: 40,
                 r: 10,
-                l: 80,
+                l: 50,
                 pad: 0
             },
             xaxis: {
@@ -296,7 +294,7 @@ function plotPeriod(period, step, thin, thick) {
                 showline: true,
                 tickprefix: "$",
                 hoverformat: ',.2f',
-                exponentformat: "none"
+                tickangle: 45
             }
         };
     }
