@@ -68,11 +68,16 @@ function displayPerformanceScatter() {
         xaxis: {
             title: 'CPU performance (TFlops)',
             ticklen: 5,
-            rangemode: "tozero"
+            rangemode: "tozero",
+            showline: true,
+            fixedrange: true
         },
         yaxis: {
             title: 'GPU performance (TFlops)',
-            rangemode: "tozero"
+            ticklen: 5,
+            rangemode: "tozero",
+            showline: true,
+            fixedrange: true
         },
         hovermode: 'closest',
         legend: {
@@ -162,23 +167,30 @@ function displayPerformanceScatter() {
     Plotly.newPlot('scatter_performance', traces, layout);
 
     scatter_plt.on("plotly_hover", function(data) {
-        for (var i=0; i < data.points.length; i++) {
-            var point = data.points[i];
-            if (point.data.info == null) {
-                return;
-            }
-            point_index = point.pointNumber;
-            //console.log(point);
-            hover_info1.innerHTML = hover_info1.innerHTML + " " +point.data.info[point_index];
-            hover_info1.style.backgroundColor = point.data.marker.color[point_index];
-            //console.log(point.data.info[point_index] + " " + point_index + " " + point.data.marker.color[point_index]);
-        }
+        scatterHoverDisplay(data, hover_info1);
     });
 
     scatter_plt.on("plotly_unhover", function(data) {
         hover_info1.innerHTML = "";
         hover_info1.style.backgroundColor = "#fff";
     });
+}
+
+
+// Hover display
+function scatterHoverDisplay(data, hover_info) {
+    for (var i=0; i < data.points.length; i++) {
+        var point = data.points[i];
+        if (point.data.info == null) {
+            return;
+        }
+        point_index = point.pointNumber;
+        //console.log(point);
+        hover_info.innerHTML = hover_info.innerHTML + " " +point.data.info[point_index];
+        hover_info.style.backgroundColor = point.data.marker.color[point_index];
+        hover_info.style.opacity="0.8";
+        //console.log(point.data.info[point_index] + " " + point_index + " " + point.data.marker.color[point_index]);
+    }
 }
 
 
@@ -397,6 +409,7 @@ function plotPeriod(period, step, thin, thick) {
         }
         hover_info2.innerHTML = hover_info2.innerHTML + " " +point.data.info;
         hover_info2.style.backgroundColor = point.fullData.line.color;
+        hover_info2.style.opacity = "0.8";
         //console.log(point.data.info + " " + point.fullData.line.color);
     });
 
@@ -455,7 +468,8 @@ function displaySlice(n) {
     //console.log(dates[1][n]);
     var months = dates[1][n].years*12 + dates[1][n].months;
     var hours = n*step;
-    console.log("Clicked "+n+ " "+ hours+" hours, X: "+ dates[0][n] + ", full "+months+" months / " + dates[2][n]);
+
+    console.log("Slice on "+n+ " "+ hours+" hours, X: "+ dates[0][n] + ", full "+months+" months / " + dates[2][n]);
     // rewind to the beginning of the month
     var i = n;
     var point = 0;
@@ -465,56 +479,50 @@ function displaySlice(n) {
             point = i+1;
         }
     }
+
+    var slice_cost_perf_plot = document.getElementById("slice_cost_perf");
     //console.log("Month start point: "+ point+" / "+dates[2][point]);
     // Set plot description period
     document.getElementById("r_period").innerHTML=dates[2][point];
-    var layout_bar = {
-        title: "1 TFlops cost per " + dates[2][n],
-        barmode: 'group',
-        hovermode:'closest',
-        margin: {
-            b: 120,
-            t: 50
-        },
-        legend: {
-            y: 1.05,
-            orientation: "h",
-            bgcolor: 'rgba(255, 255, 255, 0.5)',
-        },
+
+    var layout = {
+        title: "1 TFlops cost for " + dates[2][n],
         xaxis: {
-            fixedrange: true,
+            title: 'CPU TFLops cost (USD)',
+            ticklen: 5,
             tickangle: 45,
-            tickfont: {
-                family: 'Arial Narrow, sans-serif',
-                size: 13,
-                color: 'black'
-            }
+            hoverformat: "$,.2f",
+            type: "log",
+            rangemode: "tozero",
+            showline: true
         },
         yaxis: {
-            title: 'Cost per CPU 1 TFlops (USD/TFlops)',
-            tickprefix: "$",
-            hoverformat: ',.2f',
-            exponentformat: "none",
-            separatethousands: true,
-            gridcolor: cpu_color.light,
-            gridwidth: 1,
-            linecolor: cpu_color.light
+            title: 'GPU TFlops cost (USD)',
+            ticklen: 5,
+            tickangle: 45,
+            hoverformat: "$,.2f",
+            type: "log",
+            rangemode: "tozero",
+            showline: true
         },
-        yaxis2: {
-            title: 'Cost per GPU 1 TFlops (USD/TFlops)',
-            overlaying: 'y',
-            side: 'right',
-            tickprefix: "$",
-            hoverformat: ',.2f',
-            exponentformat: "none",
-            separatethousands: true,
-            gridcolor: gpu_color.light,
-            gridwidth: 1,
-            linecolor: gpu_color.light
+        hovermode: 'closest',
+        legend: {
+            y: 1,
+            yanchor: "top",
+            x: 0.01,
+            bgcolor: "rgba(255,255,255,0.7)",
+            bordercolor: "#eee",
+            borderwidth: 1
+        },
+        margin: {
+            t: 40,
+            r: 10,
+            l: 70,
+            pad: 0
         }
     };
-    var y_cpu = [];
-    var y_gpu = [];
+    //console.log("in displayPerformanceScatter has " + offers.length + " filtered offers");
+    var traces = [];
     var y_cost = [];
     var y_cost_monthly = [];
     var x = [];
@@ -522,21 +530,59 @@ function displaySlice(n) {
     var info = [];
     console.log("displaySlice has " + offers.length+" offers.")
     var last_prov="";
-    var c_max = 0;
+    var last_offer=""; // For removing offer duplicates hourly/weekly/monthly...
+    var skip_words=["minutely", "hourly", "dayly", "weekly", "monthly", "yearly"];
     var color = "";
-    for (j=0; j < offers.length; j++) {
+    for (var j=0; j < offers.length; j++) {
         var prov = offers[j].provider.toLowerCase();
+        var offer_name = getSimpleName(offers[j].name,skip_words);
+        if (last_offer == offer_name) {
+            continue;
+        } else {
+            last_offer = offer_name;
+        }
         if (last_prov != prov) {
             last_prov = prov;
+            color = colors[getColor(prov)][0];
+            if (new_trace) {
+                traces.push(new_trace);
+                new_trace=null;
+            }
+            var new_trace = {
+                name: offers[j].provider,
+                mode: "markers",
+                type: "scatter",
+                x: [],
+                y: [],
+                text: [],
+                marker: {
+                    color: [],
+                    opacity: 1,
+                    size: 12,
+                    line: {
+                        width: 1,
+                        color: 'rgba(0,0,0,0.2)'
+                    }
+                },
+                info: []
+            }
         }
-        color = colors[getColor(prov)][0];
 
         // Split one offer by cost period
         splitByCostPeriod(offers[j]).forEach( function (offer) {
             var cost = getQuote4Hours(offer,hours);
             var month_start_quote = getQuote4Hours(offer, dates[0][point]);
-            y_cpu.push(cost/offer.cpu_p);
-            y_gpu.push(cost/offer.gpu_p);
+            /*if (new_trace) {
+                console.log(new_trace);
+            } else {
+                console.log("No new_trace");
+            }*/
+            new_trace.x.push(cost/offer.cpu_p);
+            new_trace.y.push(cost/offer.gpu_p);
+            new_trace.text.push(offer.provider + " " +offer.shortname)
+            new_trace.marker.color.push(color);
+            new_trace.info.push(getOfferInfo(offer));
+
             y_cost.push(cost);
             y_cost_monthly.push(month_start_quote/months)
             //console.log(offer.shortname+" cost:" + month_start_quote + " " +months+ " months");
@@ -545,37 +591,19 @@ function displaySlice(n) {
             info.push(getOfferInfo(offer));
         });
     }
+    if (new_trace) {
+        traces.push(new_trace);
+    }
+    Plotly.newPlot('slice_cost_perf', traces, layout);
 
-    var trace_cpu = {
-        x: x,
-        y: y_cpu,
-        name: "USD/CPU TFlops",
-        offset: -0.35,
-        width: 0.3,
-        type: "bar",
-        marker: {
-            color: cpu_color.dark
-        },
-        info: info,
-        color: c
-    };
+    slice_cost_perf_plot.on("plotly_hover", function(data) {
+        scatterHoverDisplay(data, hover_info4);
+    });
 
-    var trace_gpu = {
-        x: x,
-        y: y_gpu,
-        name: "USD/GPU TFlops",
-        type: "bar",
-        offset: 0,
-        width: 0.3,
-        yaxis: 'y2',
-        marker: {
-            color: gpu_color.dark
-        },
-        info: info,
-        color: c
-    };
-
-    Plotly.newPlot('slice_cost_perf', [trace_cpu, trace_gpu], layout_bar);
+    slice_cost_perf_plot.on("plotly_unhover", function(data) {
+        hover_info4.innerHTML = "";
+        hover_info4.style.backgroundColor = "#fff";
+    });
 
 
     var layout_cost = {
@@ -637,21 +665,11 @@ function displaySlice(n) {
 
     var slice_cost_plot = document.getElementById("slice_cost");
     var slice_cost_monthly_plot = document.getElementById("slice_cost_monthly");
-    var slice_cost_perf_plot = document.getElementById("slice_cost_perf");
     var hover_info3 = document.getElementById("offer_details3");
     var hover_info4 = document.getElementById("offer_details4");
 
     slice_cost_plot.on("plotly_hover", function(data) {
-        for (var i=0; i < data.points.length; i++) {
-            var point = data.points[i];
-            if (point.data.info == null) {
-                return;
-            }
-            point_index = point.pointNumber;
-            hover_info3.innerHTML = hover_info3.innerHTML + " " +point.data.info[point_index];
-            hover_info3.style.backgroundColor = point.data.marker.color[point_index];
-            //console.log(point.data.info[point_index] + " " + point_index + " " + point.data.marker.color[point_index]);
-        }
+        scatterHoverDisplay(data, hover_info3);
     });
 
     slice_cost_plot.on("plotly_unhover", function(data) {
@@ -661,16 +679,7 @@ function displaySlice(n) {
 
     if (months > 1) {
         slice_cost_monthly_plot.on("plotly_hover", function(data) {
-            for (var i=0; i < data.points.length; i++) {
-                var point = data.points[i];
-                if (point.data.info == null) {
-                    return;
-                }
-                point_index = point.pointNumber;
-                hover_info3.innerHTML = hover_info3.innerHTML + " " +point.data.info[point_index];
-                hover_info3.style.backgroundColor = point.data.marker.color[point_index];
-                //console.log(point.data.info[point_index] + " " + point_index + " " + point.data.marker.color[point_index]);
-            }
+            scatterHoverDisplay(data, hover_info3);
         });
 
         slice_cost_monthly_plot.on("plotly_unhover", function(data) {
@@ -678,24 +687,6 @@ function displaySlice(n) {
             hover_info3.style.backgroundColor = "#fff";
         });
     }
-
-    slice_cost_perf_plot.on("plotly_hover", function(data) {
-        for (var i=0; i < data.points.length; i++) {
-            var point = data.points[i];
-            if (point.data.info == null) {
-                return;
-            }
-            point_index = point.pointNumber;
-            hover_info4.innerHTML = hover_info4.innerHTML + " " +point.data.info[point_index];
-            hover_info4.style.backgroundColor = point.data.color[point_index];
-            //console.log(point.data.info[point_index] + " " + point_index + " " + point.data.color[point_index]);
-        }
-    });
-
-    slice_cost_perf_plot.on("plotly_unhover", function(data) {
-        hover_info4.innerHTML = "&nbsp;";
-        hover_info4.style.backgroundColor = "#fff";
-    });
 }
 
 
