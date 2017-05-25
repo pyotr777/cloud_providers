@@ -188,7 +188,7 @@ function displayPerformanceScatter() {
 // Period must be in hours.
 function getQuote(offer, step, period) {
     var costs = [], costs_cpu=[], costs_gpu=[];
-    if (offer.time_limit != null && offer.time_limit != "") {
+    if (offer.time_limit != null && offer.time_limit != "" && offer.continuous == "") {
         period = offer.time_limit;
     }
     for (var i=0; i <= period; i+=step) {

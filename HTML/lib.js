@@ -2,7 +2,6 @@
 var CSV_file = "./cost-performance.csv";
 //var CSV_file = "/cloudproviders/cost-performance.csv";
 
-var last_update = "Last update: 2017/05/23";
 var last_update = "Last update: 2017/05/24";
 
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
@@ -209,7 +208,8 @@ function processStaticData(results) {
             hdd2_vol:  row[23],
             net:       row[24],
             time_limit:row[25],
-            notes:     row[26]
+            continuous:row[26],
+            notes:     row[27]
         }
         offers_all.push(offer);
     }
@@ -497,6 +497,12 @@ function getQuote4Hours(offer, h) {
     var cost = 0;
     if (offer.setup != "" ) {
         cost += offer.setup;
+    }
+    if ("continuous" in offer && offer.continuous != "" ) {
+        var hours = offer.time_limit;
+        var periods = Math.ceil(h / hours);
+        cost += periods * offer.yearly;
+        return cost;
     }
     // Apply monthly limit
     if ("month_limit" in offer && offer.month_limit != "" ) {
