@@ -45,6 +45,12 @@ function continue_proc(filter, field, group) {
 
 function plotTimeCost(TFLOPs) {
     console.log("Plotting GPU Time x Cost fot " + TFLOPs/1e+6 + " EFLOP-s 1*e18 FLOPS");
+    var cpu_plt = document.getElementById("CPUtime_x_cost");
+    var hover_info2 = document.getElementById("offer_details2");
+    var gpu_plt = document.getElementById("GPUtime_x_cost");
+    var hover_info1 = document.getElementById("offer_details1");
+
+
     var layout = {
         title:'GPU calculation Time and Cost for ' + TFLOPs/1e+6 + ' EFLOP-s ('+ TFLOPs/1e+6+' * 10<sup>18</sup> FLOP-s<sup>***</sup>)',
         hovermode: 'closest',
@@ -73,10 +79,7 @@ function plotTimeCost(TFLOPs) {
             y: 1,
             bgcolor: "rgba(255,255,255,0.8)",
             bordercolor: "#eee",
-            borderwidth: 1,
-            font: {
-                size: 16
-            }
+            borderwidth: 1
         }
     };
     var traces = [];
@@ -107,10 +110,15 @@ function plotTimeCost(TFLOPs) {
                 text: [],
                 marker: {
                     color: [],
-                    size: 15,
+                    size: 12,
                     opacity: 0.8,
-                    symbol: "diamond"
-                }
+                    symbol: "circle",
+                    line: {
+                        width: 1,
+                        color: 'rgba(0,0,0,0.5)'
+                    }
+                },
+                info: []
             }
         } else {
             color_i++;
@@ -129,7 +137,7 @@ function plotTimeCost(TFLOPs) {
         if (cost > max_y) {
             max_y = Math.ceil(cost*1.1);
         }
-
+        new_trace.info.push(getOfferInfo(offers[j]));
         new_trace.text.push(offers[j].provider + " " + offers[j].name + " ("+offers[j].shortname+")")
         new_trace.marker.color.push(colors[c][color_i]);
         //console.log(offers[j].shortname + " color:" + c + "x"+color_i);
@@ -146,6 +154,15 @@ function plotTimeCost(TFLOPs) {
         traces.push(new_trace);
     }
     Plotly.newPlot('GPUtime_x_cost', traces, layout);
+
+    gpu_plt.on("plotly_hover", function(data) {
+        scatterHoverDisplay(data, hover_info1);
+    });
+
+    gpu_plt.on("plotly_unhover", function(data) {
+        hover_info1.innerHTML = "&nbsp;";
+        hover_info1.style.backgroundColor = "#fff";
+    });
 
 
     // Plot CPU time
@@ -176,10 +193,7 @@ function plotTimeCost(TFLOPs) {
             y: 1,
             bgcolor: "rgba(255,255,255,0.8)",
             bordercolor: "#eee",
-            borderwidth: 1,
-            font: {
-                size: 16
-            }
+            borderwidth: 1
         }
     };
 
@@ -211,10 +225,15 @@ function plotTimeCost(TFLOPs) {
                 text: [],
                 marker: {
                     color: [],
-                    size: 15,
+                    size: 12,
                     opacity: 0.8,
-                    symbol: "square"
-                }
+                    symbol: "diamond",
+                    line: {
+                        width: 1,
+                        color: 'rgba(0,0,0,0.5)'
+                    }
+                },
+                info: []
             }
         } else {
             color_i++;
@@ -233,6 +252,7 @@ function plotTimeCost(TFLOPs) {
         if (cost > max_y) {
             max_y = Math.ceil(cost*1.1);
         }
+        new_trace_cpu.info.push(getOfferInfo(offers[j]));
         new_trace_cpu.text.push(offers[j].provider + " " + offers[j].name + " ("+offers[j].shortname+")")
         new_trace_cpu.marker.color.push(colors[c][color_i]);
         //console.log(offers[j].shortname + " color:" + c + "x"+color_i);
@@ -249,6 +269,15 @@ function plotTimeCost(TFLOPs) {
         cpu_traces.push(new_trace_cpu);
     }
     Plotly.newPlot('CPUtime_x_cost', cpu_traces, cpu_layout);
+
+    cpu_plt.on("plotly_hover", function(data) {
+        scatterHoverDisplay(data, hover_info2);
+    });
+
+    cpu_plt.on("plotly_unhover", function(data) {
+        hover_info2.innerHTML = "&nbsp;";
+        hover_info2.style.backgroundColor = "#fff";
+    });
 }
 
 

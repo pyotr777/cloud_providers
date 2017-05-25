@@ -169,28 +169,10 @@ function displayPerformanceScatter() {
     });
 
     scatter_plt.on("plotly_unhover", function(data) {
-        hover_info1.innerHTML = "";
-        hover_info1.style.backgroundColor = "#fff";
+        hover_info1.innerHTML = "&nbsp;";
+        hover_info1.style.backgroundColor = "rgba(1,1,1,0)";
     });
 }
-
-
-// Hover display
-function scatterHoverDisplay(data, hover_info) {
-    for (var i=0; i < data.points.length; i++) {
-        var point = data.points[i];
-        if (point.data.info == null) {
-            return;
-        }
-        point_index = point.pointNumber;
-        //console.log(point);
-        hover_info.innerHTML = hover_info.innerHTML + " " +point.data.info[point_index];
-        hover_info.style.backgroundColor = point.data.marker.color[point_index];
-        hover_info.style.opacity="0.8";
-        //console.log(point.data.info[point_index] + " " + point_index + " " + point.data.marker.color[point_index]);
-    }
-}
-
 
 
 
@@ -420,8 +402,8 @@ function plotPeriod(period, step, thin, thick) {
             opacity: 1
         };
         Plotly.restyle('costs_period', update, [data.points[0].curveNumber]);
-        hover_info2.innerHTML = "";
-        hover_info2.style.backgroundColor = "#fff";
+        hover_info2.innerHTML = "&nbsp;";
+        hover_info2.style.backgroundColor = "rgba(1,1,1,0)";
     });
 }
 
@@ -599,8 +581,8 @@ function displaySlice(n) {
     });
 
     slice_cost_perf_plot.on("plotly_unhover", function(data) {
-        hover_info4.innerHTML = "";
-        hover_info4.style.backgroundColor = "#fff";
+        hover_info4.innerHTML = "&nbsp;";
+        hover_info4.style.backgroundColor = "rgba(1,1,1,0)";
     });
 
 
@@ -672,7 +654,7 @@ function displaySlice(n) {
 
     slice_cost_plot.on("plotly_unhover", function(data) {
         hover_info3.innerHTML = "&nbsp;";
-        hover_info3.style.backgroundColor = "#fff";
+        hover_info3.style.backgroundColor = "rgba(1,1,1,0)";
     });
 
     if (months > 1) {
@@ -682,7 +664,7 @@ function displaySlice(n) {
 
         slice_cost_monthly_plot.on("plotly_unhover", function(data) {
             hover_info3.innerHTML = "&nbsp;";
-            hover_info3.style.backgroundColor = "#fff";
+            hover_info3.style.backgroundColor = "rgba(1,1,1,0)";
         });
     }
 }

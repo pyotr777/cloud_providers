@@ -21,10 +21,14 @@
 </head>
 <body>
 [hoops name="plotting"]
+<p>There are plenty of cloud GPU offers from many providers. This post is here to help you to compare offers in terms of cost<sup><a href="#notes">*</a></sup>, GPU and CPU performance<sup><a href="#notes">**</a></sup>, memory etc. It has some interactive graphs for comparing offers and a table with details for each offer.</p>
 
-<p>In this post I compiled some data about Cloud providers GPU offerings: CPU and GPU performance**, costs*, memory, etc. </p>
-<p>Using the graphs below you can compare estimate CPU and GPU performance, compare costs and cost/performance values for a particular period. To select the period click on the "Cost per period" graph or use one of the buttons below it. You can also filter offerings by number of GPUs and by providers.</p>
-<p>You can find details for all offerings in the table at the bottom of this post. The data will be updated on (I hope) a regular basis.</p>
+<p>Please find my article on our <a href="https://stair.center/archives/439" target="_blank">STAIR laboratory web site</a> about why I created these graphs and how to use them. </p>
+
+<p>The "filter" graphs below provide statistical information, such as how many offers each provider has, but can also be used for filtering offers. Click on a value in any graph to filter out offers with different values. You can select multiple values on one or multiple graphs. All graphs and the table below will show data only for the selected offers.</p>
+
+<p>Please note, that only offers with GPU are mentioned on this page. Some providers, like Google and Amazon, have too many offers to show them all here, so I picked up only some representative ones. I collected data from cloud providers' web sites.</p>
+
 <p class="note" id="updated"></p>
 
 
@@ -47,17 +51,17 @@
     <div id="dc_end"></div>
 </div>
 <div id="messages"></div>
-
+<p>The graph below shows estimate CPU and GPU performance<sup><a href="#notes">**</a></sup> in <span title="Floating Point Operations per Second * 10e+12">TFlops</span> for each offer. Hover over offers to display information below the graph. More detailed information can be found in the table at the bottom of the page. Drag to zoom in.</p>
 <div id="scatter_performance" style="width: 100%; height: 500px;"></div>
-<div id="offer_details1" class="note"></div>
+<div id="offer_details1" class="note">&nbsp;</div>
 <p>The below graph shows rent cost for a period. X-axis is rent period, Y-axis is rent cost.</p>
 <p>All offers are charged in time units: hours, weeks, months or years. If an offer is charged by months, for example, using it for 1 day will cost you monthly price. Thus, the below graph can be thought of as the minimum sum you have to pay for using offers for particular period.</p>
-<p>Clicking on the graph will change graphs below it to display costs for the selected period. You can also set the period with the buttons below.</p>
+<p>Click on the graph to select use period. All graphs below will change to display data for the selected period. You can also set the period with the buttons below. Drag to zoom in.</p>
 
 
 
 <div id="costs_period" style="width: 100%; height: 550px;"></div>
-<div id="offer_details2" class="note"></div>
+<div id="offer_details2" class="note">&nbsp;</div>
 
 
 <div class="grouptitle"><h3>Set period for below graphs</h3>
@@ -69,17 +73,19 @@
         <div class="button" id="6months" onclick="displayTime('6 months');">6 months</div>
         <div class="button" id="12months" onclick="displayTime('1 year');">1 year</div>
     </div>
+
     <p>The below graph shows total costs if rented for given period.</p>
     <div id="slice_cost" style="width: 100%; height: 500px;"></div>
-    <div id="offer_details3" class="note"></div>
+    <div id="offer_details3" class="note">&nbsp;</div>
     <p id="slice_cost_monthly_text">The below graph shows per month costs if rented for <span id="r_period"></span>.</p>
     <div id="slice_cost_monthly" style="width: 100%; height: 0px;"></div>
 
+    <p>The below graph shows cost per 1 TFlops of GPU and CPU performance for the selected period of use in logarithmic scale. To change the period use the buttons above or click on "Cost for rent period" graph.</p>
     <div id="slice_cost_perf" style="width: 100%; height: 500px;"></div>
-    <div id="offer_details4" class="note"></div>
+    <div id="offer_details4" class="note">&nbsp;</div>
 </div>
-
-<h1 class="tableTitle">Offer Details</h1>
+<br>
+<h1 class="tableTitle">Detailed information for selected offers</h1>
 <div id="table_div"></div>
 
 
@@ -92,13 +98,13 @@
 
 </div>
 
-<div class="note">
+<div class="note" id="notes">
     Notes:<br>
     <p>* All prices <b>do not include taxes</b>. All sums are in <b>USD</b>. Offers based on other currencies are converted using today's rates from <a href=http://www.ecb.europa.eu/stats/exchange/eurofxref/html/index.en.html target=_blank>European Central Bank</a>:<br>
     <div id="rates" class="notes_cell"></div>
     </p>
 
-    <p>** Perfomance data shows single precision FLOPS for GPUs and single precision FLOPS for CPUs. <b>Beware that performance data is a rough estimate, and actual performance may vary greatly between applications.</b></p>
+    <p>** Performance data shows single precision <span title="Floating Point Operations per Second">Flops</span> for GPUs and single precision <span title="Floating Point Operations per Second">Flops</span> for CPUs. <b>Beware that performance data are theoretical peak values, and actual performance will be lower and may vary greatly between applications.</b></p>
     </p>
 </div>
 

@@ -1,6 +1,6 @@
 // Library functions
-var CSV_file = "./cost-performance.csv";
-//var CSV_file = "/cloudproviders/cost-performance.csv";
+//var CSV_file = "./cost-performance.csv";
+var CSV_file = "/cloudproviders/cost-performance.csv";
 
 var last_update = "Last update: 2017/05/25";
 
@@ -166,7 +166,7 @@ function processStaticData(results) {
             provider_link = row[1];
         }
         // Use for selecting providers
-        /*var providers = ["leadertelecom"];
+        /*var providers = ["idcf"];
         if (!providers.includes(provider.toLowerCase())) {
             console.log("Skip "+ provider);
             continue;
@@ -814,4 +814,20 @@ function cloneOffer(offer) {
     return new_offer;
 }
 
+
+// Hover display
+function scatterHoverDisplay(data, hover_info) {
+    for (var i=0; i < data.points.length; i++) {
+        var point = data.points[i];
+        if (point.data.info == null) {
+            return;
+        }
+        point_index = point.pointNumber;
+        //console.log(point);
+        hover_info.innerHTML = hover_info.innerHTML + " " +point.data.info[point_index];
+        hover_info.style.backgroundColor = point.data.marker.color[point_index];
+        hover_info.style.opacity="0.8";
+        //console.log(point.data.info[point_index] + " " + point_index + " " + point.data.marker.color[point_index]);
+    }
+}
 
