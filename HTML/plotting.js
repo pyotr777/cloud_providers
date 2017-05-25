@@ -79,7 +79,6 @@ function displayPerformanceScatter() {
             y: 1,
             yanchor: "top",
             x: 0.01,
-            tracegroupgap: 0,
             bgcolor: "rgba(255,255,255,0.8)",
             bordercolor: "#eee",
             borderwidth: 1
@@ -87,7 +86,7 @@ function displayPerformanceScatter() {
         margin: {
             t: 40,
             r: 10,
-            l: 70,
+            l: 50,
             pad: 0
         }
     };
@@ -105,7 +104,7 @@ function displayPerformanceScatter() {
             size: [],
             color:"rgba(0,0,0,0)",
             line: {
-                color: 'rgb(0,0,0)',
+                color: 'rgba(0,0,0,0.6)',
                 width: 1
             }
         }
@@ -138,7 +137,8 @@ function displayPerformanceScatter() {
                 text: [],
                 marker: {
                     color: [],
-                    size: 14
+                    opacity: 0.8,
+                    size: 15
                 },
                 info: []
             }
