@@ -2,7 +2,7 @@
 var CSV_file = "./cost-performance.csv";
 //var CSV_file = "/cloudproviders/cost-performance.csv";
 
-var last_update = "Last update: 2017/05/24";
+var last_update = "Last update: 2017/05/25";
 
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
 var accumulated_months_days = [];
@@ -15,13 +15,13 @@ var colors=[["#fa6d44", "#ff6a3f"],  // Amazon
            ["#94c7ff", "#94c7ff"],  // Tokyo University
            ["#589ff4", "#589ff4"],  // MS
            ["#8be2fd", "#8be2fd"], // Google
-           ["#dddddd", "#dddddd"],  // IDCF
+           ["#d7f0d4", "#d7f0d4"],  // IDCF
            ["#d1e69b", "#d3eb96"],  // Tsubame
            ["#a3edc6", "#a3edc6"],  //
            ["#7dd8a8","#7dd8a8"],];  //
-var cpu_color = {light: "#e2e4ff", dark: "#b9b2ee"};
-var gpu_color = {light: "#ffe8c4", dark: "#f8b36e"};
-var other_colors = ["#b4c4d5","#ec9276","#e97e77","#d27486","#8e6bb4","#6766ce"];
+var cpu_color = {light: "#e2e4ff", dark: "#a6b3d5"};
+var gpu_color = {light: "#ffe8c4", dark: "#f2bd88"};
+var other_colors = ["#c1c8c4","#ec9276","#e97e77","#d27486","#8e6bb4","#6766ce"];
 
 function getColor(prov) {
     var c = colors.length-1;
