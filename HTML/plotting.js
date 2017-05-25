@@ -113,7 +113,6 @@ function displayPerformanceScatter() {
     var last_prov="";
     var last_offer=""; // For removing offer duplicates hourly/weekly/monthly...
     var skip_words=["minutely", "hourly", "dayly", "weekly", "monthly", "yearly"];
-    var color_i = 0;
     for (var j=0; j < offers.length; j++) {
         var prov = offers[j].provider.toLowerCase();
         var offer_name = getSimpleName(offers[j].name,skip_words);
@@ -125,7 +124,6 @@ function displayPerformanceScatter() {
         //console.log(j+" "+prov)
         if (last_prov != prov) {
             last_prov = prov;
-            color_i = 0;
             var c = getColor(prov);
             if (new_trace) {
                 traces.push(new_trace);
@@ -144,17 +142,11 @@ function displayPerformanceScatter() {
                 },
                 info: []
             }
-        } else {
-            color_i++;
-            if (color_i >= colors[c].length) {
-                color_i = 0;
-            }
         }
         new_trace.x.push(offers[j].cpu_p);
         new_trace.y.push(offers[j].gpu_p);
         new_trace.text.push(offers[j].provider + " " +offers[j].shortname)
-        //console.log("Color for "+ offers[j].provider+"  offer is "+ color_i+ " ("+colors[c][color_i]+")");
-        new_trace.marker.color.push(colors[c][color_i]);
+        new_trace.marker.color.push(colors[c][0]);
         new_trace.info.push(getOfferInfo(offers[j]));
 
         memory_trace.x.push(offers[j].cpu_p);
@@ -298,14 +290,12 @@ function plotPeriod(period, step, thin, thick) {
     }
 
     var last_prov = ""
-    var color_i = 0;
     for (j=0; j < offers.length; j++) {
 
         var prov = offers[j].provider.toLowerCase();
         var c = getColor(prov);
         if (last_prov != prov) {
             last_prov = prov;
-            color_i = 0;
             var legend_trace = {
                 showlegend: true,
                 legendgroup: prov,
@@ -319,13 +309,7 @@ function plotPeriod(period, step, thin, thick) {
                 }
             }
             traces.push(legend_trace)
-        } else {
-            color_i++;
-            if (color_i >= colors[c].length) {
-                color_i = 0;
-            }
         }
-        //console.log("Color for "+ offers[j].provider+"  offer is "+ color_i+ " ("+colors[c][color_i]+")");
 
         // Split one offer by cost period
         splitByCostPeriod(offers[j]).forEach( function (offer) {
@@ -342,7 +326,7 @@ function plotPeriod(period, step, thin, thick) {
                 legendgroup: prov,
                 mode: 'lines',
                 line: {
-                    color: colors[c][color_i],
+                    color: colors[c][1],
                     width: thin,
                     shape: "linear",
                     smoothing: 0
@@ -538,22 +522,14 @@ function displaySlice(n) {
     var info = [];
     console.log("displaySlice has " + offers.length+" offers.")
     var last_prov="";
-    var color_i = 0;
     var c_max = 0;
     var color = "";
     for (j=0; j < offers.length; j++) {
         var prov = offers[j].provider.toLowerCase();
         if (last_prov != prov) {
             last_prov = prov;
-            color_i = 0;
-            c_max = colors[getColor(prov)].length - 1;
-        } else {
-            color_i++;
-            if (color_i > c_max) {
-                color_i = 0;
-            }
         }
-        color = colors[getColor(prov)][color_i];
+        color = colors[getColor(prov)][0];
 
         // Split one offer by cost period
         splitByCostPeriod(offers[j]).forEach( function (offer) {

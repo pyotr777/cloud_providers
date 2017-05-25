@@ -7,19 +7,22 @@ var last_update = "Last update: 2017/05/24";
 
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
 var accumulated_months_days = [];
-var colors=[["#fd7b6e"],  // Amazon
-           ["#de7643"],  // Softlayer
-           ["#eeb85a"],  // Nimbix
-           ["#efda65"],  // Cirrascale
-           ["#eee892"],  // Sakura
-           ["#cddcbf"],  // LeaderTelecom
-           ["#79d0b6"],  // Tokyo University
-           ["#98e2e3"],  // MS
-           ["#6eabda"], // Google
-           ["#6c7abc"]];  // other
-var cpu_color = {light: "#c3d9f7", dark: "#7098d0"};
-var gpu_color = {light: "#ffdfb2", dark: "#f99f46"};
-var other_colors = ["#eca576","#ec9276","#e97e77","#d27486","#8e6bb4","#6766ce"];
+var colors=[["#fa6d44", "#ff6a3f"],  // Amazon
+           ["#f8a358", "#ffa85c"],  // Softlayer
+           ["#ffd879", "#fccd5f"],  // Nimbix
+           ["#efd5c0", "#f0cbb3"],  // Cirrascale
+           ["#f5a1c0", "#f5a1c0"],  // Sakura
+           ["#b9b7f4", "#b3b1fa"],  // LeaderTelecom
+           ["#94c7ff", "#94c7ff"],  // Tokyo University
+           ["#589ff4", "#589ff4"],  // MS
+           ["#8be2fd", "#8be2fd"], // Google
+           ["#dddddd", "#dddddd"],  // IDCF
+           ["#d1e69b", "#d3eb96"],  // Tsubame
+           ["#a3edc6", "#a3edc6"],  //
+           ["#7dd8a8","#7dd8a8"],];  //
+var cpu_color = {light: "#e2e4ff", dark: "#b9b2ee"};
+var gpu_color = {light: "#ffe8c4", dark: "#f8b36e"};
+var other_colors = ["#b4c4d5","#ec9276","#e97e77","#d27486","#8e6bb4","#6766ce"];
 
 function getColor(prov) {
     var c = colors.length-1;
@@ -52,8 +55,14 @@ function getColor(prov) {
         case "google":
             c = 8;
             break;
-        default:
+        case "idcf":
             c = 9;
+            break;
+        case "tsubame 2.5":
+            c = 10;
+            break;
+        default:
+            c = 11;
             break;
     };
     return c;
