@@ -10,8 +10,8 @@ body {
     border-radius: 5px;
     background: #eee;
     padding:12px 12px;
-    margin-bottom:5px;
-    /*display: flex;*/
+    margin: 0 0 5px 0;
+    padding: 10px;
     align-items: center;
 }
 
@@ -22,8 +22,8 @@ body {
 
 .grouptitle {
     margin:15px 0 5px 0;
-    padding: 6pt 5px 5px 5px;
-    border: 1px dotted #aaa;
+    padding: 5px;
+    border: 1px dotted rgba(239, 236, 233, 1);
     webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
@@ -37,7 +37,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.3pt;
     position: relative;
-    top: -13pt;
+    top: -10pt;
     background-color: #fff;
     height: 7pt;
     display: inline-block;
@@ -98,6 +98,7 @@ div.note {
     -moz-border-radius:5px;
     -webkit-border-radius:5px;
     border-radius:5px;
+    font: 10pt  "Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif;;
 }
 
 .note {

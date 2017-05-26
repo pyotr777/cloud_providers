@@ -165,7 +165,7 @@ function displayPerformanceScatter() {
     Plotly.newPlot('scatter_performance', traces, layout);
 
     scatter_plt.on("plotly_hover", function(data) {
-        scatterHoverDisplay(data, hover_info1);
+        hoverDisplay(data, hover_info1);
     });
 
     scatter_plt.on("plotly_unhover", function(data) {
@@ -218,6 +218,7 @@ function plotPeriod(period, step, thin, thick) {
     var tickvals = [];
     var ticktext = [];
     var traces = [];
+    var line_opacity = 0.6;
 
     if (dates.length == 0) {
         dates = prepDates(period, step);
@@ -323,7 +324,7 @@ function plotPeriod(period, step, thin, thick) {
                     shape: "linear",
                     smoothing: 0
                 },
-                opacity:1,
+                opacity:line_opacity,
                 name: offer.shortname,
                 longname: offer.provider+" "+offer.name,
                 text: text,
@@ -399,7 +400,7 @@ function plotPeriod(period, step, thin, thick) {
                 color: data.points[0].fullData.line.color,
                 width: thin
             },
-            opacity: 1
+            opacity: line_opacity
         };
         Plotly.restyle('costs_period', update, [data.points[0].curveNumber]);
         hover_info2.innerHTML = "&nbsp;";
@@ -466,7 +467,7 @@ function displaySlice(n) {
     document.getElementById("r_period").innerHTML=dates[2][point];
 
     var layout = {
-        title: "1 TFlops cost for " + dates[2][n],
+        title: "1 TFlops cost for " + dates[2][n]+" rent",
         xaxis: {
             title: 'CPU TFLops cost (USD)',
             ticklen: 5,
@@ -577,7 +578,7 @@ function displaySlice(n) {
     Plotly.newPlot('slice_cost_perf', traces, layout);
 
     slice_cost_perf_plot.on("plotly_hover", function(data) {
-        scatterHoverDisplay(data, hover_info4);
+        hoverDisplay(data, hover_info4);
     });
 
     slice_cost_perf_plot.on("plotly_unhover", function(data) {
@@ -587,7 +588,7 @@ function displaySlice(n) {
 
 
     var layout_cost = {
-        title: "Cost for "+dates[2][n],
+        title: "Cost for "+dates[2][n]+" rent",
         showlegend: false,
         margin: {
             b: 120,
@@ -649,7 +650,7 @@ function displaySlice(n) {
     var hover_info4 = document.getElementById("offer_details4");
 
     slice_cost_plot.on("plotly_hover", function(data) {
-        scatterHoverDisplay(data, hover_info3);
+        hoverDisplay(data, hover_info3);
     });
 
     slice_cost_plot.on("plotly_unhover", function(data) {
@@ -659,7 +660,7 @@ function displaySlice(n) {
 
     if (months > 1) {
         slice_cost_monthly_plot.on("plotly_hover", function(data) {
-            scatterHoverDisplay(data, hover_info3);
+            hoverDisplay(data, hover_info3);
         });
 
         slice_cost_monthly_plot.on("plotly_unhover", function(data) {
@@ -669,16 +670,6 @@ function displaySlice(n) {
     }
 }
 
-
-function CurrencyFormat(s, currency) {
-    if (s == "") {
-        return "";
-    }
-    //console.log("Formatting " + s + " as " + currency);
-    num = Number(s).toLocaleString('en', { style: 'currency', currency: currency, maximumFractionDigits: 2 });
-    num = num.replace(",", "&nbsp;");
-    return num;
-}
 
 function NumberFormat(s) {
     if (s == "") {
@@ -692,6 +683,7 @@ function NumberFormat(s) {
     return num;
 }
 
+
 function shortFormat(s) {
     if (s == "") {
         return "";
@@ -703,6 +695,7 @@ function shortFormat(s) {
     num = num.replace(",", " ");
     return num;
 }
+
 
 function formatCPUs(offer) {
     var str = "";
