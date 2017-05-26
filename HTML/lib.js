@@ -1,8 +1,8 @@
 // Library functions
-//var CSV_file = "./cost-performance.csv";
-var CSV_file = "/cloudproviders/cost-performance.csv";
+var CSV_file = "./cost-performance.csv";
+//var CSV_file = "/cloudproviders/cost-performance.csv";
 
-var last_update = "Last update: 2017/05/25";
+var last_update = "Last update: 2017/05/26";
 
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
 var accumulated_months_days = [];
@@ -406,7 +406,20 @@ function getOfferInfo(offer) {
     } else {
         memory = " | RAM: " + memory + " GB"
     }
-    return offer.provider + " "+ offer.name + " | CPU: " + offer.cpu_model + " x" + offer.cpus + " |  GPU: "+ offer.gpu_model + " x"+ offer.gpus + memory;
+    var hdd = "";
+    if (offer.hdd1_vol != "" ) {
+        hdd += " | HDD: "+offer.hdd1_vol+"GB";
+        if (offer.hdd1 != "") {
+            hdd += " ("+offer.hdd1+")";
+        }
+        if (offer.hdd2_vol !="") {
+            hdd +=" + "+offer.hdd2_vol+"GB";
+            if (offer.hdd2 != "") {
+                hdd += " ("+ offer.hdd2+")";
+            }
+        }
+    }
+    return offer.provider + " "+ offer.name + " | CPU: " + offer.cpu_model + " x" + offer.cpus + " |  GPU: "+ offer.gpu_model + " x"+ offer.gpus + memory + hdd;
 }
 
 
@@ -816,7 +829,7 @@ function cloneOffer(offer) {
 
 
 // Hover display
-function scatterHoverDisplay(data, hover_info) {
+function hoverDisplay(data, hover_info) {
     for (var i=0; i < data.points.length; i++) {
         var point = data.points[i];
         if (point.data.info == null) {
