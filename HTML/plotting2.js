@@ -52,7 +52,7 @@ function plotTimeCost(TFLOPs) {
 
 
     var layout = {
-        title:'GPU calculation Time and Cost for ' + TFLOPs/1e+6 + ' EFLOP-s ('+ TFLOPs/1e+6+' * 10<sup>18</sup> FLOP-s<sup>***</sup>)',
+        title:'GPU calculation time and cost for ' + TFLOPs/1e+6 + ' EFLOP-s ('+ TFLOPs/1e+6+' * 10<sup>18</sup> FLOP-s<sup>***</sup>)',
         hovermode: 'closest',
         xaxis: {
             title: 'Calculation time',
@@ -61,17 +61,26 @@ function plotTimeCost(TFLOPs) {
             ticktext: [],
             nticks: 5,
             tickfont: {
-                family: '"Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif',
+                family: '"Cabin Condensed", "Arial Narrow", sans-serif',
                 size: 11
             },
-            showline: true
+            showline: true,
+            rangemode: "tozero"
         },
         yaxis: {
+            title: "Calculation cost (USD)",
+            ticklen: 5,
+            tickangle: 45,
+            showexponent: "none",
             tickprefix: "$",
-            hoverformat: ',.2f',
-            exponentformat: "none",
-            zeroline: false,
-            range: [0]
+            hoverformat: "$,.0f",
+            tickfont: {
+                family: '"Cabin Condensed", "Arial Narrow", sans-serif',
+                size: 11
+            },
+            type: "log",
+            rangemode: "tozero",
+            showline: true
         },
         legend: {
             x: 0.99,
@@ -85,7 +94,6 @@ function plotTimeCost(TFLOPs) {
     var traces = [];
     var last_prov="";
     var color_i = 0;
-    var max_y = 0;
     var max_x = 0;
     var new_trace  = {};
     //console.log("New trace:" + new_trace+" Not empty? " + (!jQuery.isEmptyObject(new_trace)));
@@ -118,6 +126,7 @@ function plotTimeCost(TFLOPs) {
                         color: 'rgba(0,0,0,0.5)'
                     }
                 },
+                hoverinfo: "text",
                 info: []
             }
         } else {
@@ -134,58 +143,63 @@ function plotTimeCost(TFLOPs) {
             max_x = time;
         }
         new_trace.y.push(cost);
-        if (cost > max_y) {
-            max_y = Math.ceil(cost*1.1);
-        }
         new_trace.info.push(getOfferInfo(offers[j]));
-        new_trace.text.push(offers[j].provider + " " + offers[j].name + " ("+offers[j].shortname+")")
+        new_trace.text.push(offers[j].provider + " "+offers[j].name + "<br>"+CurrencyFormat(cost, "USD")+"/"+hoursToHuman(time, true)[1]);
         new_trace.marker.color.push(colors[c][color_i]);
         //console.log(offers[j].shortname + " color:" + c + "x"+color_i);
     }
-    layout.yaxis.range.push(max_y);
     var ticks = 10;
     var tick_interval = Math.ceil(max_x / ticks);
     for (var i=0; i <= max_x; i+=tick_interval) {
         layout.xaxis.tickvals.push(i);
         layout.xaxis.ticktext.push(hoursToHuman(i, true)[1]);
     }
-    //console.log("MAX Y set to " + max_y);
     if (new_trace) {
         traces.push(new_trace);
     }
     Plotly.newPlot('GPUtime_x_cost', traces, layout);
 
     gpu_plt.on("plotly_hover", function(data) {
-        scatterHoverDisplay(data, hover_info1);
+        hoverDisplay(data, hover_info1);
     });
 
     gpu_plt.on("plotly_unhover", function(data) {
         hover_info1.innerHTML = "&nbsp;";
-        hover_info1.style.backgroundColor = "#fff";
+        hover_info1.style.backgroundColor = "rgba(1,1,1,0)";
     });
 
 
     // Plot CPU time
     var cpu_layout = {
-        title:'CPU calculation Time and Cost for ' + TFLOPs/1e+6 + ' EFLOP-s ('+ TFLOPs/1e+6+' * 10<sup>18</sup> FLOP-s<sup>***</sup>)',
+        title:'CPU calculation time and cost for ' + TFLOPs/1e+6 + ' EFLOP-s ('+ TFLOPs/1e+6+' * 10<sup>18</sup> FLOP-s<sup>***</sup>)',
         hovermode: 'closest',
         xaxis: {
             title: 'Calculation time',
             tickangle: 45,
             tickvals: [],
             ticktext: [],
+            nticks: 5,
             tickfont: {
-                family: '"Cabin Condensed", "Arial Narrow", "Helvetica", "Arial", sans-serif',
+                family: '"Cabin Condensed", "Arial Narrow", sans-serif',
                 size: 11
             },
-            showline: true
+            showline: true,
+            rangemode: "tozero"
         },
         yaxis: {
+            title: "Calculation cost (USD)",
+            ticklen: 5,
+            tickangle: 45,
+            showexponent: "none",
             tickprefix: "$",
-            hoverformat: ',.2f',
-            exponentformat: "none",
-            zeroline: false,
-            range: [0]
+            hoverformat: "$,.0f",
+            tickfont: {
+                family: '"Cabin Condensed", "Arial Narrow", sans-serif',
+                size: 11
+            },
+            type: "log",
+            rangemode: "tozero",
+            showline: true
         },
         legend: {
             x: 0.99,
@@ -200,7 +214,6 @@ function plotTimeCost(TFLOPs) {
     var cpu_traces = [];
     last_prov="";
     color_i = 0;
-    max_y = 0;
     max_x = 0;
     var new_trace_cpu = {};
 
@@ -233,6 +246,7 @@ function plotTimeCost(TFLOPs) {
                         color: 'rgba(0,0,0,0.5)'
                     }
                 },
+                hoverinfo: "text",
                 info: []
             }
         } else {
@@ -249,15 +263,11 @@ function plotTimeCost(TFLOPs) {
             max_x = time;
         }
         new_trace_cpu.y.push(cost);
-        if (cost > max_y) {
-            max_y = Math.ceil(cost*1.1);
-        }
         new_trace_cpu.info.push(getOfferInfo(offers[j]));
-        new_trace_cpu.text.push(offers[j].provider + " " + offers[j].name + " ("+offers[j].shortname+")")
+        new_trace_cpu.text.push(offers[j].provider + " "+ offers[j].name + "<br>"+CurrencyFormat(cost, "USD")+"/"+hoursToHuman(time, true)[1]);
         new_trace_cpu.marker.color.push(colors[c][color_i]);
         //console.log(offers[j].shortname + " color:" + c + "x"+color_i);
     }
-    cpu_layout.yaxis.range.push(max_y);
 
     tick_interval = Math.ceil(max_x / ticks);
     for (var i=0; i <= max_x; i+=tick_interval) {
@@ -271,12 +281,12 @@ function plotTimeCost(TFLOPs) {
     Plotly.newPlot('CPUtime_x_cost', cpu_traces, cpu_layout);
 
     cpu_plt.on("plotly_hover", function(data) {
-        scatterHoverDisplay(data, hover_info2);
+        hoverDisplay(data, hover_info2);
     });
 
     cpu_plt.on("plotly_unhover", function(data) {
         hover_info2.innerHTML = "&nbsp;";
-        hover_info2.style.backgroundColor = "#fff";
+        hover_info2.style.backgroundColor = "rgba(1,1,1,0)";
     });
 }
 
@@ -284,7 +294,7 @@ function plotTimeCost(TFLOPs) {
 function plotFLOPsScale() {
     var x = [0.1, 0.5, 1, 5, 10, 50, 100, 200, 500, 800, 1000, 5000, 10000,];
     var div=document.getElementById("FLOPsScale");
-    div.innerHTML = "Hover over number to update the two above graphs.<br>EFLOP-s: ";
+    //div.innerHTML = "Hover over number to update the two above graphs.<br>EFLOP-s: ";
 
     for (var i=0; i < x.length;i++) {
         div.innerHTML = div.innerHTML + " <span class='scale_number' onmouseover='javascript:plotTimeCost(" + x[i]*1e+6 + ");'> "+ x[i] + "</a>&nbsp;"
