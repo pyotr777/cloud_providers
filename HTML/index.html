@@ -25,9 +25,9 @@
 
 <p>Please find my article on our <a href="https://stair.center/archives/439" target="_blank">STAIR laboratory web site</a> about why I created these graphs and how to use them. </p>
 
-<p>The "filter" graphs below provide statistical information, such as how many offers each provider has, but can also be used for filtering offers. Click on a value in any graph to filter out offers with different values. You can select multiple values on one or multiple graphs. All graphs and the table below will show data only for the selected offers.</p>
+<p>The "filter" charts below provide statistical information about offers distribution by some parameters, such as how many offers each provider has. These charts can also be used for filtering offers. Click on a value in any chart to filter out offers with different values. You can select multiple values on one or multiple charts. All graphs and the table below will show data only for the selected offers.</p>
 
-<p>Please note, that only offers with GPU are mentioned on this page. Some providers, like Google and Amazon, have too many offers to show them all here, so I picked up only some representative ones. I collected data from cloud providers' web sites.</p>
+<p>Please note, that only offers with GPU are mentioned on this page. Some providers, like Google and Amazon, have too many offers to show them all here, so I picked up only some representative ones.</p>
 
 <p class="note" id="updated"></p>
 
@@ -35,9 +35,9 @@
 <!--more-->
 
 <div class="grouptitle">
-    <h3>Filter all graphs below using these plots</h3>
+    <h3>Filter offers in all graphs below using these charts</h3>
     <div style="float:none;"></div>
-    <div id="dc_gpu_models"><title>GPU model</title></div>
+    <div id="dc_gpu_models"><title>Number of offers by GPU model</title></div>
     <div class="dc_group">
         <div id="dc_gpus"><title>Number of GPUs</title></div>
         <div id="dc_gpu_perf"><title>Total GPU performance (TFlops)</title></div>
@@ -46,17 +46,17 @@
         <div id="dc_memory"><title>Memory (GB)</title></div>
         <div id="dc_cpu_perf"><title>Total CPU performance (TFlops)</title></div>
     </div>
-    <div id="dc_providers"><title>Provider</title></div>
+    <div id="dc_providers"><title>Number of offers by Providers</title></div>
 
     <div id="dc_end"></div>
 </div>
 <div id="messages"></div>
-<p>The graph below shows estimate CPU and GPU performance<sup><a href="#notes">**</a></sup> in <span title="Floating Point Operations per Second * 10e+12">TFlops</span> for each offer. Hover over offers to display information below the graph. More detailed information can be found in the table at the bottom of the page. Drag to zoom in.</p>
+<p>The graph below shows theoretical peak CPU and GPU performance<sup><a href="#notes">**</a></sup> in <span title="Floating Point Operations per Second * 10e+12">TFlops</span> for each offer. Hover over offers to display information below the graph. More detailed information can be found in the table at the bottom of the page. Drag across the chart to zoom in. Click on the legend to filter out offers by provider.</p>
 <div id="scatter_performance" style="width: 100%; height: 500px;"></div>
 <div id="offer_details1" class="note">&nbsp;</div>
 <p>The below graph shows rent cost for a period. X-axis is rent period, Y-axis is rent cost.</p>
-<p>All offers are charged in time units: hours, weeks, months or years. If an offer is charged by months, for example, using it for 1 day will cost you monthly price. Thus, the below graph can be thought of as the minimum sum you have to pay for using offers for particular period.</p>
-<p>Click on the graph to select use period. All graphs below will change to display data for the selected period. You can also set the period with the buttons below. Drag to zoom in.</p>
+<p>All offers are charged in time units: minutes, hours, weeks, months or years. That is why some lines on the graph has steps. Only lines for minutely and hourly charged offers are straight. Actually, they should be stepped also, but the graph X-axis resolution is lower (several hours) so these lines look straight on the graph.</p>
+<p>Click on the graph to select rent period. All graphs below will change to display data for the selected period. You can also set the period with the buttons below. Drag across the graph to zoom in. Click on the legend to filter offers by provider.</p>
 
 
 
@@ -64,13 +64,14 @@
 <div id="offer_details2" class="note">&nbsp;</div>
 
 
-<div class="grouptitle"><h3>Set period for below graphs</h3>
+<div class="grouptitle"><h3>Set rent period for below graphs</h3>
     <div class="buttons">
-        <div class="groupname">Display for period</div>
         <div class="button" id="day" onclick="displayTime('1 day');">1 day</div>
         <div class="button" id="week" onclick="displayTime('7 days');">1 week</div>
         <div class="button" id="month" onclick="displayTime('1 month');">1 month</div>
+        <div class="button" id="3months" onclick="displayTime('3 month');">3 month</div>
         <div class="button" id="6months" onclick="displayTime('6 months');">6 months</div>
+        <div class="button" id="9months" onclick="displayTime('9 month');">9 month</div>
         <div class="button" id="12months" onclick="displayTime('1 year');">1 year</div>
     </div>
 
@@ -80,7 +81,7 @@
     <p id="slice_cost_monthly_text">The below graph shows per month costs if rented for <span id="r_period"></span>.</p>
     <div id="slice_cost_monthly" style="width: 100%; height: 0px;"></div>
 
-    <p>The below graph shows cost per 1 TFlops of GPU and CPU performance for the selected period of use in logarithmic scale. To change the period use the buttons above or click on "Cost for rent period" graph.</p>
+    <p>The below graph shows cost per 1 <span title="Floating Point Operations per Second * 10e+12">TFlops</span> of GPU and CPU performance for the selected rent period in logarithmic scale. To change rent period use the buttons above or click on the "Cost for rent period" graph.</p>
     <div id="slice_cost_perf" style="width: 100%; height: 500px;"></div>
     <div id="offer_details4" class="note">&nbsp;</div>
 </div>
