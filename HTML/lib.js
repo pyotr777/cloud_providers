@@ -2,12 +2,12 @@
 var CSV_file = "./cost-performance.csv";
 //var CSV_file = "/cloudproviders/cost-performance.csv";
 
-var last_update = "Last update: 2017/05/26";
+var last_update = "Last update: 2017/05/30";
 
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
 var accumulated_months_days = [];
 var colors=[["#fa6d44", "#ff6a3f"],  // Amazon
-           ["#f8a358", "#ffa85c"],  // Softlayer
+           ["#f8a358", "#ffa85c"],  // IBM
            ["#ffd879", "#fccd5f"],  // Nimbix
            ["#efd5c0", "#f0cbb3"],  // Cirrascale
            ["#f5a1c0", "#f5a1c0"],  // Sakura
@@ -30,7 +30,7 @@ function getColor(prov) {
         case "amazon":
             c = 0;
             break;
-        case "softlayer":
+        case "ibm":
             c = 1;
             break;
         case "nimbix":
