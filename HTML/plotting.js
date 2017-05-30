@@ -718,7 +718,7 @@ function plotTable() {
     <th>model x quantity</th> \
     <th>RAM (GB)</th> \
     <th>primary</th><th>vol. (GB)</th><th>secondary</th><th>vol. (GB)</th> \
-    <th>Internal/External (GB/s)</th> \
+    <th>Internal/External (Gbps)</th> \
     <th>minutely</th><th>hourly</th><th>weekly</th><th>monthly</th><th>yearly</th><th title="One time setup price">Setup</th><th>Monthly limit</th> \
     </tr></thead><tbody>';
     var body="";
