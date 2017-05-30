@@ -294,7 +294,7 @@ function plotTimeCost(TFLOPs) {
 function plotFLOPsScale() {
     var x = [0.1, 0.5, 1, 5, 10, 50, 100, 200, 500, 800, 1000, 5000, 10000,];
     var div=document.getElementById("FLOPsScale");
-    //div.innerHTML = "Hover over number to update the two above graphs.<br>EFLOP-s: ";
+    div.innerHTML = "";
 
     for (var i=0; i < x.length;i++) {
         div.innerHTML = div.innerHTML + " <span class='scale_number' onmouseover='javascript:plotTimeCost(" + x[i]*1e+6 + ");'> "+ x[i] + "</a>&nbsp;"
