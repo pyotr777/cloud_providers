@@ -505,6 +505,92 @@ function getMonths4Hours(h) {
 }
 
 
+// Return:
+// Array of full months in period and
+// leftover time in seconds.
+// Period is in seconds.
+function getMonths4Seconds(sec) {
+    var period = secondsToHuman(sec);
+    var leftover = 0;
+    if (period[0].days > 0 ) {
+        leftover +=  period[0].days *24 * 60;
+    }
+    if (period[0].hours > 0) {
+        leftover += period[0].hours * 60;
+    }
+    if (period[0].seconds > 0) {
+        leftover += period[0].seconds;
+    }
+    var months = period[0].years*12 + period[0].months;
+    return [months, leftover];
+}
+
+// Return Cost for given number of seconds.
+function getQuote4Seconds(offer, sec) {
+    var cost = 0;
+    if (offer.setup != "" ) {
+        cost += offer.setup;
+    }
+    if ("continuous" in offer && offer.continuous != "" ) {
+        var h = Math.ceil(sec / 3600); // sec -> hours for cost calculations
+        var hours = offer.time_limit;
+        var periods = Math.ceil(h / hours);
+        cost += periods * offer.yearly;
+        return cost;
+    }
+    // Apply monthly limit
+    if ("month_limit" in offer && offer.month_limit != "" ) {
+        //console.log("Month limit for "+offer.shortname+" is " + offer.month_limit);
+        var months = getMonths4Seconds(sec);
+        cost += offer.month_limit * months[0];
+        sec = months[1]; // use leftover time to calculate additional cost
+    }
+    if ("minutely" in offer && offer.minutely != "") {
+        var cost1 = Math.ceil(sec / 60) * offer.minutely;
+        // Apply monthly limit
+        if ("month_limit" in offer && offer.month_limit != "" ) {
+            if (cost1 > offer.month_limit) {
+                cost1 = offer.month_limit;
+            }
+        }
+        cost += cost1;
+    }
+    else if ("hourly" in offer && offer.hourly != "" ) {
+        var cost1 = Math.ceil(sec / 3600) * offer.hourly;
+        // Apply monthly limit
+        if ("month_limit" in offer && offer.month_limit != "" ) {
+            if (cost1 > offer.month_limit) {
+                cost1 = offer.month_limit;
+            }
+        }
+        cost += cost1;
+    } else if ("weekly" in offer && offer.weekly != "" ) {
+        var period_w = Math.ceil(sec / (24 * 7 * 3600));
+        cost1 = period_w * offer.weekly;
+        // Apply monthly limit
+        if ("month_limit" in offer && offer.month_limit != "" ) {
+            if (cost1 > offer.month_limit) {
+                cost1 = offer.month_limit;
+            }
+        }
+        cost += cost1;
+    } else if ("monthly" in offer && offer.monthly != "" ) {
+        var months = getMonths4Seconds(sec);
+        var more_than_a_month = 0;
+        if (months[1] > 0) {
+            more_than_a_month = 1;
+        }
+        cost +=  (months[0] + more_than_a_month)* offer.monthly;
+        //console.log("Monthly: "+ offer.shortname + " "+offer.monthly);
+        //console.log(months);
+    } else if ("yearly" in offer && offer.yearly != "" ) {
+        // Year is counted as 365 days
+        var period_y = Math.ceil(sec / (3600 * 24 * 365));
+        cost += period_y * offer.yearly;
+    }
+    return cost;
+}
+
 // Return Cost for given number of hours (period).
 function getQuote4Hours(offer, h) {
     var cost = 0;
@@ -567,7 +653,6 @@ function getQuote4Hours(offer, h) {
         var period_y = Math.ceil(h / (24 * 365));
         cost += period_y * offer.yearly;
     }
-
     return cost;
 }
 
@@ -748,6 +833,125 @@ function hoursToHuman(h, short) {
         hours: hours
         }, s ];
 }
+
+
+
+// Convert time in seconds to human readable format
+// Return object {years, months, days, hours, seconds}.
+// Second returned value is text representation.
+function secondsToHuman(sec, short) {
+    if (accumulated_months_days.length < 1) {
+        //console.log("Calculate accumulated months days");
+        accumulated_days = 0;
+        for (var m = 0; m < 12; m++) {
+            accumulated_days += days_in_month[m];
+            accumulated_months_days.push(accumulated_days);
+        }
+        //console.log(accumulated_months_days);
+    }
+    var human_text_long = {
+        years:" year ",
+        month: " month ",
+        months: " months ",
+        day: " day ",
+        days: " days ",
+        hours: " hours ",
+        minutes: " minutes",
+        seconds: " sec."
+    }
+    var human_text_short = {
+        years:"y. ",
+        month: "m. ",
+        months: "m. ",
+        day: "d. ",
+        days: "d. ",
+        hours: ":",
+        minutes: ":",
+        seconds: ""
+    }
+    var human_text = null;
+    if (short == true) {
+        human_text = human_text_short;
+    } else {
+        human_text = human_text_long;
+    }
+    var init_sec = sec;
+    var seconds_day   = 24 * 3600;
+    var seconds_year  = 3600 * 24 * accumulated_months_days[11];
+
+
+    var years  = Math.floor(sec / seconds_year);
+    sec = sec - (years * seconds_year);
+
+    // Months
+    // Have numbers of days in months, so need to know how many full days we have.
+    var days = Math.floor(sec / seconds_day);
+    var m = 0;
+    for (; m < 12; m++ ) {
+        if (days < accumulated_months_days[m]) {
+            break;
+        }
+    }
+    var months = m;
+    //console.log("Calculating months. days="+days+" m="+m+ " months="+months+ " years="+years);
+
+    if (months > 0) {
+        sec = sec - accumulated_months_days[months-1] * seconds_day;
+    }
+
+    // Days
+    days   = Math.floor(sec / seconds_day);
+    sec = sec - days * seconds_day;
+
+    // Hours
+    var hours  = Math.floor(sec / 3600);
+    sec = sec - hours * 3600;
+
+    // Minutes
+    var mins = Math.floor( sec / 60);
+    sec = sec - mins * 60;
+    s = "";
+    if ( years > 0) {
+        s = s + years + human_text.years;
+    }
+    if ( months > 0) {
+        if (months == 1) {
+            s = s + months + human_text.month;
+        } else {
+            s = s + months + human_text.months;
+        }
+    }
+    if ( days > 0) {
+        if (days == 1) {
+            s = s + days + human_text.day;
+        } else {
+            s = s + days + human_text.days;
+        }
+    }
+    s = s + hours + human_text.hours;
+    s = s + time_str(mins) + human_text.minutes;
+    s = s + time_str(sec) + human_text.seconds;
+
+    console.log("Count "+init_sec+ " seconds as "+ s );
+    return [{
+        years: years,
+        months: months,
+        days: days,
+        hours: hours,
+        seconds: sec
+        }, s ];
+}
+
+// Return string representation of int
+// as 2 digits, first is 0 if i < 10.
+function time_str(i) {
+    var str = i.toString();
+    if (str.length < 2) {
+        str = "0"+str;
+    }
+    return str;
+}
+
 
 
 function getHours4Months(months) {
