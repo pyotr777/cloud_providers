@@ -526,51 +526,54 @@ function getMonths4Seconds(sec) {
 }
 
 // Return Cost for given number of seconds.
-function getQuote4Seconds(offer, sec) {
+function getQuote4Seconds(offer, sec, nodes) {
     var cost = 0;
+    if (nodes == null || nodes == "") {
+        nodes = 1;
+    }
     if (offer.setup != "" ) {
-        cost += offer.setup;
+        cost += offer.setup * nodes;  // Assume setup price is per node
     }
     if ("continuous" in offer && offer.continuous != "" ) {
         var h = Math.ceil(sec / 3600); // sec -> hours for cost calculations
         var hours = offer.time_limit;
         var periods = Math.ceil(h / hours);
-        cost += periods * offer.yearly;
+        cost += periods * offer.yearly * nodes;
         return cost;
     }
     // Apply monthly limit
     if ("month_limit" in offer && offer.month_limit != "" ) {
         //console.log("Month limit for "+offer.shortname+" is " + offer.month_limit);
         var months = getMonths4Seconds(sec);
-        cost += offer.month_limit * months[0];
+        cost += offer.month_limit * months[0] * nodes;
         sec = months[1]; // use leftover time to calculate additional cost
     }
     if ("minutely" in offer && offer.minutely != "") {
-        var cost1 = Math.ceil(sec / 60) * offer.minutely;
+        var cost1 = Math.ceil(sec / 60) * offer.minutely * nodes;
         // Apply monthly limit
         if ("month_limit" in offer && offer.month_limit != "" ) {
-            if (cost1 > offer.month_limit) {
-                cost1 = offer.month_limit;
+            if (cost1 > offer.month_limit * nodes) {
+                cost1 = offer.month_limit * nodes;
             }
         }
         cost += cost1;
     }
     else if ("hourly" in offer && offer.hourly != "" ) {
-        var cost1 = Math.ceil(sec / 3600) * offer.hourly;
+        var cost1 = Math.ceil(sec / 3600) * offer.hourly * nodes;
         // Apply monthly limit
         if ("month_limit" in offer && offer.month_limit != "" ) {
-            if (cost1 > offer.month_limit) {
-                cost1 = offer.month_limit;
+            if (cost1 > offer.month_limit * nodes) {
+                cost1 = offer.month_limit * nodes;
             }
         }
         cost += cost1;
     } else if ("weekly" in offer && offer.weekly != "" ) {
         var period_w = Math.ceil(sec / (24 * 7 * 3600));
-        cost1 = period_w * offer.weekly;
+        cost1 = period_w * offer.weekly * nodes;
         // Apply monthly limit
         if ("month_limit" in offer && offer.month_limit != "" ) {
-            if (cost1 > offer.month_limit) {
-                cost1 = offer.month_limit;
+            if (cost1 > offer.month_limit * nodes) {
+                cost1 = offer.month_limit * nodes;
             }
         }
         cost += cost1;
@@ -580,13 +583,13 @@ function getQuote4Seconds(offer, sec) {
         if (months[1] > 0) {
             more_than_a_month = 1;
         }
-        cost +=  (months[0] + more_than_a_month)* offer.monthly;
+        cost +=  (months[0] + more_than_a_month)* offer.monthly * nodes;
         //console.log("Monthly: "+ offer.shortname + " "+offer.monthly);
         //console.log(months);
     } else if ("yearly" in offer && offer.yearly != "" ) {
         // Year is counted as 365 days
         var period_y = Math.ceil(sec / (3600 * 24 * 365));
-        cost += period_y * offer.yearly;
+        cost += period_y * offer.yearly * nodes;
     }
     return cost;
 }
@@ -694,7 +697,7 @@ function convert2BaseCurrency(sum, currency) {
     if (sum == null || sum == "") return "";
     if (currency != base_currency) {
         try {
-            var conv = fx.convert(sum, { from: currency});
+            var conv = round_curr(fx.convert(sum, { from: currency}));
             //console.log(sum + " " +currency + " = " + conv + " " + base_currency );
             return conv;
         } catch(err) {
@@ -706,6 +709,12 @@ function convert2BaseCurrency(sum, currency) {
     return sum;
 }
 
+
+// Round number to 2 digits after decimal point
+function round_curr(n) {
+    var n100 = Math.round(n*100);
+    return n100/100;
+}
 
 function ButtonOver(button) {
     if (button.title == "") {
@@ -932,7 +941,7 @@ function secondsToHuman(sec, short) {
     s = s + time_str(mins) + human_text.minutes;
     s = s + time_str(sec) + human_text.seconds;
 
-    console.log("Count "+init_sec+ " seconds as "+ s );
+    //console.log("Count "+init_sec+ " seconds as "+ s );
     return [{
         years: years,
         months: months,
