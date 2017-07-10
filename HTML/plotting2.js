@@ -15,9 +15,10 @@ var quotes=[];
 var msg;
 var TimeCost;
 var FLOPsScale;
-var nodes_arr_ = [1,2,4,8,16];
-var nodes_ = 1;
-var TFLOPs_ = 1000000000;
+var nodes_arr_ = [1,2,4,8,16,32,64];
+var TFLOPs_arr_= [0.1, 0.5, 1, 5, 10, 50, 100];
+var nodes_ = nodes_arr_[0];
+var TFLOPs_ = TFLOPs_arr_[0]*1e+6;
 
 function plotFilterPlots() {
     console.log("Plotting DC plots.");
@@ -55,6 +56,7 @@ function makeTraces(offers, performance) {
     var last_nodes=0;
     var color_i = 0;
     var max_x = 0;
+    var ys = [];
     var c = 0;
     var new_trace  = {};
     var showlegend = false;
@@ -108,6 +110,7 @@ function makeTraces(offers, performance) {
             max_x = seconds;
         }
         new_trace.y.push(cost);
+        ys.push(cost);
         new_trace.info.push(getOfferInfo(offers[j]));
         new_trace.text.push(nodes + "nodes "+offers[j].provider + " "+offers[j].name + "<br>"+CurrencyFormat(cost, "USD")+"/"+secondsToHuman(seconds, true)[1]);
         new_trace.marker.color.push(colors[c][color_i]);
@@ -116,8 +119,47 @@ function makeTraces(offers, performance) {
     if (new_trace) {
         traces.push(new_trace);
     }
-    var trace_obj = [traces, max_x];
+    var y_max = getMaxRange(ys);
+    var trace_obj = [traces, max_x, y_max];
     return trace_obj;
+}
+
+
+// Calculate standart deviation for the array,
+// remove elements outside mean + 1*σ,
+// return max of remaining elements.
+function getMaxRange(x) {
+    var mean = 0;
+    var variance = 0;
+    var deviation = 0;
+    var sum = 0;
+    var x_max=0;
+    for (var i=0; i<x.length; i++) {
+        sum += x[i];
+        if (x_max < x[i]) {
+            x_max = x[i];
+        }
+    }
+    mean = sum / x.length;
+    for (var i=0; i<x.length; i++) {
+        variance += (x[i] - mean)*(x[i] - mean);
+    }
+    deviation = Math.sqrt(variance / x.length);
+    //console.log("mean:"+mean+" max:"+x_max+" variance:"+variance+" deviation:"+deviation);
+    var upper_limit = mean + 1*deviation;
+    var y = [];
+    for (var i=0; i<x.length; i++) {
+        if (x[i] < upper_limit) {
+            y.push(x[i]);
+        }
+    }
+    x_max = 0;
+    for (var i=0; i< y.length; i++) {
+        if (x_max < y[i]) {
+            x_max = y[i];
+        }
+    }
+    return x_max;
 }
 
 
@@ -181,12 +223,14 @@ function plotTimeCostMultiNode() {
     var traces_obj = makeTraces(offers, "gpu_p");
     var traces = traces_obj[0];
     var max_x = traces_obj[1];
+    var max_y = traces_obj[2];
     var ticks = 10;
     var tick_interval = Math.ceil(max_x / ticks);
     for (var i=0; i <= max_x; i+=tick_interval) {
         layout.xaxis.tickvals.push(i);
         layout.xaxis.ticktext.push(secondsToHuman(i, true)[1]);
     }
+    layout.yaxis.range = [0, max_y];
 
     Plotly.newPlot('GPUtime_x_cost', traces, layout);
 
@@ -243,8 +287,9 @@ function plotTimeCostMultiNode() {
 
     traces_obj = makeTraces(offers, "cpu_p");
     var cpu_traces = traces_obj[0];
-    var max_x = traces_obj[1];
-
+    max_x = traces_obj[1];
+    max_y = traces_obj[2];
+    cpu_layout.yaxis.range = [0, max_y];
     tick_interval = Math.ceil(max_x / ticks);
     for (var i=0; i <= max_x; i+=tick_interval) {
         cpu_layout.xaxis.tickvals.push(i);
@@ -265,7 +310,7 @@ function plotTimeCostMultiNode() {
 
 
 function plotFLOPsScale() {
-    var x = [0.1, 0.5, 1, 5, 10, 50, 100, 200, 500, 800, 1000, 5000, 10000,];
+    var x = TFLOPs_arr_;
     var div=document.getElementById("FLOPsScale");
     div.innerHTML = "";
 
