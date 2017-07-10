@@ -528,6 +528,13 @@ function getMonths4Seconds(sec) {
     return [months, leftover];
 }
 
+
+// Koeff.3 for Tsubame 2.5 cost calculations
+// cost = (nodes * walltime (s) * koeff.1 * koeff.2 * koeff.3) / 3600(s)
+// koeff.3 borders (h): 1, 24, 48,  96
+var tsubame_koeff = [0.9, 1, 2, 4, 4];
+var tsubame_border= [1, 24, 48, 96];
+
 // Return Cost for given number of seconds.
 function getQuote4Seconds(offer, sec, nodes) {
     //console.log(sec);
@@ -542,8 +549,22 @@ function getQuote4Seconds(offer, sec, nodes) {
         var h = Math.ceil(sec / 3600); // sec -> hours for cost calculations
         var hours = offer.time_limit;
         var periods = Math.ceil(h / hours);
-        cost += periods * offer.yearly * nodes;
-        return cost;
+        if (offer.continuous == 1) {
+            cost += periods * offer.yearly * nodes;
+            return cost;
+        } else if (offer.continuous == 2.5) {
+            // Tsubame 2.5
+            var koeff3 = tsubame_koeff[0];
+            for (var k=0; k < tsubame_border.length; k++) {
+                if (tsubame_border[k] < sec * 3600) {
+                    koeff3 = tsubame_koeff[k+1];
+                } else {
+                    break;
+                }
+            }
+            cost = periods * nodes * koeff3 * offer.yearly;
+            return cost;
+        }
     }
     // Apply monthly limit
     if ("month_limit" in offer && offer.month_limit != "" ) {
@@ -565,7 +586,7 @@ function getQuote4Seconds(offer, sec, nodes) {
     }
     else if ("hourly" in offer && offer.hourly != "" ) {
         var cost1 = Math.ceil(sec / 3600) * offer.hourly * nodes;
-        //console.log ("cost1="+Math.ceil(sec / 3600)+"x"+offer.hourly+"="+cost1);
+        console.log (" "+sec+"sec. cost1= "+Math.ceil(sec / 3600)+"x"+offer.hourly+" = "+cost1);
         // Apply monthly limit
         if ("month_limit" in offer && offer.month_limit != "" ) {
             if (cost1 > offer.month_limit * nodes) {
@@ -575,7 +596,7 @@ function getQuote4Seconds(offer, sec, nodes) {
         cost += cost1;
     } else if ("weekly" in offer && offer.weekly != "" ) {
         var period_w = Math.ceil(sec / (24 * 7 * 3600));
-        cost1 = period_w * offer.weekly * nodes;
+        var cost1 = period_w * offer.weekly * nodes;
         // Apply monthly limit
         if ("month_limit" in offer && offer.month_limit != "" ) {
             if (cost1 > offer.month_limit * nodes) {
@@ -609,8 +630,16 @@ function getQuote4Hours(offer, h) {
     if ("continuous" in offer && offer.continuous != "" ) {
         var hours = offer.time_limit;
         var periods = Math.ceil(h / hours);
-        cost += periods * offer.yearly;
-        return cost;
+        if (offer.continuous == 1) {
+            cost += periods * offer.yearly;
+            return cost;
+        } else if (offer.continuous == 2.5) {
+            // Tsubame 2.5
+            // Cost for long-term rent, not for long-running jobs, hence koeff3 is undefined (let it be 1).
+            var koeff3 = 1;
+            cost += periods *  koeff3 * offer.yearly;
+            return cost;
+        }
     }
     // Apply monthly limit
     if ("month_limit" in offer && offer.month_limit != "" ) {
