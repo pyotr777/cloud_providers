@@ -67,33 +67,31 @@ function makeTraces(offers, performance) {
         if (last_prov != prov) {
             last_prov = prov;
             c = getColor(prov);
-            showlegend = true;
-        }
-        //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
-        if (!jQuery.isEmptyObject(new_trace)) {
-            traces.push(new_trace);
-            new_trace=null;
-        }
-        new_trace = {
-            name: offers[j].provider,
-            mode: "markers",
-            type: "scatter",
-            x: [],
-            y: [],
-            text: [],
-            marker: {
-                color: [],
-                size: 14,
-                opacity: 0.7,
-                symbol: "circle",
-                line: {
-                    width: 1,
-                    color: 'rgba(0,0,0,0.7)'
-                }
-            },
-            showlegend: showlegend,
-            hoverinfo: "text",
-            info: []
+            //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
+            if (!jQuery.isEmptyObject(new_trace)) {
+                traces.push(new_trace);
+                new_trace=null;
+            }
+            new_trace = {
+                name: offers[j].provider,
+                mode: "markers",
+                type: "scatter",
+                x: [],
+                y: [],
+                text: [],
+                marker: {
+                    color: [],
+                    size: 14,
+                    opacity: 0.7,
+                    symbol: "circle",
+                    line: {
+                        width: 1,
+                        color: 'rgba(0,0,0,0.7)'
+                    }
+                },
+                hoverinfo: "text",
+                info: []
+            }
         }
         var seconds1 = Math.ceil(TFLOPs / offers[j][performance]); // Calculation time in seconds on 1 node.
         var seconds = Math.ceil(seconds1 / nodes); // Calculation time in seconds on "nodes" nodes.
@@ -141,6 +139,7 @@ function plotTimeCostMultiNode() {
     var layout = {
         title:'GPU calculation time and cost for ' + TFLOPs/1e+6 + ' EFLOP-s<sup>***</sup>'+nodes_txt,
         hovermode: 'closest',
+        showlegend: true,
         xaxis: {
             title: 'Calculation time',
             tickangle: 45,
@@ -160,7 +159,7 @@ function plotTimeCostMultiNode() {
             tickangle: 45,
             showexponent: "all",
             tickprefix: "$",
-            hoverformat: "$,.0f",
+            //hoverformat: "$,.0f",
             tickfont: {
                 family: '"Cabin Condensed", "Arial Narrow", sans-serif',
                 size: 11
@@ -224,7 +223,7 @@ function plotTimeCostMultiNode() {
             tickangle: 45,
             showexponent: "all",
             tickprefix: "$",
-            hoverformat: "$,.0f",
+            //hoverformat: "$,.0f",
             tickfont: {
                 family: '"Cabin Condensed", "Arial Narrow", sans-serif',
                 size: 11
