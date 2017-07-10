@@ -99,14 +99,14 @@ function makeTraces(offers, performance, marker) {
         }
         var seconds1 = Math.ceil(TFLOPs / offers[j][performance]); // Calculation time in seconds on 1 node.
         var seconds = Math.ceil(seconds1 / nodes); // Calculation time in seconds on "nodes" nodes.
-        console.log(offers[j].shortname+" SP.performance="+offers[j][performance])
-        var cost1node = getQuote4Seconds(offers[j], seconds1, 1);
+        //console.log(offers[j].shortname+" SP.performance="+offers[j][performance]+" walltime="+seconds1+"sec");
+        //var cost1node = getQuote4Seconds(offers[j], seconds1, 1);
         var cost = getQuote4Seconds(offers[j], seconds, nodes);
-        if (Math.abs(cost1node - cost) > 1) {  // This should not happen
+        //if (Math.abs(cost1node - cost) > 1) {  // This should not happen
             // Check
-            console.log(" Cost " + nodes+" nodes :"+cost+" / "+cost1node);
-            console.log(" Time " + nodes+" nodes:"+ seconds + " / "+seconds1);
-        }
+        //    console.log(" Cost " + nodes+" nodes :"+cost+" / "+cost1node);
+        //    console.log(" Time " + nodes+" nodes:"+ seconds + " / "+seconds1);
+        //}
         new_trace.x.push(seconds);
         if (max_x < seconds) {
             max_x = seconds*axis_range_padding_koef;
@@ -143,7 +143,7 @@ function getMaxRange(x) {
         }
     }
     // For small arrays do not remove elements
-    if (x.length < 8) {
+    if (x.length < 12) {
         return x_max;
     }
     mean = sum / x.length;

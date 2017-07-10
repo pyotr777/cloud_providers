@@ -548,21 +548,24 @@ function getQuote4Seconds(offer, sec, nodes) {
     if ("continuous" in offer && offer.continuous != "" ) {
         var h = Math.ceil(sec / 3600); // sec -> hours for cost calculations
         var hours = offer.time_limit;
-        var periods = Math.ceil(h / hours);
         if (offer.continuous == 1) {
+            var periods = Math.ceil(h / hours);
             cost += periods * offer.yearly * nodes;
             return cost;
         } else if (offer.continuous == 2.5) {
             // Tsubame 2.5
             var koeff3 = tsubame_koeff[0];
             for (var k=0; k < tsubame_border.length; k++) {
-                if (tsubame_border[k] < sec * 3600) {
+                if (tsubame_border[k] < sec / 3600) {
                     koeff3 = tsubame_koeff[k+1];
                 } else {
                     break;
                 }
             }
-            cost = periods * nodes * koeff3 * offer.yearly;
+            var periods = Math.ceil(h * nodes * koeff3 / hours);
+            //console.log(" periods=ceil("+h+"x"+nodes+"x"+ koeff3+"/"+hours+")="+(h*nodes*koeff3/hours));
+            cost = periods * offer.yearly;
+            //console.log(" "+periods+" x "+offer.yearly+ " = "+cost);
             return cost;
         }
     }
@@ -586,7 +589,7 @@ function getQuote4Seconds(offer, sec, nodes) {
     }
     else if ("hourly" in offer && offer.hourly != "" ) {
         var cost1 = Math.ceil(sec / 3600) * offer.hourly * nodes;
-        console.log (" "+sec+"sec. cost1= "+Math.ceil(sec / 3600)+"x"+offer.hourly+" = "+cost1);
+        //console.log (" "+sec+"sec. cost1= "+Math.ceil(sec / 3600)+"x"+offer.hourly+" = "+cost1);
         // Apply monthly limit
         if ("month_limit" in offer && offer.month_limit != "" ) {
             if (cost1 > offer.month_limit * nodes) {
