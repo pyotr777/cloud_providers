@@ -513,10 +513,13 @@ function getMonths4Seconds(sec) {
     var period = secondsToHuman(sec);
     var leftover = 0;
     if (period[0].days > 0 ) {
-        leftover +=  period[0].days *24 * 60;
+        leftover +=  period[0].days *24 * 3600;
     }
     if (period[0].hours > 0) {
-        leftover += period[0].hours * 60;
+        leftover += period[0].hours * 3600;
+    }
+    if (period[0].minutes > 0) {
+        leftover += period[0].minutes * 60;
     }
     if (period[0].seconds > 0) {
         leftover += period[0].seconds;
@@ -527,6 +530,7 @@ function getMonths4Seconds(sec) {
 
 // Return Cost for given number of seconds.
 function getQuote4Seconds(offer, sec, nodes) {
+    console.log(sec);
     var cost = 0;
     if (nodes == null || nodes == "") {
         nodes = 1;
@@ -545,6 +549,7 @@ function getQuote4Seconds(offer, sec, nodes) {
     if ("month_limit" in offer && offer.month_limit != "" ) {
         //console.log("Month limit for "+offer.shortname+" is " + offer.month_limit);
         var months = getMonths4Seconds(sec);
+        console.log("Months:"+months);
         cost += offer.month_limit * months[0] * nodes;
         sec = months[1]; // use leftover time to calculate additional cost
     }
@@ -560,6 +565,7 @@ function getQuote4Seconds(offer, sec, nodes) {
     }
     else if ("hourly" in offer && offer.hourly != "" ) {
         var cost1 = Math.ceil(sec / 3600) * offer.hourly * nodes;
+        console.log ("cost1="+Math.ceil(sec / 3600)+"x"+offer.hourly+"="+cost1);
         // Apply monthly limit
         if ("month_limit" in offer && offer.month_limit != "" ) {
             if (cost1 > offer.month_limit * nodes) {
@@ -865,7 +871,7 @@ function secondsToHuman(sec, short) {
         day: " day ",
         days: " days ",
         hours: " hours ",
-        minutes: " minutes",
+        minutes: " minutes ",
         seconds: " sec."
     }
     var human_text_short = {
@@ -947,6 +953,7 @@ function secondsToHuman(sec, short) {
         months: months,
         days: days,
         hours: hours,
+        minutes: mins,
         seconds: sec
         }, s ];
 }

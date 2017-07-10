@@ -15,6 +15,9 @@ var quotes=[];
 var msg;
 var TimeCost;
 var FLOPsScale;
+var nodes_arr_ = [1,2,4,8,16];
+var nodes_ = 1;
+var TFLOPs_ = 1000000000;
 
 function plotFilterPlots() {
     console.log("Plotting DC plots.");
@@ -33,264 +36,20 @@ function plotFilterPlots() {
 function continue_proc(filter, field, group) {
     if (processing) return; // Prevent onchange event loop for providers filter
     processing = true;
-    var TFLOPs = 1000000000;
     filter(field, group);
     quotes=[];
-    //plotFLOPsMoney(25000);
-    //plotTimeCost(TFLOPs);
-    plotTimeCostMultiNode(TFLOPs);
-    plotFLOPsScale(TFLOPs);
+    plotTimeCostMultiNode();
+    plotFLOPsScale();
+    plotNodesScale();
     processing = false;
 }
 
-
-function plotTimeCost(TFLOPs) {
-    console.log("Plotting GPU Time x Cost fot " + TFLOPs/1e+6 + " EFLOP-s 1*e18 FLOPS");
-    var cpu_plt = document.getElementById("CPUtime_x_cost");
-    var hover_info2 = document.getElementById("offer_details2");
-    var gpu_plt = document.getElementById("GPUtime_x_cost");
-    var hover_info1 = document.getElementById("offer_details1");
-
-
-    var layout = {
-        title:'GPU calculation time and cost for ' + TFLOPs/1e+6 + ' EFLOP-s ('+ TFLOPs/1e+6+' * 10<sup>18</sup> FLOP-s<sup>***</sup>)',
-        hovermode: 'closest',
-        xaxis: {
-            title: 'Calculation time',
-            tickangle: 45,
-            tickvals: [],
-            ticktext: [],
-            nticks: 5,
-            tickfont: {
-                family: '"Cabin Condensed", "Arial Narrow", sans-serif',
-                size: 11
-            },
-            showline: true,
-            rangemode: "tozero"
-        },
-        yaxis: {
-            title: "Calculation cost (USD)",
-            ticklen: 5,
-            tickangle: 45,
-            showexponent: "none",
-            tickprefix: "$",
-            hoverformat: "$,.0f",
-            tickfont: {
-                family: '"Cabin Condensed", "Arial Narrow", sans-serif',
-                size: 11
-            },
-            type: "log",
-            rangemode: "tozero",
-            showline: true
-        },
-        legend: {
-            x: 0.99,
-            xanchor: "right",
-            y: 1,
-            bgcolor: "rgba(255,255,255,0.8)",
-            bordercolor: "#eee",
-            borderwidth: 1
-        }
-    };
-    var traces = [];
-    var last_prov="";
-    var color_i = 0;
-    var max_x = 0;
-    var new_trace  = {};
-    //console.log("New trace:" + new_trace+" Not empty? " + (!jQuery.isEmptyObject(new_trace)));
-    for (j=0; j < offers.length; j++) {
-        var prov = offers[j].provider.toLowerCase();
-        //console.log(j+" "+prov)
-        if (last_prov != prov) {
-            last_prov = prov;
-            color_i = 0;
-            var c = getColor(prov);
-            //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
-            if (!jQuery.isEmptyObject(new_trace)) {
-                traces.push(new_trace);
-                new_trace=null;
-            }
-            new_trace = {
-                name: offers[j].provider,
-                mode: "markers",
-                type: "scatter",
-                x: [],
-                y: [],
-                text: [],
-                marker: {
-                    color: [],
-                    size: 12,
-                    opacity: 0.8,
-                    symbol: "circle",
-                    line: {
-                        width: 1,
-                        color: 'rgba(0,0,0,0.5)'
-                    }
-                },
-                hoverinfo: "text",
-                info: []
-            }
-        }
-
-        var time = Math.ceil(TFLOPs / offers[j].gpu_p / 3600); // Calculation time in hours
-        var cost = getQuote4Hours(offers[j], time);
-        new_trace.x.push(time);
-        if (time > max_x) {
-            max_x = time;
-        }
-        new_trace.y.push(cost);
-        new_trace.info.push(getOfferInfo(offers[j]));
-        new_trace.text.push(offers[j].provider + " "+offers[j].name + "<br>"+CurrencyFormat(cost, "USD")+"/"+hoursToHuman(time, true)[1]);
-        new_trace.marker.color.push(colors[c][color_i]);
-        //console.log(offers[j].shortname + " color:" + c + "x"+color_i);
-    }
-    var ticks = 10;
-    var tick_interval = Math.ceil(max_x / ticks);
-    for (var i=0; i <= max_x; i+=tick_interval) {
-        layout.xaxis.tickvals.push(i);
-        layout.xaxis.ticktext.push(hoursToHuman(i, true)[1]);
-    }
-    if (new_trace) {
-        traces.push(new_trace);
-    }
-    Plotly.newPlot('GPUtime_x_cost', traces, layout);
-
-    gpu_plt.on("plotly_hover", function(data) {
-        hoverDisplay(data, hover_info1);
-    });
-
-    gpu_plt.on("plotly_unhover", function(data) {
-        hover_info1.innerHTML = "&nbsp;";
-        hover_info1.style.backgroundColor = "rgba(1,1,1,0)";
-    });
-
-
-    // Plot CPU time
-    var cpu_layout = {
-        title:'CPU calculation time and cost for ' + TFLOPs/1e+6 + ' EFLOP-s ('+ TFLOPs/1e+6+' * 10<sup>18</sup> FLOP-s<sup>***</sup>)',
-        hovermode: 'closest',
-        xaxis: {
-            title: 'Calculation time',
-            tickangle: 45,
-            tickvals: [],
-            ticktext: [],
-            nticks: 5,
-            tickfont: {
-                family: '"Cabin Condensed", "Arial Narrow", sans-serif',
-                size: 11
-            },
-            showline: true,
-            rangemode: "tozero"
-        },
-        yaxis: {
-            title: "Calculation cost (USD)",
-            ticklen: 5,
-            tickangle: 45,
-            showexponent: "none",
-            tickprefix: "$",
-            hoverformat: "$,.0f",
-            tickfont: {
-                family: '"Cabin Condensed", "Arial Narrow", sans-serif',
-                size: 11
-            },
-            type: "log",
-            rangemode: "tozero",
-            showline: true
-        },
-        legend: {
-            x: 0.99,
-            xanchor: "right",
-            y: 1,
-            bgcolor: "rgba(255,255,255,0.8)",
-            bordercolor: "#eee",
-            borderwidth: 1
-        }
-    };
-
-    var cpu_traces = [];
-    last_prov="";
-    color_i = 0;
-    max_x = 0;
-    var new_trace_cpu = {};
-
-    for (j=0; j < offers.length; j++) {
-        var prov = offers[j].provider.toLowerCase();
-        //console.log(j+" "+prov)
-        if (last_prov != prov) {
-            last_prov = prov;
-            color_i = 0;
-            var c = getColor(prov);
-            //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
-            if (!jQuery.isEmptyObject(new_trace_cpu)) {
-                cpu_traces.push(new_trace_cpu);
-                new_trace_cpu=null;
-            }
-            new_trace_cpu = {
-                name: offers[j].provider,
-                mode: "markers",
-                type: "scatter",
-                x: [],
-                y: [],
-                text: [],
-                marker: {
-                    color: [],
-                    size: 12,
-                    opacity: 0.8,
-                    symbol: "diamond",
-                    line: {
-                        width: 1,
-                        color: 'rgba(0,0,0,0.5)'
-                    }
-                },
-                hoverinfo: "text",
-                info: []
-            }
-        } else {
-            color_i++;
-            if (color_i >= colors[c].length) {
-                color_i = 0;
-            }
-        }
-
-        var time = Math.ceil(TFLOPs / offers[j].cpu_p / 3600); // Calculation time in hours
-        var cost = getQuote4Hours(offers[j], time);
-        new_trace_cpu.x.push(time);
-        if (time > max_x) {
-            max_x = time;
-        }
-        new_trace_cpu.y.push(cost);
-        new_trace_cpu.info.push(getOfferInfo(offers[j]));
-        new_trace_cpu.text.push(offers[j].provider + " "+ offers[j].name + "<br>"+CurrencyFormat(cost, "USD")+"/"+hoursToHuman(time, true)[1]);
-        new_trace_cpu.marker.color.push(colors[c][color_i]);
-        //console.log(offers[j].shortname + " color:" + c + "x"+color_i);
-    }
-
-    tick_interval = Math.ceil(max_x / ticks);
-    for (var i=0; i <= max_x; i+=tick_interval) {
-        cpu_layout.xaxis.tickvals.push(i);
-        cpu_layout.xaxis.ticktext.push(hoursToHuman(i, true)[1]);
-    }
-
-    if (new_trace_cpu) {
-        cpu_traces.push(new_trace_cpu);
-    }
-    Plotly.newPlot('CPUtime_x_cost', cpu_traces, cpu_layout);
-
-    cpu_plt.on("plotly_hover", function(data) {
-        hoverDisplay(data, hover_info2);
-    });
-
-    cpu_plt.on("plotly_unhover", function(data) {
-        hover_info2.innerHTML = "&nbsp;";
-        hover_info2.style.backgroundColor = "rgba(1,1,1,0)";
-    });
-}
 
 
 
 // Return array of traces for given
 //
-function makeTraces(offers, performance, TFLOPs) {
+function makeTraces(offers, performance) {
     var traces = [];
     var last_prov="";
     var last_nodes=0;
@@ -299,68 +58,62 @@ function makeTraces(offers, performance, TFLOPs) {
     var c = 0;
     var new_trace  = {};
     var showlegend = false;
+    var TFLOPs = TFLOPs_;
+    var nodes = nodes_;
     for (j=0; j < offers.length; j++) {
         var prov = offers[j].provider.toLowerCase();
-        for (nodes=1; nodes < 7; nodes++) {
-            //console.log(j+" "+prov)
-            showlegend = false;
-            if (last_prov != prov || last_nodes != nodes) {
-                if (last_prov != prov) {
-                    last_prov = prov;
-                    color_i = 0;
-                    c = getColor(prov);
-                    showlegend = true;
-                }
-                if (last_nodes != nodes) {
-                    last_nodes = nodes;
-                }
-                //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
-                if (!jQuery.isEmptyObject(new_trace)) {
-                    traces.push(new_trace);
-                    new_trace=null;
-                }
-                new_trace = {
-                    name: offers[j].provider,
-                    mode: "markers",
-                    type: "scatter",
-                    x: [],
-                    y: [],
-                    text: [],
-                    marker: {
-                        color: [],
-                        size: 6+3*nodes,
-                        opacity: 0.5,
-                        symbol: "circle",
-                        line: {
-                            width: 1,
-                            color: 'rgba(0,0,0,0.5)'
-                        }
-                    },
-                    showlegend: showlegend,
-                    hoverinfo: "text",
-                    info: []
-                }
-            }
-            var seconds1 = Math.ceil(TFLOPs / offers[j][performance]); // Calculation time in seconds on 1 node.
-            var seconds = Math.ceil(seconds1 / nodes); // Calculation time in seconds on "nodes" nodes.
-            var cost1node = getQuote4Seconds(offers[j], seconds1, 1);
-            var cost = getQuote4Seconds(offers[j], seconds, nodes);   // TODO: Make nodes function argument!
-            //if (Math.abs(cost1node - cost) > 1 && offers[j].monthly != "") {  // This should not happen
-                // Check
-            //    console.log(offers[j].shortname + "\n Cost " + nodes+" nodes : "+cost+"/"+cost1node);
-            //    console.log(" Time " + nodes+" nodes:"+ seconds + "/"+seconds1);
-            //    console.log(" Tflops="+offers[j].gpu_p+ " cost="+offers[j].monthly);
-            //}
-            new_trace.x.push(seconds);
-            if (seconds > max_x) {
-                max_x = seconds;
-            }
-            new_trace.y.push(cost);
-            new_trace.info.push(getOfferInfo(offers[j]));
-            new_trace.text.push(nodes + "nodes "+offers[j].provider + " "+offers[j].name + "<br>"+CurrencyFormat(cost, "USD")+"/"+secondsToHuman(seconds, true)[1]);
-            new_trace.marker.color.push(colors[c][color_i]);
-            //console.log(offers[j].shortname + " color:" + c + "x"+color_i);
+        //console.log(j+" "+prov)
+        showlegend = false;
+        if (last_prov != prov) {
+            last_prov = prov;
+            c = getColor(prov);
+            showlegend = true;
         }
+        //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
+        if (!jQuery.isEmptyObject(new_trace)) {
+            traces.push(new_trace);
+            new_trace=null;
+        }
+        new_trace = {
+            name: offers[j].provider,
+            mode: "markers",
+            type: "scatter",
+            x: [],
+            y: [],
+            text: [],
+            marker: {
+                color: [],
+                size: 14,
+                opacity: 0.7,
+                symbol: "circle",
+                line: {
+                    width: 1,
+                    color: 'rgba(0,0,0,0.7)'
+                }
+            },
+            showlegend: showlegend,
+            hoverinfo: "text",
+            info: []
+        }
+        var seconds1 = Math.ceil(TFLOPs / offers[j][performance]); // Calculation time in seconds on 1 node.
+        var seconds = Math.ceil(seconds1 / nodes); // Calculation time in seconds on "nodes" nodes.
+        var cost1node = getQuote4Seconds(offers[j], seconds1, 1);
+        var cost = getQuote4Seconds(offers[j], seconds, nodes);
+        if (Math.abs(cost1node - cost) > 1 && offers[j].monthly != "") {  // This should not happen
+            // Check
+            console.log(offers[j].shortname + "\n Cost " + nodes+" nodes : "+cost+"/"+cost1node);
+            console.log(" Time " + nodes+" nodes:"+ seconds + "/"+seconds1);
+            console.log(" Tflops="+offers[j].gpu_p+ " cost="+offers[j].monthly);
+        }
+        new_trace.x.push(seconds);
+        if (seconds > max_x) {
+            max_x = seconds;
+        }
+        new_trace.y.push(cost);
+        new_trace.info.push(getOfferInfo(offers[j]));
+        new_trace.text.push(nodes + "nodes "+offers[j].provider + " "+offers[j].name + "<br>"+CurrencyFormat(cost, "USD")+"/"+secondsToHuman(seconds, true)[1]);
+        new_trace.marker.color.push(colors[c][color_i]);
+        //console.log(offers[j].shortname + " color:" + c + "x"+color_i);
     }
     if (new_trace) {
         traces.push(new_trace);
@@ -372,16 +125,21 @@ function makeTraces(offers, performance, TFLOPs) {
 
 
 // Plot time x cost graphs for multiple nodes
-function plotTimeCostMultiNode(TFLOPs) {
-    console.log("Plotting GPU Time x Cost for " + TFLOPs + " TFLOP-s");
+function plotTimeCostMultiNode() {
+    var TFLOPs = TFLOPs_;
+    var nodes = nodes_;
+    //console.log("Plotting GPU Time x Cost for " + TFLOPs_ + " TFLOP-s, "+nodes_+" nodes");
     var cpu_plt = document.getElementById("CPUtime_x_cost");
     var hover_info2 = document.getElementById("offer_details2");
     var gpu_plt = document.getElementById("GPUtime_x_cost");
     var hover_info1 = document.getElementById("offer_details1");
 
-
+    var nodes_txt="on 1 node";
+    if (nodes > 1) {
+        nodes_txt = " on "+nodes+" nodes"
+    }
     var layout = {
-        title:'GPU calculation time and cost for ' + TFLOPs/1e+6 + ' EFLOP-s ('+ TFLOPs/1e+6+' * 10<sup>18</sup> FLOP-s<sup>***</sup>)',
+        title:'GPU calculation time and cost for ' + TFLOPs/1e+6 + ' EFLOP-s<sup>***</sup>'+nodes_txt,
         hovermode: 'closest',
         xaxis: {
             title: 'Calculation time',
@@ -407,7 +165,6 @@ function plotTimeCostMultiNode(TFLOPs) {
                 family: '"Cabin Condensed", "Arial Narrow", sans-serif',
                 size: 11
             },
-            //type: "log",
             tickmode: "auto",
             rangemode: "tozero",
             showline: true
@@ -421,7 +178,8 @@ function plotTimeCostMultiNode(TFLOPs) {
             borderwidth: 1
         }
     };
-    var traces_obj = makeTraces(offers, "gpu_p", TFLOPs);
+
+    var traces_obj = makeTraces(offers, "gpu_p");
     var traces = traces_obj[0];
     var max_x = traces_obj[1];
     var ticks = 10;
@@ -445,7 +203,7 @@ function plotTimeCostMultiNode(TFLOPs) {
 
     // Plot CPU time
     var cpu_layout = {
-        title:'CPU calculation time and cost for ' + TFLOPs/1e+6 + ' EFLOP-s ('+ TFLOPs/1e+6+' * 10<sup>18</sup> FLOP-s<sup>***</sup>)',
+        title:'CPU calculation time and cost for ' + TFLOPs/1e+6 + ' EFLOP-s <sup>***</sup>'+nodes_txt,
         hovermode: 'closest',
         xaxis: {
             title: 'Calculation time',
@@ -464,14 +222,13 @@ function plotTimeCostMultiNode(TFLOPs) {
             title: "Calculation cost (USD)",
             ticklen: 5,
             tickangle: 45,
-            showexponent: "none",
+            showexponent: "all",
             tickprefix: "$",
             hoverformat: "$,.0f",
             tickfont: {
                 family: '"Cabin Condensed", "Arial Narrow", sans-serif',
                 size: 11
             },
-            type: "log",
             rangemode: "tozero",
             showline: true
         },
@@ -485,63 +242,9 @@ function plotTimeCostMultiNode(TFLOPs) {
         }
     };
 
-    var cpu_traces = [];
-    last_prov="";
-    color_i = 0;
-    max_x = 0;
-    var new_trace_cpu = {};
-
-    for (j=0; j < offers.length; j++) {
-        var prov = offers[j].provider.toLowerCase();
-        //console.log(j+" "+prov)
-        if (last_prov != prov) {
-            last_prov = prov;
-            color_i = 0;
-            var c = getColor(prov);
-            //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
-            if (!jQuery.isEmptyObject(new_trace_cpu)) {
-                cpu_traces.push(new_trace_cpu);
-                new_trace_cpu=null;
-            }
-            new_trace_cpu = {
-                name: offers[j].provider,
-                mode: "markers",
-                type: "scatter",
-                x: [],
-                y: [],
-                text: [],
-                marker: {
-                    color: [],
-                    size: 12,
-                    opacity: 0.8,
-                    symbol: "diamond",
-                    line: {
-                        width: 1,
-                        color: 'rgba(0,0,0,0.5)'
-                    }
-                },
-                hoverinfo: "text",
-                info: []
-            }
-        } else {
-            color_i++;
-            if (color_i >= colors[c].length) {
-                color_i = 0;
-            }
-        }
-
-        var time = Math.ceil(TFLOPs / offers[j].cpu_p / 3600); // Calculation time in hours
-        var cost = getQuote4Hours(offers[j], time);
-        new_trace_cpu.x.push(time);
-        if (time > max_x) {
-            max_x = time;
-        }
-        new_trace_cpu.y.push(cost);
-        new_trace_cpu.info.push(getOfferInfo(offers[j]));
-        new_trace_cpu.text.push(offers[j].provider + " "+ offers[j].name + "<br>"+CurrencyFormat(cost, "USD")+"/"+hoursToHuman(time, true)[1]);
-        new_trace_cpu.marker.color.push(colors[c][color_i]);
-        //console.log(offers[j].shortname + " color:" + c + "x"+color_i);
-    }
+    traces_obj = makeTraces(offers, "cpu_p");
+    var cpu_traces = traces_obj[0];
+    var max_x = traces_obj[1];
 
     tick_interval = Math.ceil(max_x / ticks);
     for (var i=0; i <= max_x; i+=tick_interval) {
@@ -549,9 +252,6 @@ function plotTimeCostMultiNode(TFLOPs) {
         cpu_layout.xaxis.ticktext.push(hoursToHuman(i, true)[1]);
     }
 
-    if (new_trace_cpu) {
-        cpu_traces.push(new_trace_cpu);
-    }
     Plotly.newPlot('CPUtime_x_cost', cpu_traces, cpu_layout);
 
     cpu_plt.on("plotly_hover", function(data) {
@@ -565,18 +265,36 @@ function plotTimeCostMultiNode(TFLOPs) {
 }
 
 
-
-
 function plotFLOPsScale() {
     var x = [0.1, 0.5, 1, 5, 10, 50, 100, 200, 500, 800, 1000, 5000, 10000,];
     var div=document.getElementById("FLOPsScale");
     div.innerHTML = "";
 
     for (var i=0; i < x.length;i++) {
-        div.innerHTML = div.innerHTML + " <span class='scale_number' onmouseover='javascript:plotTimeCostMultiNode(" + x[i]*1e+6 + ");'> "+ x[i] + "</a>&nbsp;"
+        div.innerHTML = div.innerHTML + " <span class='button' onclick='javascript:changeFLOPS("+x[i]*1e+6 + ")'> "+ x[i] + "</a>&nbsp;"
     }
 }
 
+function plotNodesScale() {
+    var x = nodes_arr_;
+    var div=document.getElementById("NodesScale");
+    div.innerHTML = "";
+
+    for (var i=0; i < x.length;i++) {
+        div.innerHTML = div.innerHTML + " <span class='button' onclick='javascript:changeNodes("+x[i]+");'> "+ x[i] + "</a>&nbsp;"
+    }
+}
+
+
+function changeFLOPS(flops) {
+    TFLOPs_ = flops;
+    plotTimeCostMultiNode();
+}
+
+function changeNodes(nodes) {
+    nodes_ = nodes;
+    plotTimeCostMultiNode();
+}
 
 function flopsForMoney(offer, sum) {
     var hours = getHours4Quote(offer,sum)
