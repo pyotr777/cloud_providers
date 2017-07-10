@@ -20,6 +20,8 @@ var TFLOPs_arr_= [0.1, 0.5, 1, 5, 10, 50, 100];
 var nodes_ = nodes_arr_[0];
 var TFLOPs_ = TFLOPs_arr_[0]*1e+6;
 
+var axis_range_padding_koef = 1.1;
+
 function plotFilterPlots() {
     console.log("Plotting DC plots.");
     ndx = crossfilter(offers_all);
@@ -50,7 +52,7 @@ function continue_proc(filter, field, group) {
 
 // Return array of traces for given
 //
-function makeTraces(offers, performance) {
+function makeTraces(offers, performance, marker) {
     var traces = [];
     var last_prov="";
     var last_nodes=0;
@@ -85,7 +87,7 @@ function makeTraces(offers, performance) {
                     color: [],
                     size: 14,
                     opacity: 0.7,
-                    symbol: "circle",
+                    symbol: marker,
                     line: {
                         width: 1,
                         color: 'rgba(0,0,0,0.7)'
@@ -97,24 +99,24 @@ function makeTraces(offers, performance) {
         }
         var seconds1 = Math.ceil(TFLOPs / offers[j][performance]); // Calculation time in seconds on 1 node.
         var seconds = Math.ceil(seconds1 / nodes); // Calculation time in seconds on "nodes" nodes.
+        console.log(offers[j].shortname+" SP.performance="+offers[j][performance])
         var cost1node = getQuote4Seconds(offers[j], seconds1, 1);
         var cost = getQuote4Seconds(offers[j], seconds, nodes);
-        if (Math.abs(cost1node - cost) > 1 && offers[j].monthly != "") {  // This should not happen
+        if (Math.abs(cost1node - cost) > 1) {  // This should not happen
             // Check
-            console.log(offers[j].shortname + "\n Cost " + nodes+" nodes : "+cost+"/"+cost1node);
-            console.log(" Time " + nodes+" nodes:"+ seconds + "/"+seconds1);
-            console.log(" Tflops="+offers[j].gpu_p+ " cost="+offers[j].monthly);
+            console.log(" Cost " + nodes+" nodes :"+cost+" / "+cost1node);
+            console.log(" Time " + nodes+" nodes:"+ seconds + " / "+seconds1);
         }
         new_trace.x.push(seconds);
-        if (seconds > max_x) {
-            max_x = seconds;
+        if (max_x < seconds) {
+            max_x = seconds*axis_range_padding_koef;
         }
         new_trace.y.push(cost);
         ys.push(cost);
         new_trace.info.push(getOfferInfo(offers[j]));
         new_trace.text.push(nodes + "nodes "+offers[j].provider + " "+offers[j].name + "<br>"+CurrencyFormat(cost, "USD")+"/"+secondsToHuman(seconds, true)[1]);
         new_trace.marker.color.push(colors[c][color_i]);
-        //console.log(offers[j].shortname + " color:" + c + "x"+color_i);
+        //console.log(offers[j].shortname + " max_x:" + max_x);
     }
     if (new_trace) {
         traces.push(new_trace);
@@ -137,8 +139,12 @@ function getMaxRange(x) {
     for (var i=0; i<x.length; i++) {
         sum += x[i];
         if (x_max < x[i]) {
-            x_max = x[i];
+            x_max = x[i]*axis_range_padding_koef;
         }
+    }
+    // For small arrays do not remove elements
+    if (x.length < 8) {
+        return x_max;
     }
     mean = sum / x.length;
     for (var i=0; i<x.length; i++) {
@@ -156,7 +162,7 @@ function getMaxRange(x) {
     x_max = 0;
     for (var i=0; i< y.length; i++) {
         if (x_max < y[i]) {
-            x_max = y[i];
+            x_max = y[i]*axis_range_padding_koef;
         }
     }
     return x_max;
@@ -220,7 +226,7 @@ function plotTimeCostMultiNode() {
         }
     };
 
-    var traces_obj = makeTraces(offers, "gpu_p");
+    var traces_obj = makeTraces(offers, "gpu_p","circle");
     var traces = traces_obj[0];
     var max_x = traces_obj[1];
     var max_y = traces_obj[2];
@@ -231,6 +237,7 @@ function plotTimeCostMultiNode() {
         layout.xaxis.ticktext.push(secondsToHuman(i, true)[1]);
     }
     layout.yaxis.range = [0, max_y];
+    layout.xaxis.range = [0, max_x];
 
     Plotly.newPlot('GPUtime_x_cost', traces, layout);
 
@@ -248,6 +255,7 @@ function plotTimeCostMultiNode() {
     var cpu_layout = {
         title:'CPU calculation time and cost for ' + TFLOPs/1e+6 + ' EFLOP-s <sup>***</sup>'+nodes_txt,
         hovermode: 'closest',
+        showlegend: true,
         xaxis: {
             title: 'Calculation time',
             tickangle: 45,
@@ -285,11 +293,12 @@ function plotTimeCostMultiNode() {
         }
     };
 
-    traces_obj = makeTraces(offers, "cpu_p");
+    traces_obj = makeTraces(offers, "cpu_p", "diamond");
     var cpu_traces = traces_obj[0];
     max_x = traces_obj[1];
     max_y = traces_obj[2];
     cpu_layout.yaxis.range = [0, max_y];
+    cpu_layout.xaxis.range = [0, max_x];
     tick_interval = Math.ceil(max_x / ticks);
     for (var i=0; i <= max_x; i+=tick_interval) {
         cpu_layout.xaxis.tickvals.push(i);
