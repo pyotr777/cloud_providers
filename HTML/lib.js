@@ -1023,7 +1023,7 @@ function CurrencyFormat(s, currency) {
     }
     //console.log("Formatting " + s + " as " + currency);
     num = Number(s).toLocaleString('en', { style: 'currency', currency: currency, maximumFractionDigits: 2 });
-    num = num.replace(",", "&nbsp;");
+    num = num.replace(/,/g, "&nbsp;");
     return num;
 }
 

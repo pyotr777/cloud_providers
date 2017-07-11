@@ -64,7 +64,7 @@ function makeTraces(offers, performance, marker) {
     var showlegend = false;
     var TFLOPs = TFLOPs_;
     var nodes = nodes_;
-    for (j=0; j < offers.length; j++) {
+    for (var j=0; j < offers.length; j++) {
         var prov = offers[j].provider.toLowerCase();
         //console.log(j+" "+prov)
         showlegend = false;
@@ -97,16 +97,9 @@ function makeTraces(offers, performance, marker) {
                 info: []
             }
         }
-        var seconds1 = Math.ceil(TFLOPs / offers[j][performance]); // Calculation time in seconds on 1 node.
-        var seconds = Math.ceil(seconds1 / nodes); // Calculation time in seconds on "nodes" nodes.
-        //console.log(offers[j].shortname+" SP.performance="+offers[j][performance]+" walltime="+seconds1+"sec");
-        //var cost1node = getQuote4Seconds(offers[j], seconds1, 1);
-        var cost = getQuote4Seconds(offers[j], seconds, nodes);
-        //if (Math.abs(cost1node - cost) > 1) {  // This should not happen
-            // Check
-        //    console.log(" Cost " + nodes+" nodes :"+cost+" / "+cost1node);
-        //    console.log(" Time " + nodes+" nodes:"+ seconds + " / "+seconds1);
-        //}
+        var data = getData(offers[j],performance);
+        var seconds = data[0];
+        var cost = data[1];
         new_trace.x.push(seconds);
         if (max_x < seconds) {
             max_x = seconds*axis_range_padding_koef;
@@ -121,9 +114,82 @@ function makeTraces(offers, performance, marker) {
     if (new_trace) {
         traces.push(new_trace);
     }
-    var y_max = getMaxRange(ys);
-    var trace_obj = [traces, max_x, y_max];
+    var max_y = getMaxRange(ys);
+    var trace_obj = [traces, max_x, max_y];
     return trace_obj;
+}
+
+
+// Return array of [time[], cost[]] for given offers.
+// performance is on of "gpu_p" and "cpu_p"
+function getData4offers(offers, performance) {
+    var TFLOPs = TFLOPs_;
+    var nodes = nodes_;
+    var time = [];
+    var cost = [];
+    var text = [];
+    for (var j = 0; j < offers.length; j++) {
+        var offer = offers[j];
+        var data = getData(offer, performance);
+        time.push(data[0]);
+        cost.push(data[1]);
+        text.push(data[2]);
+    }
+    return [time, cost, text];
+}
+
+// Return array [time, cost] for a given offer.
+// performance is on of "gpu_p" and "cpu_p"
+function getData(offer, performance) {
+    var TFLOPs = TFLOPs_;
+    var nodes = nodes_;
+    var time = Math.ceil(TFLOPs / offer[performance] / nodes); // time in seconds
+    var hours = Math.ceil(time / 36) / 100; // time in hours
+    var cost = getQuote4Seconds(offer, time, nodes);
+    var text = nodes + "nodes "+offer.provider + " "+offer.name + "<br>"+CurrencyFormat(cost, "USD")+"/"+secondsToHuman(time, true)[1];
+    return [hours, cost, text];
+}
+
+
+var duration = 4000;
+var anim_opts = {frame: {duration: duration}, transition: {duration: duration * 0.5}};
+
+// Animate to a new frame.
+// performance is on of "gpu_p" and "cpu_p"
+function updateFrame(gd, performance, cpu_gpu) {
+    var TFLOPs = TFLOPs_;
+    var nodes = nodes_;
+    var data = [];
+    var trace_data = [];
+    var one_trace_offers = [];
+    var last_prov = "";
+    for (var j=0; j < offers.length; j++) {
+        var prov = offers[j].provider.toLowerCase();
+        if (last_prov != prov) {
+            last_prov = prov;
+            if (!jQuery.isEmptyObject(one_trace_offers)) {
+                trace_data = getData4offers(one_trace_offers, performance);
+                data.push({x:trace_data[0],y:trace_data[1],text:trace_data[2]});
+                trace_data = [];
+                one_trace_offers = [];
+            }
+        }
+        one_trace_offers.push(offers[j]);
+    }
+    if (!jQuery.isEmptyObject(one_trace_offers)) {
+        trace_data = getData4offers(one_trace_offers, performance);
+        data.push({x:trace_data[0],y:trace_data[1],text:trace_data[2]});
+        trace_data = [];
+        one_trace_offers = [];
+    }
+    var nodes_txt="on 1 node";
+    if (nodes > 1) {
+        nodes_txt = " on "+nodes+" nodes"
+    }
+    var layout={
+        title: cpu_gpu+ ' calculation time and cost for ' + TFLOPs/1e+6 + ' EFLOP-s <sup>***</sup>'+nodes_txt
+    }
+    Plotly.animate(gd, {data:data, layout:layout}, anim_opts);
 }
 
 
@@ -189,11 +255,11 @@ function plotTimeCostMultiNode() {
         hovermode: 'closest',
         showlegend: true,
         xaxis: {
-            title: 'Calculation time',
+            title: 'Calculation time (h)',
             tickangle: 45,
-            tickvals: [],
-            ticktext: [],
-            nticks: 5,
+            //tickvals: [],
+            //ticktext: [],
+            //nticks: 5,
             tickfont: {
                 family: '"Cabin Condensed", "Arial Narrow", sans-serif',
                 size: 11
@@ -214,6 +280,7 @@ function plotTimeCostMultiNode() {
             },
             tickmode: "auto",
             rangemode: "tozero",
+            //type:"log",
             showline: true
         },
         legend: {
@@ -230,12 +297,13 @@ function plotTimeCostMultiNode() {
     var traces = traces_obj[0];
     var max_x = traces_obj[1];
     var max_y = traces_obj[2];
-    var ticks = 10;
-    var tick_interval = Math.ceil(max_x / ticks);
-    for (var i=0; i <= max_x; i+=tick_interval) {
-        layout.xaxis.tickvals.push(i);
-        layout.xaxis.ticktext.push(secondsToHuman(i, true)[1]);
-    }
+    //console.log(traces_obj);
+    //var ticks = 10;
+    //var tick_interval = Math.ceil(max_x / ticks);
+    //for (var i=0; i <= max_x; i+=tick_interval) {
+    //    layout.xaxis.tickvals.push(i);
+    //    layout.xaxis.ticktext.push(secondsToHuman(i, true)[1]);
+    //}
     layout.yaxis.range = [0, max_y];
     layout.xaxis.range = [0, max_x];
 
@@ -257,11 +325,11 @@ function plotTimeCostMultiNode() {
         hovermode: 'closest',
         showlegend: true,
         xaxis: {
-            title: 'Calculation time',
+            title: 'Calculation time (h)',
             tickangle: 45,
-            tickvals: [],
-            ticktext: [],
-            nticks: 5,
+            //tickvals: [],
+            //ticktext: [],
+            //nticks: 5,
             tickfont: {
                 family: '"Cabin Condensed", "Arial Narrow", sans-serif',
                 size: 11
@@ -299,11 +367,11 @@ function plotTimeCostMultiNode() {
     max_y = traces_obj[2];
     cpu_layout.yaxis.range = [0, max_y];
     cpu_layout.xaxis.range = [0, max_x];
-    tick_interval = Math.ceil(max_x / ticks);
-    for (var i=0; i <= max_x; i+=tick_interval) {
-        cpu_layout.xaxis.tickvals.push(i);
-        cpu_layout.xaxis.ticktext.push(hoursToHuman(i, true)[1]);
-    }
+    //tick_interval = Math.ceil(max_x / ticks);
+    //for (var i=0; i <= max_x; i+=tick_interval) {
+    //    cpu_layout.xaxis.tickvals.push(i);
+    //    cpu_layout.xaxis.ticktext.push(hoursToHuman(i, true)[1]);
+    //}
 
     Plotly.newPlot('CPUtime_x_cost', cpu_traces, cpu_layout);
 
@@ -320,35 +388,53 @@ function plotTimeCostMultiNode() {
 
 function plotFLOPsScale() {
     var x = TFLOPs_arr_;
-    var div=document.getElementById("FLOPsScale");
-    div.innerHTML = "";
+    var div1=document.getElementById("FLOPsScale");
+    var div2=document.getElementById("FLOPsScale_cpu");
+    div1.innerHTML = "";
 
     for (var i=0; i < x.length;i++) {
-        div.innerHTML = div.innerHTML + " <span class='button' onclick='javascript:changeFLOPS("+x[i]*1e+6 + ")'> "+ x[i] + "</a>&nbsp;"
+        div1.innerHTML = div1.innerHTML + " <span class='button' onclick='javascript:changeFLOPSGPU("+x[i]*1e+6 + ")'> "+ x[i] + "</a>&nbsp;"
+        div2.innerHTML = div2.innerHTML + " <span class='button' onclick='javascript:changeFLOPSCPU("+x[i]*1e+6 + ")'> "+ x[i] + "</a>&nbsp;"
     }
 }
 
 function plotNodesScale() {
     var x = nodes_arr_;
-    var div=document.getElementById("NodesScale");
-    div.innerHTML = "";
-
+    var div1=document.getElementById("NodesScale");
+    var div2 = document.getElementById("NodesScale_cpu");
+    div1.innerHTML = "";
+    div2.innerHTML = "";
     for (var i=0; i < x.length;i++) {
-        div.innerHTML = div.innerHTML + " <span class='button' onclick='javascript:changeNodes("+x[i]+");'> "+ x[i] + "</a>&nbsp;"
+        div1.innerHTML = div1.innerHTML + " <span class='button' onclick='javascript:changeNodesGPU("+x[i]+");'> "+ x[i] + "</a>&nbsp;"
+        div2.innerHTML = div2.innerHTML + " <span class='button' onclick='javascript:changeNodesCPU("+x[i]+");'> "+ x[i] + "</a>&nbsp;"
     }
 }
 
 
-function changeFLOPS(flops) {
+// These functions called on button click events.
+// They cause change in TFLOPS_ or nodes_ global variables and redraw graphs.
+function changeFLOPSGPU(flops) {
     TFLOPs_ = flops;
-    plotTimeCostMultiNode();
+    updateFrame("GPUtime_x_cost","gpu_p", "GPU");
 }
 
-function changeNodes(nodes) {
+function changeFLOPSCPU(flops) {
+    TFLOPs_ = flops;
+    updateFrame("CPUtime_x_cost","cpu_p", "CPU");
+}
+
+function changeNodesGPU(nodes) {
     nodes_ = nodes;
-    plotTimeCostMultiNode();
+    updateFrame("GPUtime_x_cost","gpu_p", "GPU");
 }
 
+function changeNodesCPU(nodes) {
+    nodes_ = nodes;
+    updateFrame("CPUtime_x_cost","cpu_p", "CPU")
+}
+
+
+// Not used
 function flopsForMoney(offer, sum) {
     var hours = getHours4Quote(offer,sum)
     var CPU_FOLPs = hours * offer.cpu_p * 3600; // CPU FLOPs for given hours
@@ -356,7 +442,7 @@ function flopsForMoney(offer, sum) {
     return [CPU_FOLPs, GPU_FOLPs]
 }
 
-
+// Not used
 function plotFLOPsMoney(sum) {
     console.log("EFLOPs for money $"+ sum);
     //var div_element = document.getElementById("flops_4money");
