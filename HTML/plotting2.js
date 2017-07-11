@@ -2,6 +2,16 @@
 function ready() {
     TimeCost = document.getElementById('time_x_cost');
     FLOPsScale = document.getElementById('FLOPsScale');
+    global_var = {
+        cpu: {
+            TFLOPs: EFLOPs_arr_[0]*1e+6,
+            nodes: nodes_arr_[0]
+        },
+        gpu: {
+            TFLOPs: EFLOPs_arr_[0]*1e+6,
+            nodes: nodes_arr_[0]
+        },
+    };
     getRates();
 }
 
@@ -16,9 +26,8 @@ var msg;
 var TimeCost;
 var FLOPsScale;
 var nodes_arr_ = [1,2,4,8,16,32,64];
-var TFLOPs_arr_= [0.1, 0.5, 1, 5, 10, 50, 100];
-var nodes_ = nodes_arr_[0];
-var TFLOPs_ = TFLOPs_arr_[0]*1e+6;
+var EFLOPs_arr_= [0.1, 0.5, 1, 5, 10, 50, 100];
+var global_var = {};
 
 var axis_range_padding_koef = 1.1;
 
@@ -51,8 +60,8 @@ function continue_proc(filter, field, group) {
 
 
 // Return array of traces for given
-//
-function makeTraces(offers, performance, marker) {
+//cpu_gpu: "cpu"/"gpu"
+function makeTraces(offers, cpu_gpu,  marker) {
     var traces = [];
     var last_prov="";
     var last_nodes=0;
@@ -62,8 +71,6 @@ function makeTraces(offers, performance, marker) {
     var c = 0;
     var new_trace  = {};
     var showlegend = false;
-    var TFLOPs = TFLOPs_;
-    var nodes = nodes_;
     for (var j=0; j < offers.length; j++) {
         var prov = offers[j].provider.toLowerCase();
         //console.log(j+" "+prov)
@@ -97,7 +104,7 @@ function makeTraces(offers, performance, marker) {
                 info: []
             }
         }
-        var data = getData(offers[j],performance);
+        var data = getData(offers[j],cpu_gpu);
         var seconds = data[0];
         var cost = data[1];
         new_trace.x.push(seconds);
@@ -107,7 +114,7 @@ function makeTraces(offers, performance, marker) {
         new_trace.y.push(cost);
         ys.push(cost);
         new_trace.info.push(getOfferInfo(offers[j]));
-        new_trace.text.push(nodes + "nodes "+offers[j].provider + " "+offers[j].name + "<br>"+CurrencyFormat(cost, "USD")+"/"+secondsToHuman(seconds, true)[1]);
+        new_trace.text.push(global_var[cpu_gpu].nodes + "nodes "+offers[j].provider + " "+offers[j].name + "<br>"+CurrencyFormat(cost, "USD")+"/"+secondsToHuman(seconds, true)[1]);
         new_trace.marker.color.push(colors[c][color_i]);
         //console.log(offers[j].shortname + " max_x:" + max_x);
     }
@@ -121,16 +128,14 @@ function makeTraces(offers, performance, marker) {
 
 
 // Return array of [time[], cost[]] for given offers.
-// performance is on of "gpu_p" and "cpu_p"
-function getData4offers(offers, performance) {
-    var TFLOPs = TFLOPs_;
-    var nodes = nodes_;
+// cpu_gpu is one of "gpu"  and "cpu"
+function getData4offers(offers, cpu_gpu) {
     var time = [];
     var cost = [];
     var text = [];
     for (var j = 0; j < offers.length; j++) {
         var offer = offers[j];
-        var data = getData(offer, performance);
+        var data = getData(offer, cpu_gpu);
         time.push(data[0]);
         cost.push(data[1]);
         text.push(data[2]);
@@ -139,10 +144,11 @@ function getData4offers(offers, performance) {
 }
 
 // Return array [time, cost] for a given offer.
-// performance is on of "gpu_p" and "cpu_p"
-function getData(offer, performance) {
-    var TFLOPs = TFLOPs_;
-    var nodes = nodes_;
+// cpu_gpu is one of "gpu"  and "cpu"
+function getData(offer, cpu_gpu) {
+    var performance = cpu_gpu + "_p";
+    var TFLOPs = global_var[cpu_gpu].TFLOPs;
+    var nodes = global_var[cpu_gpu].nodes;
     var time = Math.ceil(TFLOPs / offer[performance] / nodes); // time in seconds
     var hours = Math.ceil(time / 36) / 100; // time in hours
     var cost = getQuote4Seconds(offer, time, nodes);
@@ -156,9 +162,10 @@ var anim_opts = {frame: {duration: duration}, transition: {duration: duration * 
 
 // Animate to a new frame.
 // performance is on of "gpu_p" and "cpu_p"
-function updateFrame(gd, performance, cpu_gpu) {
-    var TFLOPs = TFLOPs_;
-    var nodes = nodes_;
+function updateFrame(gd, cpu_gpu) {
+    var TFLOPs = global_var[cpu_gpu].TFLOPs;
+    var nodes = global_var[cpu_gpu].nodes;
+    var performance = cpu_gpu+"_p";
     var data = [];
     var trace_data = [];
     var one_trace_offers = [];
@@ -168,7 +175,7 @@ function updateFrame(gd, performance, cpu_gpu) {
         if (last_prov != prov) {
             last_prov = prov;
             if (!jQuery.isEmptyObject(one_trace_offers)) {
-                trace_data = getData4offers(one_trace_offers, performance);
+                trace_data = getData4offers(one_trace_offers, cpu_gpu);
                 data.push({x:trace_data[0],y:trace_data[1],text:trace_data[2]});
                 trace_data = [];
                 one_trace_offers = [];
@@ -177,18 +184,14 @@ function updateFrame(gd, performance, cpu_gpu) {
         one_trace_offers.push(offers[j]);
     }
     if (!jQuery.isEmptyObject(one_trace_offers)) {
-        trace_data = getData4offers(one_trace_offers, performance);
+        trace_data = getData4offers(one_trace_offers, cpu_gpu);
         data.push({x:trace_data[0],y:trace_data[1],text:trace_data[2]});
         trace_data = [];
         one_trace_offers = [];
     }
-    var nodes_txt="on 1 node";
-    if (nodes > 1) {
-        nodes_txt = " on "+nodes+" nodes"
-    }
-    var layout={
-        title: cpu_gpu+ ' calculation time and cost for ' + TFLOPs/1e+6 + ' EFLOP-s <sup>***</sup>'+nodes_txt
-    }
+    var layout = {
+        title: getTitle(cpu_gpu.toUpperCase(), TFLOPs, nodes)
+    };
     Plotly.animate(gd, {data:data, layout:layout}, anim_opts);
 }
 
@@ -238,20 +241,16 @@ function getMaxRange(x) {
 
 // Plot time x cost graphs for multiple nodes
 function plotTimeCostMultiNode() {
-    var TFLOPs = TFLOPs_;
-    var nodes = nodes_;
-    //console.log("Plotting GPU Time x Cost for " + TFLOPs_ + " TFLOP-s, "+nodes_+" nodes");
+    var TFLOPs = global_var.gpu.TFLOPs;
+    var nodes = global_var.gpu.nodes;
     var cpu_plt = document.getElementById("CPUtime_x_cost");
     var hover_info2 = document.getElementById("offer_details2");
     var gpu_plt = document.getElementById("GPUtime_x_cost");
     var hover_info1 = document.getElementById("offer_details1");
 
-    var nodes_txt="on 1 node";
-    if (nodes > 1) {
-        nodes_txt = " on "+nodes+" nodes"
-    }
+
     var layout = {
-        title:'GPU calculation time and cost for ' + TFLOPs/1e+6 + ' EFLOP-s<sup>***</sup>'+nodes_txt,
+        title: getTitle("GPU", TFLOPs, nodes),
         hovermode: 'closest',
         showlegend: true,
         xaxis: {
@@ -293,7 +292,7 @@ function plotTimeCostMultiNode() {
         }
     };
 
-    var traces_obj = makeTraces(offers, "gpu_p","circle");
+    var traces_obj = makeTraces(offers, "gpu","circle");
     var traces = traces_obj[0];
     var max_x = traces_obj[1];
     var max_y = traces_obj[2];
@@ -320,8 +319,10 @@ function plotTimeCostMultiNode() {
 
 
     // Plot CPU time
+    TFLOPs = global_var.cpu.TFLOPs;
+    nodes = global_var.cpu.nodes;
     var cpu_layout = {
-        title:'CPU calculation time and cost for ' + TFLOPs/1e+6 + ' EFLOP-s <sup>***</sup>'+nodes_txt,
+        title: getTitle("CPU", TFLOPs, nodes),
         hovermode: 'closest',
         showlegend: true,
         xaxis: {
@@ -361,7 +362,7 @@ function plotTimeCostMultiNode() {
         }
     };
 
-    traces_obj = makeTraces(offers, "cpu_p", "diamond");
+    traces_obj = makeTraces(offers, "cpu", "diamond");
     var cpu_traces = traces_obj[0];
     max_x = traces_obj[1];
     max_y = traces_obj[2];
@@ -387,7 +388,7 @@ function plotTimeCostMultiNode() {
 
 
 function plotFLOPsScale() {
-    var x = TFLOPs_arr_;
+    var x = EFLOPs_arr_;
     var div1=document.getElementById("FLOPsScale");
     var div2=document.getElementById("FLOPsScale_cpu");
     div1.innerHTML = "";
@@ -414,25 +415,34 @@ function plotNodesScale() {
 // These functions called on button click events.
 // They cause change in TFLOPS_ or nodes_ global variables and redraw graphs.
 function changeFLOPSGPU(flops) {
-    TFLOPs_ = flops;
-    updateFrame("GPUtime_x_cost","gpu_p", "GPU");
+    global_var["gpu"].TFLOPs = flops;
+    updateFrame("GPUtime_x_cost","gpu");
 }
 
 function changeFLOPSCPU(flops) {
-    TFLOPs_ = flops;
-    updateFrame("CPUtime_x_cost","cpu_p", "CPU");
+    global_var["cpu"].TFLOPs = flops;
+    updateFrame("CPUtime_x_cost","cpu");
 }
 
 function changeNodesGPU(nodes) {
-    nodes_ = nodes;
-    updateFrame("GPUtime_x_cost","gpu_p", "GPU");
+    global_var["gpu"].nodes = nodes;
+    updateFrame("GPUtime_x_cost","gpu");
 }
 
 function changeNodesCPU(nodes) {
-    nodes_ = nodes;
-    updateFrame("CPUtime_x_cost","cpu_p", "CPU")
+    global_var["cpu"].nodes = nodes;
+    updateFrame("CPUtime_x_cost","cpu")
 }
 
+
+function getTitle(gpu_cpu, TFLOPS,nodes) {
+    var nodes_txt="on 1 node";
+    if (nodes > 1) {
+        nodes_txt = " on "+nodes+" nodes"
+    }
+    var title = gpu_cpu+' calculation time and cost for ' + TFLOPS/1e+6 + ' EFLOP-s'+nodes_txt;
+    return title;
+}
 
 // Not used
 function flopsForMoney(offer, sum) {

@@ -14,6 +14,11 @@ var colors=[["#fa6d44", "#ff6a3f"],  // Amazon
            ["#a3edc6", "#a3edc6"],  //
            ["#7dd8a8","#7dd8a8"],];  //
 
+
+var nodes_arr_ = [1,2,4,8,16,32,64];
+var EFLOPs_arr_= [0.1, 0.5, 1, 5, 10, 50, 100];
+var global_var = {};
+
 function newTrace(name,j) {
     var new_trace = {
         name: name,
@@ -53,7 +58,19 @@ function fillData() {
 
 var layout = {};
 var traces = [];
+
 function ready() {
+    global_var = {
+        cpu: {
+            TFLOPs: EFLOPs_arr_[0]*1e+6,
+            nodes: nodes_arr_[1]
+        },
+        gpu: {
+            TFLOPs: EFLOPs_arr_[0]*1e+6,
+            nodes: nodes_arr_[0]
+        },
+    };
+    alert(global_var["cpu"].nodes);
     layout = {
         title:'GPU calculation time and cost EFLOP-s<sup>***</sup>',
         hovermode: 'closest',

@@ -21,7 +21,10 @@
 
 [hoops name="plotting2"]
 <p>Continued from <a href="/cloud-gpu-providers-comparison/">the previous post</a>.</p>
-<p>Compare costs and calculation time for a fixed amount of calculations.</p>
+<p>With the graph below you can compare calculation time and cost for a fixed amount of calculations in Floating Point Operations (FLOPs<sup><a href="#notes">***</a></sup>). Use buttons above the graphs to set calculations amount and number of virtual or bare metal machines called "nodes" used for calculations.</p>
+<p>Important notice: we assume that a task can be run on multiple computers WITHOUT any slowdown. This means that on N machines the task will finish N times faster. This could be true, for instance,  in case of hyperparameters search when you have multiple independant tasks.</p>
+<p>Graphs are not scaled when parameters changes to make points movement clearly visible. To scale graphs manually use "Autoscale" and "Reset axes" buttons that appear in the top right corner of the graphs when you bring the mouse cursor over it (on tablet devices tap the graph).</p>
+<p>In most cases renting more nodes will
 <p  class="note" id="updated"></p>
 <!--more-->
 
@@ -49,7 +52,7 @@
         <div id="NodesScale" style="width: 100%;"></div></div>
 
 
-    <p>The graph below shows calculation time and cost necessary for running a task with task complexity set in <span title="Floating Point Operations * 10e18">EFLOPs</span><sup><a href="#notes">***</a></sup> on GPU(s) provided by each offer.</p>
+    <p>The graph below shows calculation time and cost necessary for calculating a task with task complexity set in <span title="Floating Point Operations * 10e18">EFLOPs</span><sup><a href="#notes">****</a></sup> on GPU(s) provided by each offer.</p>
 
     <div id="GPUtime_x_cost" style="width: 100%; height: 600px;"></div>
     <div id="offer_details1" class="note">&nbsp;</div>
@@ -60,7 +63,7 @@
     <div class="buttons"><h4>nodes</h4>
         <div id="NodesScale_cpu" style="width: 100%;"></div></div>
 
-    <p>The graph below shows calculation time and cost necessary for running a task with the same complexity using only provided CPUs.</p>
+    <p>The graph below shows calculation time and cost necessary for calculating a task with the same complexity using only provided CPUs.</p>
 
     <div id="CPUtime_x_cost" style="width: 100%; height: 600px;"></div>
     <div id="offer_details2" class="note">&nbsp;</div>
@@ -76,6 +79,8 @@
     </p>
 
     <p>*** Floating Point Operations (not to be confused with Flops &mdash; Floating Point Operations per Second).</p>
+
+    <p>**** EFLOPs = 1 * 10<sup>18</sup>FLOPs. TFLOPs = 1 * 10<sup>12</sup>FLOPs.
 </div>
 
 </body>
