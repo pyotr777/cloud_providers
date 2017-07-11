@@ -190,7 +190,7 @@ function updateFrame(gd, cpu_gpu) {
         one_trace_offers = [];
     }
     var layout = {
-        title: getTitle(cpu_gpu.toUpperCase(), TFLOPs, nodes)
+        title: getPlotTitle(cpu_gpu, TFLOPs, nodes)
     };
     Plotly.animate(gd, {data:data, layout:layout}, anim_opts);
 }
@@ -250,7 +250,7 @@ function plotTimeCostMultiNode() {
 
 
     var layout = {
-        title: getTitle("GPU", TFLOPs, nodes),
+        title: getPlotTitle("GPU", TFLOPs, nodes),
         hovermode: 'closest',
         showlegend: true,
         xaxis: {
@@ -322,7 +322,7 @@ function plotTimeCostMultiNode() {
     TFLOPs = global_var.cpu.TFLOPs;
     nodes = global_var.cpu.nodes;
     var cpu_layout = {
-        title: getTitle("CPU", TFLOPs, nodes),
+        title: getPlotTitle("CPU", TFLOPs, nodes),
         hovermode: 'closest',
         showlegend: true,
         xaxis: {
@@ -435,12 +435,13 @@ function changeNodesCPU(nodes) {
 }
 
 
-function getTitle(gpu_cpu, TFLOPS,nodes) {
-    var nodes_txt="on 1 node";
+function getPlotTitle(gpu_cpu, TFLOPS,nodes) {
+    var nodes_txt=" on 1 node";
     if (nodes > 1) {
         nodes_txt = " on "+nodes+" nodes"
     }
-    var title = gpu_cpu+' calculation time and cost for ' + TFLOPS/1e+6 + ' EFLOP-s'+nodes_txt;
+    var title = gpu_cpu.toUpperCase()+' time and cost for ' + TFLOPS/1e+6 + ' EFLOP-s'+nodes_txt;
+    console.log(title);
     return title;
 }
 
