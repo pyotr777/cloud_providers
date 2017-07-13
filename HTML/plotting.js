@@ -164,6 +164,9 @@ function displayPerformanceScatter() {
     //console.log(traces);
     Plotly.newPlot('scatter_performance', traces, layout);
 
+    resizeLegend('scatter_performance');
+
+
     scatter_plt.on("plotly_hover", function(data) {
         hoverDisplay(data, hover_info1);
     });
@@ -174,7 +177,14 @@ function displayPerformanceScatter() {
     });
 }
 
-
+// Resize legend
+function resizeLegend(ID) {
+    var scatter_chart = d3.selectAll("#"+ID).filter(function(d, i) { return i === 0 });
+    var scatter_chart_width = scatter_chart.attr("width");
+    var legend_width = 190;
+    var bg_scatter = d3.selectAll("#"+ID+" .legend rect.bg");
+    bg_scatter.attr("width", legend_width);
+}
 
 // Return array of Cost, Cost/CPU FLops, Cost/GPU FLops for given number of hours (period).
 // Period must be in hours.
@@ -344,6 +354,7 @@ function plotPeriod(period, step, thin, thick) {
 
     //console.log("traces has "+traces.length + " elements");
     Plotly.newPlot("costs_period", traces, period_plot_layout);
+    resizeLegend('costs_period');
 
     var myPlot = document.getElementById('costs_period');
     var hover_info2 = document.getElementById("offer_details2");
@@ -576,6 +587,7 @@ function displaySlice(n) {
         traces.push(new_trace);
     }
     Plotly.newPlot('slice_cost_perf', traces, layout);
+    resizeLegend('slice_cost_perf');
 
     slice_cost_perf_plot.on("plotly_hover", function(data) {
         hoverDisplay(data, hover_info4);

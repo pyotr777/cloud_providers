@@ -296,13 +296,6 @@ function plotTimeCostMultiNode() {
     var traces = traces_obj[0];
     var max_x = traces_obj[1];
     var max_y = traces_obj[2];
-    //console.log(traces_obj);
-    //var ticks = 10;
-    //var tick_interval = Math.ceil(max_x / ticks);
-    //for (var i=0; i <= max_x; i+=tick_interval) {
-    //    layout.xaxis.tickvals.push(i);
-    //    layout.xaxis.ticktext.push(secondsToHuman(i, true)[1]);
-    //}
     layout.yaxis.range = [0, max_y];
     layout.xaxis.range = [0, max_x];
 
@@ -368,13 +361,57 @@ function plotTimeCostMultiNode() {
     max_y = traces_obj[2];
     cpu_layout.yaxis.range = [0, max_y];
     cpu_layout.xaxis.range = [0, max_x];
-    //tick_interval = Math.ceil(max_x / ticks);
-    //for (var i=0; i <= max_x; i+=tick_interval) {
-    //    cpu_layout.xaxis.tickvals.push(i);
-    //    cpu_layout.xaxis.ticktext.push(hoursToHuman(i, true)[1]);
-    //}
 
-    Plotly.newPlot('CPUtime_x_cost', cpu_traces, cpu_layout);
+    var cpu_plot = Plotly.newPlot('CPUtime_x_cost', cpu_traces, cpu_layout);
+
+    // Resize legend
+    var GPU_chart = d3.selectAll("#GPUtime_x_cost svg.main-svg").filter(function(d, i) { return i === 0 });
+    var CPU_chart = d3.selectAll("#CPUtime_x_cost svg.main-svg").filter(function(d, i) { return i === 0 });
+    var cpu_chart_width = CPU_chart.attr("width");
+    var gpu_chart_width = GPU_chart.attr("width");
+    console.log(gpu_chart_width);
+    var legend_width = 190;
+    var legend_shfit = 262;
+    var cpu_legend_x = cpu_chart_width - legend_shfit;
+    var gpu_legend_x = gpu_chart_width - legend_shfit;
+    var legendGPU = d3.selectAll("#GPUtime_x_cost g.legend");
+    var legendCPU = d3.selectAll("#CPUtime_x_cost .legend");
+    var bg_GPU = d3.selectAll("#GPUtime_x_cost .legend rect.bg");
+    var bg_CPU = d3.selectAll("#CPUtime_x_cost .legend rect.bg");
+    //vis.style("fill", "green");
+    //var vis1 = vis.filter( function(d, i) { return i === 0 });
+    //console.log(GPU_chart);
+    //console.log(CPU_chart);
+    //translate(778, 100)
+    console.log("GPU transform before:"+legendGPU.attr("transform"));
+    //console.log("x="+vis1.attr("x"));
+    //console.log("width="+vis1.attr("width"));
+    bg_GPU.attr("width", legend_width);
+    bg_CPU.attr("width", legend_width);
+    legendGPU.attr("transform", "translate("+gpu_legend_x+", 100)");
+    legendCPU.attr("transform", "translate("+cpu_legend_x+", 100)");
+    console.log("GPU transform after:"+legendGPU.attr("transform"));
+    //vis.attr('transform','translate(-50,0)');
+
+    //var redraw = false;
+
+
+    /*cpu_plt.on('plotly_afterplot', function(){
+        if (redraw) return;
+        redraw = true;
+        console.log('done plotting');
+        var vis = d3.selectAll("#CPUtime_x_cost .legend rect.bg").filter(function(d, i) { return i === 0 });
+        //vis.style("fill", "green");
+        vis.attr("width", "190px");
+        //vis.attr('transform','scale(0.5,1)');
+        console.log(vis);
+
+        var legend = $("#CPUtime_x_cost .main-svg .legend rect.bg");
+        console.log(legend);
+        //console.log("width="+cpu_plot.getAttribute("width"));
+
+        //Plotly.redraw('CPUtime_x_cost');
+    });*/
 
     cpu_plt.on("plotly_hover", function(data) {
         hoverDisplay(data, hover_info2);
