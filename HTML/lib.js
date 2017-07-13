@@ -1,8 +1,9 @@
 // Library functions
-var CSV_file = "./cost-performance.csv";
+var CSV_file = "cost-performance.csv";
 //var CSV_file = "/cloudproviders/cost-performance.csv";
 
 var last_update = "Last update: 2017/07/11";
+var data_loaded = false;
 
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
 var accumulated_months_days = [];
@@ -107,6 +108,7 @@ var setRates = function(data) {
     fx.rates[base_currency] = 1;
 
     loadData(CSV_file);
+
 }
 
 
@@ -122,7 +124,32 @@ function getRates() {
 
 
 function loadData(filename) {
-    console.log("Loading data");
+    try {
+        console.log("Loading data from "+filename);
+        var req = $.get(filename);
+
+        req.done(function (file) {
+            try {
+                Papa.parse(file, {
+                    download: false,
+                    complete: processStaticData
+                });
+            } catch (err) {
+                console.log("Exception loding file "+filename+".");
+                console.log(err.message);
+            }
+        });
+
+        req.fail(loadDataFirefox(filename));
+
+    } catch (e) {
+        console.log("Exception loding file with get "+filename+".");
+        console.log(e.message);
+    }
+}
+
+function loadDataFirefox(filename) {
+    console.log("Loading data with Papaparse from "+filename);
     try {
         Papa.parse(filename, {
             download: true,
@@ -138,6 +165,8 @@ function loadData(filename) {
 var start_row = 2;
 
 function processStaticData(results) {
+    if (data_loaded) { return; }
+    data_loaded = true;
     console.log("Processing data");
     console.log("Rows: "+results.data.length);
 
