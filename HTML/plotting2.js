@@ -193,6 +193,7 @@ function updateFrame(gd, cpu_gpu) {
         title: getPlotTitle(cpu_gpu, TFLOPs, nodes)
     };
     Plotly.animate(gd, {data:data, layout:layout}, anim_opts);
+    resizeLegend(gd);
 }
 
 

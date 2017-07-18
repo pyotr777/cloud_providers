@@ -177,14 +177,6 @@ function displayPerformanceScatter() {
     });
 }
 
-// Resize legend
-function resizeLegend(ID) {
-    var scatter_chart = d3.selectAll("#"+ID).filter(function(d, i) { return i === 0 });
-    var scatter_chart_width = scatter_chart.attr("width");
-    var legend_width = 190;
-    var bg_scatter = d3.selectAll("#"+ID+" .legend rect.bg");
-    bg_scatter.attr("width", legend_width);
-}
 
 // Return array of Cost, Cost/CPU FLops, Cost/GPU FLops for given number of hours (period).
 // Period must be in hours.
