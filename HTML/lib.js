@@ -171,12 +171,13 @@ function processStaticData(results) {
     console.log("Rows: "+results.data.length);
 
     // Calculate hours in months
-    accumulated_days = 0;
-    for (var m = 0; m < 12; m++) {
-        accumulated_days += days_in_month[m];
-        accumulated_months_days.push(accumulated_days);
+    if (accumulated_months_days.length == 0) {
+        accumulated_days = 0;
+        for (var m = 0; m < 12; m++) {
+            accumulated_days += days_in_month[m];
+            accumulated_months_days.push(accumulated_days);
+        }
     }
-    //var max_rows = 10000;
 
     var rows = results.data.length
     var provider = "";
@@ -194,12 +195,7 @@ function processStaticData(results) {
             provider = row[0];
             provider_link = row[1];
         }
-        // Use for selecting providers
-        /*var providers = ["idcf"];
-        if (!providers.includes(provider.toLowerCase())) {
-            console.log("Skip "+ provider);
-            continue;
-        }*/
+
         var offer = {
             provider: provider,
             provider_link: provider_link,

@@ -430,6 +430,7 @@ function plotFLOPsScale() {
     var div1=document.getElementById("FLOPsScale");
     var div2=document.getElementById("FLOPsScale_cpu");
     div1.innerHTML = "";
+    div2.innerHTML = "";
 
     for (var i=0; i < x.length;i++) {
         div1.innerHTML = div1.innerHTML + " <span class='button' onclick='javascript:changeFLOPSGPU("+x[i]*1e+6 + ")'> "+ x[i] + "</a>&nbsp;"
