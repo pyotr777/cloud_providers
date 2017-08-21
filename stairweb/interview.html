@@ -1,0 +1,124 @@
+<html>
+<head>
+    <style></style>
+    <title>クラウドGPUの比較について</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF8">
+    <style type="text/css">
+		body {
+            font-family: "PingFang SC";
+			letter-spacing:0.1em;
+			line-height:190%;
+		}
+        td, th {
+            padding:12px;
+        }
+        h1,h2,h3 {
+            margin-top:24pt;
+        }
+        @media print {
+            body {
+                font-size:9pt;
+            }
+            table {
+                font-size: 7pt;
+            }
+            a {
+                text-decoration: none;
+                color:#333;
+            }
+        }
+	</style>
+</head>
+
+<body>
+<style type="text/css">
+  figcaption {
+    font-size:90%;
+    line-height:150%;
+    font-weight: bold;
+    margin:0 100px 30px 50px;
+  }
+  sup {
+    baseline-shift: 0.5pt;
+    font-size: 70%;
+    vertical-align:top;
+  }
+
+</style>
+    <h1>クラウドGPUの比較について
+    </h1>
+    <h2>序論</h2>
+    <ul>
+        <li>機械学習：多量のデータサンプル（トレーニングデータ）を使って、モデル（人工ニューラルネットワークなど）を学習させる。</li>
+        <li>トレーニングデータの量が多いため、学習は計算量が大きく、計算は時間がかかる。
+            <br>例： <a href="http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf" target="_blank">Imagenet</a> 、 GTX580 x2 GPUs　（~3000GFLOPS）　 −　5-6日。</li>
+        <li>CPUよりGPUの方が（単精度）性能が数倍高い、GPUで行う学習は数倍早く終わる。</li>
+        <li>GPUのモデルにより、値段も性能も違う。市販GPUの例：
+            <table style="border:0px solid  #aaa; margin:16px;">
+                <tr>
+                    <th> GPU モデル</th>
+                    <th>性能</th>
+                    <th>価格</th>
+                </tr>
+                <tr>
+                    <td><a href="http://kakaku.com/item/K0000849553/" target="_blank">MCI GT 710 (NVIDIA/GeForce GT 710)</a></td>
+                    <td>366 GFLOPS</td>
+                    <td>~3000円</td>
+                </tr>
+                <tr>
+                    <td><a href="http://kakaku.com/item/K0000941943/" target="_blank">NVIDIA Quadro GP100</a></td>
+                    <td>10600 GFLOPS</td>
+                    <td>~925000円</td>
+                </tr>
+            </table>
+            CPUの性能: ~100 - 1200 GFLOPS<br>
+            <a href="https://en.wikipedia.org/wiki/List_of_Nvidia_graphics_processing_units" target="_blank">List of Nvidia graphics processing units</a> &nbsp; &nbsp;
+
+            <a href="http://kakaku.com/specsearch/0550/" target="_blank">グラフィックボード・ビデオカード スペック検索</a>
+        </li>
+        <li>機械学習用の計算サーバーは高価　＝＞　クラウドを使う必要がある。</li>
+    </ul>
+    <h2>クラウドGPU比較：プロジェクトの目的</h2>
+    <ul>
+        <li>クラウドでGPUが載っているマシーンの選択肢が多く、性能とコストの見積もりは困難。</li>
+        <li>コストの比較：分ごとに課金されるプランもあれば、年ごとに課金されるプランもあり、初期費用が必要なプランも、使用できるノード時間が制限されるプランもある。特定の期間にマシーンを借りたい場合、コストだけで選ぶ場合でも、一番安いプランを選ぶのは難しい。</li>
+        <li>性能の高いマシーンは、コストもより高いけど、計算はより早く終わるので、性能の低めのマシーンよりは結局やすくなるのでは？</li>
+
+        <li>複数のクラウドGPUマシーンのコストと性能を容易に比較できるためのグラフを作成するのはプロジェクトの目的。</li>
+    </ul>
+    <h2>実現</h2>
+    <ul>
+        <li>複数のプロバイダーのウエブサイトなどからGPUオファーについての情報を収集した。</li>
+        <li>収集した情報を元に以下のインタラクティブグラフを作成した。</li>
+            <ol>
+                <li>クラウドマシーンのCPU性能、GPU性能とメモリ量を比較するグラフ。</li>
+                <li>各オファーの利用期間・コストグラフ。</li>
+                <li>コストグラフで選択した期間の断面グラフ：各オファーのコスト比較グラフ。</li>
+                <li>特定の利用期間のための各オファーのCPUとGPUの1TFLOPSあたりのコストのグラフ。</li>
+                <li>特定の計算量とマシーンの数にかかる、各オファーのおよその計算時間とコストのグラフ。</li>
+            </ol>
+        <li>上記のグラフの目的は以下の通り。
+            <ol>
+                <li>各マシーンの性能を推定し比較できる。</li>
+                <li> 利用期間によって、各オファーの変動するコストを比較できる。利用期間の目安があれば一番安いオファーがわかる。</li>
+                <li>同上</li>
+                <li>CPUとGPU性能を考慮した、各オファーのコストパフォーマンスの比較ができる。</li>
+                <li>計算量が増えることに連れて、計算時間が増え、コストも上がる。性能の高いマシーン、または複数のマシーンを借りれば、計算は早く終わる。多少コストを犠牲にし、早く計算を終わらせたい場合もある。計算にかかる時間とコストの目安がわかれば、特定の計算課題に一番あっているマシーンとその数を選択できる。</li>
+            </ol>
+        </li>
+        <li>比較するオファーをプロバイダー、メモリ量、GPUモデルなどで制限するためのフィルタリング用のグラフを作成した。</li>
+    </ul>
+
+    <h2>今後の課題</h2>
+    <ul>
+    <li>特定の計算課題の計算量を測定し、自動的に一番安いオファーを選択する仕組みの実現。</li>
+    <li>上記の機能に加えて、自動的にクラウドで計算を行う仕組みの実現。</li>
+    </ul>
+
+
+
+
+
+
+</body>
+</html>
