@@ -220,7 +220,7 @@ function plotPeriod(period, step, thin, thick) {
     var tickvals = [];
     var ticktext = [];
     var traces = [];
-    var line_opacity = 0.6;
+    var line_opacity = 0.9;
 
     if (dates.length == 0) {
         dates = prepDates(period, step);
@@ -541,7 +541,7 @@ function displaySlice(n) {
                 text: [],
                 marker: {
                     color: [],
-                    opacity: 1,
+                    opacity: 0.5,
                     size: 12,
                     line: {
                         width: 1,
@@ -566,6 +566,7 @@ function displaySlice(n) {
             new_trace.text.push(offer.provider + " " +offer.shortname)
             new_trace.marker.color.push(color);
             new_trace.info.push(getOfferInfo(offer));
+            console.log(offer.shortname+" " + cost/offer.gpu_p + "x" + cost/offer.cpu_p);
 
             y_cost.push(cost);
             y_cost_monthly.push(month_start_quote/months)

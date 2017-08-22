@@ -650,22 +650,27 @@ function getQuote4Seconds(offer, sec, nodes) {
 }
 
 // Return Cost for given number of hours (period).
+// Called from Cost for rent perion chart.
 function getQuote4Hours(offer, h) {
     var cost = 0;
     if (offer.setup != "" ) {
         cost += offer.setup;
     }
     if ("continuous" in offer && offer.continuous != "" ) {
-        var hours = offer.time_limit;
-        var periods = Math.ceil(h / hours);
+
         if (offer.continuous == 1) {
+            var periods = Math.ceil(h / offer.time_limit);
             cost += periods * offer.yearly;
             return cost;
         } else if (offer.continuous == 2.5) {
             // Tsubame 2.5
             // Cost for long-term rent, not for long-running jobs, hence koeff3 is undefined (let it be 1).
             var koeff3 = 1;
-            cost += periods *  koeff3 * offer.yearly;
+            var nodes = 1;
+            var points = offer.time_limit;
+            var periods = Math.ceil(h * koeff3 * nodes / points);
+            console.log(offer.shortname+" periods="+periods+" for hours="+h);
+            cost += periods *  offer.yearly;
             return cost;
         }
     }
