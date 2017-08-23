@@ -664,11 +664,10 @@ function getQuote4Hours(offer, h) {
             return cost;
         } else if (offer.continuous == 2.5) {
             // Tsubame 2.5
-            // Cost for long-term rent, not for long-running jobs, hence koeff3 is undefined (let it be 1).
+            // koeff3 is 1 for jobs running <= 1 day.
             var koeff3 = 1;
             var nodes = 1;
-            var points = offer.time_limit;
-            var periods = Math.ceil(h * koeff3 * nodes / points);
+            var periods = Math.ceil(h * koeff3 * nodes / offer.time_limit);
             console.log(offer.shortname+" periods="+periods+" for hours="+h);
             cost += periods *  offer.yearly;
             return cost;

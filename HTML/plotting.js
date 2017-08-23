@@ -527,7 +527,7 @@ function displaySlice(n) {
         }
         if (last_prov != prov) {
             last_prov = prov;
-            color = colors[getColor(prov)][0];
+            color = colors[getColor(prov)][1];
             if (new_trace) {
                 traces.push(new_trace);
                 new_trace=null;
@@ -541,7 +541,7 @@ function displaySlice(n) {
                 text: [],
                 marker: {
                     color: [],
-                    opacity: 0.5,
+                    opacity: 0.7,
                     size: 12,
                     line: {
                         width: 1,
