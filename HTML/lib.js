@@ -10,7 +10,7 @@ var accumulated_months_days = [];
 var colors=[["#fa6d44", "#ff6a3f"],  // Amazon
            ["#f8a358", "#ffa85c"],  // IBM
            ["#ffd879", "#fccd5f"],  // Nimbix
-           ["#efd5c0", "#f0cbb3"],  // Cirrascale
+           ["#eddbdb", "#efd5d5"],  // Cirrascale
            ["#f5a1c0", "#f5a1c0"],  // Sakura
            ["#b9b7f4", "#b3b1fa"],  // LeaderTelecom
            ["#94c7ff", "#94c7ff"],  // Tokyo University
@@ -20,9 +20,9 @@ var colors=[["#fa6d44", "#ff6a3f"],  // Amazon
            ["#d1e69b", "#d3eb96"],  // Tsubame
            ["#a3edc6", "#a3edc6"],  //
            ["#7dd8a8","#7dd8a8"],];  //
-var cpu_color = {light: "#e2e4ff", dark: "#a6b3d5"};
-var gpu_color = {light: "#ffe8c4", dark: "#f2bd88"};
-var other_colors = ["#c1c8c4","#ec9276","#e97e77","#d27486","#8e6bb4","#6766ce"];
+var cpu_color = {light: "#c9dff6", dark: "#a5c5e6"};
+var gpu_color = {light: "#ffe8c4", dark: "#e7bd93"};
+var other_colors = ["#ccdeb2","#ec9276","#e97e77","#d27486","#8e6bb4","#6766ce"];
 
 function getColor(prov) {
     var c = colors.length-1;
