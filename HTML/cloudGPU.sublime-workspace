@@ -517,18 +517,6 @@
 			]
 		]
 	},
-	"buffers":
-	[
-		{
-			"file": "lib.js",
-			"settings":
-			{
-				"buffer_size": 34638,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		}
-	],
 	"build_system": "",
 	"build_system_choices":
 	[
@@ -716,10 +704,6 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
-	"expanded_folders":
-	[
-		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML"
-	],
 	"file_history":
 	[
 		"/Users/peterbryzgalov/work/ML/Cloud Providers/HTML/plotting.js",
@@ -1092,43 +1076,6 @@
 		"whole_word": false,
 		"wrap": false
 	},
-	"groups":
-	[
-		{
-			"selected": 0,
-			"sheets":
-			[
-				{
-					"buffer": 0,
-					"file": "lib.js",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 34638,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				}
-			]
-		}
-	],
 	"incremental_find":
 	{
 		"height": 25.0
@@ -1185,7 +1132,6 @@
 		"height": 186.0
 	},
 	"pinned_build_system": "",
-	"project": "cloudGPU.sublime-project",
 	"replace":
 	{
 		"height": 46.0
@@ -1218,7 +1164,6 @@
 		],
 		"width": 392.0
 	},
-	"selected_group": 0,
 	"settings":
 	{
 	},

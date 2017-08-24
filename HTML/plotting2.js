@@ -31,6 +31,7 @@ var global_var = {};
 
 var axis_range_padding_koef = 1.1;
 
+
 function plotFilterPlots() {
     console.log("Plotting DC plots.");
     ndx = crossfilter(offers_all);
@@ -50,7 +51,8 @@ function continue_proc(filter, field, group) {
     processing = true;
     filter(field, group);
     quotes=[];
-    plotTimeCostMultiNode();
+    plotTimeCostMultiNode("gpu");
+    plotTimeCostMultiNode("cpu");
     plotFLOPsScale();
     plotNodesScale();
     processing = false;
@@ -79,7 +81,8 @@ function makeTraces(offers, cpu_gpu,  marker) {
             last_prov = prov;
             c = getColor(prov);
             //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
-            if (!jQuery.isEmptyObject(new_trace)) {
+            if (!jQuery.isEmptyObject(new_trace.y)) {
+                console.log("trace y = "+new_trace.y);
                 traces.push(new_trace);
                 new_trace=null;
             }
@@ -107,22 +110,26 @@ function makeTraces(offers, cpu_gpu,  marker) {
         var data = getData(offers[j],cpu_gpu);
         var seconds = data[0];
         var cost = data[1];
-        new_trace.x.push(seconds);
-        if (max_x < seconds) {
-            max_x = seconds*axis_range_padding_koef;
+        if (cost > 0) {
+            new_trace.x.push(seconds);
+            if (max_x < seconds) {
+                max_x = seconds*axis_range_padding_koef;
+            }
+            new_trace.y.push(cost);
+            ys.push(cost);
+            new_trace.info.push(getOfferInfo(offers[j]));
+            new_trace.text.push(global_var[cpu_gpu].nodes + "nodes "+offers[j].provider + " "+offers[j].name + "<br>"+CurrencyFormat(cost, "USD")+"/"+secondsToHuman(seconds, true)[1]);
+            new_trace.marker.color.push(colors[c][color_i]);
         }
-        new_trace.y.push(cost);
-        ys.push(cost);
-        new_trace.info.push(getOfferInfo(offers[j]));
-        new_trace.text.push(global_var[cpu_gpu].nodes + "nodes "+offers[j].provider + " "+offers[j].name + "<br>"+CurrencyFormat(cost, "USD")+"/"+secondsToHuman(seconds, true)[1]);
-        new_trace.marker.color.push(colors[c][color_i]);
         //console.log(offers[j].shortname + " max_x:" + max_x);
     }
-    if (new_trace) {
+    if (!jQuery.isEmptyObject(new_trace.y)) {
+        console.log("trace y = "+new_trace.y);
         traces.push(new_trace);
     }
     var max_y = getMaxRange(ys);
     var trace_obj = [traces, max_x, max_y];
+    console.log(trace_obj);
     return trace_obj;
 }
 
@@ -136,9 +143,11 @@ function getData4offers(offers, cpu_gpu) {
     for (var j = 0; j < offers.length; j++) {
         var offer = offers[j];
         var data = getData(offer, cpu_gpu);
-        time.push(data[0]);
-        cost.push(data[1]);
-        text.push(data[2]);
+        if (data[1] >= 0) { // hide traces with cost < 0, which means they cannot be used with given nodes and time values
+            time.push(data[0]);
+            cost.push(data[1]);
+            text.push(data[2]);
+        }
     }
     return [time, cost, text];
 }
@@ -163,6 +172,11 @@ var anim_opts = {frame: {duration: duration}, transition: {duration: duration * 
 // Animate to a new frame.
 // performance is on of "gpu_p" and "cpu_p"
 function updateFrame(gd, cpu_gpu) {
+    console.log("\nupdateFrame "+cpu_gpu+" empty="+global_var[cpu_gpu].empty);
+    if (global_var[cpu_gpu].empty == true) {
+        plotTimeCostMultiNode(cpu_gpu);
+        return;
+    }
     var TFLOPs = global_var[cpu_gpu].TFLOPs;
     var nodes = global_var[cpu_gpu].nodes;
     var performance = cpu_gpu+"_p";
@@ -176,7 +190,9 @@ function updateFrame(gd, cpu_gpu) {
             last_prov = prov;
             if (!jQuery.isEmptyObject(one_trace_offers)) {
                 trace_data = getData4offers(one_trace_offers, cpu_gpu);
-                data.push({x:trace_data[0],y:trace_data[1],text:trace_data[2]});
+                if (trace_data[1].length > 0) {
+                    data.push({x:trace_data[0],y:trace_data[1],text:trace_data[2]});
+                }
                 trace_data = [];
                 one_trace_offers = [];
             }
@@ -185,10 +201,19 @@ function updateFrame(gd, cpu_gpu) {
     }
     if (!jQuery.isEmptyObject(one_trace_offers)) {
         trace_data = getData4offers(one_trace_offers, cpu_gpu);
-        data.push({x:trace_data[0],y:trace_data[1],text:trace_data[2]});
+        if (trace_data[1].length > 0) {
+            data.push({x:trace_data[0],y:trace_data[1],text:trace_data[2]});
+        }
         trace_data = [];
         one_trace_offers = [];
     }
+    global_var[cpu_gpu].empty = false;
+    if (data.length == 0) {
+        displayNoDataMessage(gd, cpu_gpu);
+        return;
+    }
+
+
     var layout = {
         title: getPlotTitle(cpu_gpu, TFLOPs, nodes)
     };
@@ -241,187 +266,181 @@ function getMaxRange(x) {
 
 
 // Plot time x cost graphs for multiple nodes
-function plotTimeCostMultiNode() {
+function plotTimeCostMultiNode(cpu_gpu) {
     var TFLOPs = global_var.gpu.TFLOPs;
     var nodes = global_var.gpu.nodes;
-    var cpu_plt = document.getElementById("CPUtime_x_cost");
-    var hover_info2 = document.getElementById("offer_details2");
-    var gpu_plt = document.getElementById("GPUtime_x_cost");
-    var hover_info1 = document.getElementById("offer_details1");
+    if (cpu_gpu == "cpu") {
+        var cpu_plt = document.getElementById("CPUtime_x_cost");
+        var hover_info2 = document.getElementById("offer_details2");
+    } else {
+        var gpu_plt = document.getElementById("GPUtime_x_cost");
+        var hover_info1 = document.getElementById("offer_details1");
+    }
 
+    if (cpu_gpu == "gpu") {
+        var layout = {
+            title: getPlotTitle("GPU", TFLOPs, nodes),
+            hovermode: 'closest',
+            showlegend: true,
+            xaxis: {
+                title: 'Calculation time (h)',
+                tickangle: 45,
+                //tickvals: [],
+                //ticktext: [],
+                //nticks: 5,
+                tickfont: {
+                    family: '"Cabin Condensed", "Arial Narrow", sans-serif',
+                    size: 11
+                },
+                showline: true,
+                rangemode: "tozero"
+            },
+            yaxis: {
+                title: "Calculation cost (USD)",
+                ticklen: 5,
+                tickangle: 45,
+                showexponent: "all",
+                tickprefix: "$",
+                //hoverformat: "$,.0f",
+                tickfont: {
+                    family: '"Cabin Condensed", "Arial Narrow", sans-serif',
+                    size: 11
+                },
+                tickmode: "auto",
+                rangemode: "tozero",
+                //type:"log",
+                showline: true
+            },
+            legend: {
+                x: 1,
+                xanchor: "right",
+                y: 1,
+                bgcolor: "rgba(255,255,255,0.8)",
+                bordercolor: "#eee",
+                borderwidth: 1
+            }
+        };
 
-    var layout = {
-        title: getPlotTitle("GPU", TFLOPs, nodes),
-        hovermode: 'closest',
-        showlegend: true,
-        xaxis: {
-            title: 'Calculation time (h)',
-            tickangle: 45,
-            //tickvals: [],
-            //ticktext: [],
-            //nticks: 5,
-            tickfont: {
-                family: '"Cabin Condensed", "Arial Narrow", sans-serif',
-                size: 11
-            },
-            showline: true,
-            rangemode: "tozero"
-        },
-        yaxis: {
-            title: "Calculation cost (USD)",
-            ticklen: 5,
-            tickangle: 45,
-            showexponent: "all",
-            tickprefix: "$",
-            //hoverformat: "$,.0f",
-            tickfont: {
-                family: '"Cabin Condensed", "Arial Narrow", sans-serif',
-                size: 11
-            },
-            tickmode: "auto",
-            rangemode: "tozero",
-            //type:"log",
-            showline: true
-        },
-        legend: {
-            x: 1,
-            xanchor: "right",
-            y: 1,
-            bgcolor: "rgba(255,255,255,0.8)",
-            bordercolor: "#eee",
-            borderwidth: 1
+        var traces_obj = makeTraces(offers, "gpu","circle");
+        var traces = traces_obj[0];
+        if (traces.length == 0) {
+            displayNoDataMessage('GPUtime_x_cost', cpu_gpu);
+            return;
         }
-    };
+        var max_x = traces_obj[1];
+        var max_y = traces_obj[2];
+        layout.yaxis.range = [0, max_y];
+        layout.xaxis.range = [0, max_x];
 
-    var traces_obj = makeTraces(offers, "gpu","circle");
-    var traces = traces_obj[0];
-    var max_x = traces_obj[1];
-    var max_y = traces_obj[2];
-    layout.yaxis.range = [0, max_y];
-    layout.xaxis.range = [0, max_x];
+        Plotly.newPlot('GPUtime_x_cost', traces, layout);
 
-    Plotly.newPlot('GPUtime_x_cost', traces, layout);
+        gpu_plt.on("plotly_hover", function(data) {
+            hoverDisplay(data, hover_info1);
+        });
 
-    gpu_plt.on("plotly_hover", function(data) {
-        hoverDisplay(data, hover_info1);
-    });
+        gpu_plt.on("plotly_unhover", function(data) {
+            hover_info1.innerHTML = "&nbsp;";
+            hover_info1.style.backgroundColor = "rgba(1,1,1,0)";
+        });
 
-    gpu_plt.on("plotly_unhover", function(data) {
-        hover_info1.innerHTML = "&nbsp;";
-        hover_info1.style.backgroundColor = "rgba(1,1,1,0)";
-    });
-
-
-    // Plot CPU time
-    TFLOPs = global_var.cpu.TFLOPs;
-    nodes = global_var.cpu.nodes;
-    var cpu_layout = {
-        title: getPlotTitle("CPU", TFLOPs, nodes),
-        hovermode: 'closest',
-        showlegend: true,
-        xaxis: {
-            title: 'Calculation time (h)',
-            tickangle: 45,
-            //tickvals: [],
-            //ticktext: [],
-            //nticks: 5,
-            tickfont: {
-                family: '"Cabin Condensed", "Arial Narrow", sans-serif',
-                size: 11
-            },
-            showline: true,
-            rangemode: "tozero"
-        },
-        yaxis: {
-            title: "Calculation cost (USD)",
-            ticklen: 5,
-            tickangle: 45,
-            showexponent: "all",
-            tickprefix: "$",
-            //hoverformat: "$,.0f",
-            tickfont: {
-                family: '"Cabin Condensed", "Arial Narrow", sans-serif',
-                size: 11
-            },
-            rangemode: "tozero",
-            showline: true
-        },
-        legend: {
-            x: 0.99,
-            xanchor: "right",
-            y: 1,
-            bgcolor: "rgba(255,255,255,0.8)",
-            bordercolor: "#eee",
-            borderwidth: 1
+        // Resize legend
+        var GPU_chart = d3.selectAll("#GPUtime_x_cost svg.main-svg").filter(function(d, i) { return i === 0 });
+        var gpu_chart_width = GPU_chart.attr("width");
+        console.log(gpu_chart_width);
+        var legend_width = 190;
+        var legend_shfit = 262;
+        var gpu_legend_x = gpu_chart_width - legend_shfit;
+        var legendGPU = d3.selectAll("#GPUtime_x_cost g.legend");
+        var bg_GPU = d3.selectAll("#GPUtime_x_cost .legend rect.bg");
+        bg_GPU.attr("width", legend_width);
+        legendGPU.attr("transform", "translate("+gpu_legend_x+", 100)");
+        if (traces.length > 0) {
+            global_var[cpu_gpu].empty = false;
+        } else {
+            global_var[cpu_gpu].empty = true;
         }
-    };
+        console.log("\nglobal "+ cpu_gpu + "="+global_var[cpu_gpu].empty);
+    }
 
-    traces_obj = makeTraces(offers, "cpu", "diamond");
-    var cpu_traces = traces_obj[0];
-    max_x = traces_obj[1];
-    max_y = traces_obj[2];
-    cpu_layout.yaxis.range = [0, max_y];
-    cpu_layout.xaxis.range = [0, max_x];
+    if (cpu_gpu == "cpu") {
+        // Plot CPU time
+        TFLOPs = global_var.cpu.TFLOPs;
+        nodes = global_var.cpu.nodes;
+        var cpu_layout = {
+            title: getPlotTitle("CPU", TFLOPs, nodes),
+            hovermode: 'closest',
+            showlegend: true,
+            xaxis: {
+                title: 'Calculation time (h)',
+                tickangle: 45,
+                //tickvals: [],
+                //ticktext: [],
+                //nticks: 5,
+                tickfont: {
+                    family: '"Cabin Condensed", "Arial Narrow", sans-serif',
+                    size: 11
+                },
+                showline: true,
+                rangemode: "tozero"
+            },
+            yaxis: {
+                title: "Calculation cost (USD)",
+                ticklen: 5,
+                tickangle: 45,
+                showexponent: "all",
+                tickprefix: "$",
+                //hoverformat: "$,.0f",
+                tickfont: {
+                    family: '"Cabin Condensed", "Arial Narrow", sans-serif',
+                    size: 11
+                },
+                rangemode: "tozero",
+                showline: true
+            },
+            legend: {
+                x: 0.99,
+                xanchor: "right",
+                y: 1,
+                bgcolor: "rgba(255,255,255,0.8)",
+                bordercolor: "#eee",
+                borderwidth: 1
+            }
+        };
 
-    var cpu_plot = Plotly.newPlot('CPUtime_x_cost', cpu_traces, cpu_layout);
+        traces_obj = makeTraces(offers, "cpu", "diamond");
+        var cpu_traces = traces_obj[0];
+        if (cpu_traces.length == 0) {
+            displayNoDataMessage('CPUtime_x_cost', cpu_gpu);
+            return;
+        }
+        max_x = traces_obj[1];
+        max_y = traces_obj[2];
+        cpu_layout.yaxis.range = [0, max_y];
+        cpu_layout.xaxis.range = [0, max_x];
 
-    // Resize legend
-    var GPU_chart = d3.selectAll("#GPUtime_x_cost svg.main-svg").filter(function(d, i) { return i === 0 });
-    var CPU_chart = d3.selectAll("#CPUtime_x_cost svg.main-svg").filter(function(d, i) { return i === 0 });
-    var cpu_chart_width = CPU_chart.attr("width");
-    var gpu_chart_width = GPU_chart.attr("width");
-    console.log(gpu_chart_width);
-    var legend_width = 190;
-    var legend_shfit = 262;
-    var cpu_legend_x = cpu_chart_width - legend_shfit;
-    var gpu_legend_x = gpu_chart_width - legend_shfit;
-    var legendGPU = d3.selectAll("#GPUtime_x_cost g.legend");
-    var legendCPU = d3.selectAll("#CPUtime_x_cost .legend");
-    var bg_GPU = d3.selectAll("#GPUtime_x_cost .legend rect.bg");
-    var bg_CPU = d3.selectAll("#CPUtime_x_cost .legend rect.bg");
-    //vis.style("fill", "green");
-    //var vis1 = vis.filter( function(d, i) { return i === 0 });
-    //console.log(GPU_chart);
-    //console.log(CPU_chart);
-    //translate(778, 100)
-    console.log("GPU transform before:"+legendGPU.attr("transform"));
-    //console.log("x="+vis1.attr("x"));
-    //console.log("width="+vis1.attr("width"));
-    bg_GPU.attr("width", legend_width);
-    bg_CPU.attr("width", legend_width);
-    legendGPU.attr("transform", "translate("+gpu_legend_x+", 100)");
-    legendCPU.attr("transform", "translate("+cpu_legend_x+", 100)");
-    console.log("GPU transform after:"+legendGPU.attr("transform"));
-    //vis.attr('transform','translate(-50,0)');
+        var cpu_plot = Plotly.newPlot('CPUtime_x_cost', cpu_traces, cpu_layout);
+        // Resize legend
+        var CPU_chart = d3.selectAll("#CPUtime_x_cost svg.main-svg").filter(function(d, i) { return i === 0 });
+        var cpu_chart_width = CPU_chart.attr("width");
+        var legend_width = 190;
+        var legend_shfit = 262;
+        var cpu_legend_x = cpu_chart_width - legend_shfit;
+        var legendCPU = d3.selectAll("#CPUtime_x_cost .legend");
+        var bg_CPU = d3.selectAll("#CPUtime_x_cost .legend rect.bg");
+        bg_CPU.attr("width", legend_width);
+        legendCPU.attr("transform", "translate("+cpu_legend_x+", 100)");
+        cpu_plt.on("plotly_hover", function(data) {
+            hoverDisplay(data, hover_info2);
+        });
 
-    //var redraw = false;
-
-
-    /*cpu_plt.on('plotly_afterplot', function(){
-        if (redraw) return;
-        redraw = true;
-        console.log('done plotting');
-        var vis = d3.selectAll("#CPUtime_x_cost .legend rect.bg").filter(function(d, i) { return i === 0 });
-        //vis.style("fill", "green");
-        vis.attr("width", "190px");
-        //vis.attr('transform','scale(0.5,1)');
-        console.log(vis);
-
-        var legend = $("#CPUtime_x_cost .main-svg .legend rect.bg");
-        console.log(legend);
-        //console.log("width="+cpu_plot.getAttribute("width"));
-
-        //Plotly.redraw('CPUtime_x_cost');
-    });*/
-
-    cpu_plt.on("plotly_hover", function(data) {
-        hoverDisplay(data, hover_info2);
-    });
-
-    cpu_plt.on("plotly_unhover", function(data) {
-        hover_info2.innerHTML = "&nbsp;";
-        hover_info2.style.backgroundColor = "rgba(1,1,1,0)";
-    });
+        cpu_plt.on("plotly_unhover", function(data) {
+            hover_info2.innerHTML = "&nbsp;";
+            hover_info2.style.backgroundColor = "rgba(1,1,1,0)";
+        });
+        if (cpu_traces.length > 0) {
+            global_var[cpu_gpu].empty == false;
+        }
+    }
 }
 
 

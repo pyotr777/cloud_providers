@@ -2,7 +2,7 @@
 var CSV_file = "cost-performance.csv";
 //var CSV_file = "/cloudproviders/cost-performance.csv";
 
-var last_update = "Last update: 2017/08/16";
+var last_update = "Last update: 2017/08/23";
 var data_loaded = false;
 
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
@@ -557,7 +557,7 @@ function getMonths4Seconds(sec) {
 // Koeff.3 for Tsubame 2.5 cost calculations
 // cost = (nodes * walltime (s) * koeff.1 * koeff.2 * koeff.3) / 3600(s)
 // koeff.3 borders (h): 1, 24, 48,  96
-var tsubame_koeff = [0.9, 1, 2, 4, 4];
+var tsubame_koeff = [0.9, 1, 2, 4, -1];
 var tsubame_border= [1, 24, 48, 96];
 
 // Return Cost for given number of seconds.
@@ -581,16 +581,20 @@ function getQuote4Seconds(offer, sec, nodes) {
             // Tsubame 2.5
             var koeff3 = tsubame_koeff[0];
             for (var k=0; k < tsubame_border.length; k++) {
-                if (tsubame_border[k] < sec / 3600) {
+                if (tsubame_border[k] < h) {
                     koeff3 = tsubame_koeff[k+1];
                 } else {
                     break;
                 }
             }
+            if (koeff3 < 0) {
+                console.log(offer.shortname + " cannot be used for "+h+" hours and "+ nodes + " nodes.");
+                return -1;  // Jobs cannot be run for more than 96 hours on Tsubame2.5
+            }
             var periods = Math.ceil(h * nodes * koeff3 / hours);
-            //console.log(" periods=ceil("+h+"x"+nodes+"x"+ koeff3+"/"+hours+")="+(h*nodes*koeff3/hours));
+            console.log(" periods=ceil("+h+"x"+nodes+"x"+ koeff3+"/"+hours+")="+(periods));
             cost = periods * offer.yearly;
-            //console.log(" "+periods+" x "+offer.yearly+ " = "+cost);
+            console.log(" "+periods+" x "+offer.yearly+ " = "+cost);
             return cost;
         }
     }
@@ -1133,4 +1137,44 @@ function resizeLegend(ID) {
     var legend_width = 190;
     var bg_scatter = d3.selectAll("#"+ID+" .legend rect.bg");
     bg_scatter.attr("width", legend_width);
+}
+
+
+// Display warning that no data can be displayed
+function displayNoDataMessage(gd, cpu_gpu) {
+    console.log("No data. gd="+gd);
+    global_var[cpu_gpu].empty = true;
+    var trace1 = {
+        x: [2.5],
+        y: [3],
+        text: ['No available offers'],
+        textfont: {
+            family: '"Arial", "Helvetica", sans-serif',
+            size: 36,
+            color: '#ccc'
+        },
+        mode: 'text'
+    };
+    var trace2 = {
+        x: [2.5],
+        y: [2.2],
+        text: ['Change task complexity (FLOPs) or nodes number'],
+        textfont: {
+            family: '"Arial", "Helvetica", sans-serif',
+            size: 20,
+            color: '#ccc'
+        },
+        mode: 'text'
+    };
+    var layout = {
+        title: "No data to display",
+        xaxis: {
+            range: [0, 5]
+        },
+        yaxis: {
+            range: [0, 5]
+        },
+        showlegend: false
+    }
+    Plotly.newPlot(gd, [trace1, trace2], layout);
 }
