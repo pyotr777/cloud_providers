@@ -592,9 +592,9 @@ function getQuote4Seconds(offer, sec, nodes) {
                 return -1;  // Jobs cannot be run for more than 96 hours on Tsubame2.5
             }
             var periods = Math.ceil(h * nodes * koeff3 / hours);
-            console.log(" periods=ceil("+h+"x"+nodes+"x"+ koeff3+"/"+hours+")="+(periods));
+            //console.log(" periods=ceil("+h+"x"+nodes+"x"+ koeff3+"/"+hours+")="+(periods));
             cost = periods * offer.yearly;
-            console.log(" "+periods+" x "+offer.yearly+ " = "+cost);
+            //console.log(" "+periods+" x "+offer.yearly+ " = "+cost);
             return cost;
         }
     }

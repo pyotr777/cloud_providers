@@ -66,6 +66,7 @@ function continue_proc(filter, field, group) {
 function makeTraces(offers, cpu_gpu,  marker) {
     var traces = [];
     var last_prov="";
+    var color = "";
     var last_nodes=0;
     var color_i = 0;
     var max_x = 0;
@@ -73,64 +74,67 @@ function makeTraces(offers, cpu_gpu,  marker) {
     var c = 0;
     var new_trace  = {};
     var showlegend = false;
+    var inlegend = false; // This provider not shown in legend yet
     for (var j=0; j < offers.length; j++) {
         var prov = offers[j].provider.toLowerCase();
         //console.log(j+" "+prov)
-        showlegend = false;
         if (last_prov != prov) {
             last_prov = prov;
             c = getColor(prov);
-            //console.log("Color for "+ offers[j].provider+" is "+ c+ " ("+colors[c][0]+")");
-            if (!jQuery.isEmptyObject(new_trace.y)) {
-                console.log("trace y = "+new_trace.y);
-                traces.push(new_trace);
-                new_trace=null;
-            }
-            new_trace = {
-                name: offers[j].provider,
-                mode: "markers",
-                type: "scatter",
-                x: [],
-                y: [],
-                text: [],
-                marker: {
-                    color: [],
-                    size: 14,
-                    opacity: 0.7,
-                    symbol: marker,
-                    line: {
-                        width: 1,
-                        color: 'rgba(0,0,0,0.7)'
-                    }
-                },
-                hoverinfo: "text",
-                info: []
-            }
+            color = colors[c][color_i];
+            inlegend = false;
         }
+        showlegend = false;
         var data = getData(offers[j],cpu_gpu);
         var seconds = data[0];
         var cost = data[1];
-        if (cost > 0) {
-            new_trace.x.push(seconds);
-            if (max_x < seconds) {
-                max_x = seconds*axis_range_padding_koef;
-            }
-            new_trace.y.push(cost);
-            ys.push(cost);
-            new_trace.info.push(getOfferInfo(offers[j]));
-            new_trace.text.push(global_var[cpu_gpu].nodes + "nodes "+offers[j].provider + " "+offers[j].name + "<br>"+CurrencyFormat(cost, "USD")+"/"+secondsToHuman(seconds, true)[1]);
-            new_trace.marker.color.push(colors[c][color_i]);
+        var text = data[2];
+        var info = getOfferInfo(offers[j])
+        if (!inlegend && cost >= 0) {
+            showlegend = true;
+            inlegend = true;
         }
-        //console.log(offers[j].shortname + " max_x:" + max_x);
-    }
-    if (!jQuery.isEmptyObject(new_trace.y)) {
-        console.log("trace y = "+new_trace.y);
+        var new_trace = makeNewTrace(offers[j].provider, showlegend, [seconds], [cost], color, [text], [info], marker);
+        if (cost < 0) {
+            new_trace.visible = false;
+        }
+        if (max_x < seconds) {
+            max_x = seconds*axis_range_padding_koef;
+        }
+        new_trace.y.push(cost);
+        ys.push(cost);
         traces.push(new_trace);
     }
     var max_y = getMaxRange(ys);
     var trace_obj = [traces, max_x, max_y];
     console.log(trace_obj);
     return trace_obj;
+}
+
+// Returns a new trace object for scatter plot
+function makeNewTrace(name, showlegend, x, y, color, text, info, marker) {
+    var new_trace = {
+        name: name,
+        showlegend :showlegend,
+        mode: "markers",
+        type: "scatter",
+        x: x,
+        y: y,
+        text: text,
+        marker: {
+            color: color,
+            size: 14,
+            opacity: 0.7,
+            symbol: marker,
+            line: {
+                width: 1,
+                color: 'rgba(0,0,0,0.7)'
+            }
+        },
+        hoverinfo: "text",
+        info: []
+    };
+    return new_trace;
 }
 
 
@@ -143,14 +147,21 @@ function getData4offers(offers, cpu_gpu) {
     for (var j = 0; j < offers.length; j++) {
         var offer = offers[j];
         var data = getData(offer, cpu_gpu);
-        if (data[1] >= 0) { // hide traces with cost < 0, which means they cannot be used with given nodes and time values
-            time.push(data[0]);
-            cost.push(data[1]);
-            text.push(data[2]);
-        }
+        time.push(data[0]);
+        cost.push(data[1]);
+        text.push(data[2]);
     }
     return [time, cost, text];
 }
+
+// Return array of [time, cost, text] for given offers.
+// cpu_gpu is one of "gpu"  and "cpu"
+function getData4offer(offer, cpu_gpu) {
+    var data = getData(offer, cpu_gpu);
+    return [[data[0]], [data[1]], [data[2]]];
+}
+
+
 
 // Return array [time, cost] for a given offer.
 // cpu_gpu is one of "gpu"  and "cpu"
@@ -173,6 +184,10 @@ var anim_opts = {frame: {duration: duration}, transition: {duration: duration * 
 // performance is on of "gpu_p" and "cpu_p"
 function updateFrame(gd, cpu_gpu) {
     console.log("\nupdateFrame "+cpu_gpu+" empty="+global_var[cpu_gpu].empty);
+    var graph_div = document.getElementById(gd);
+    var graph_data = graph_div.data;
+    console.log("Graph:");
+    console.log(graph_data);
     if (global_var[cpu_gpu].empty == true) {
         plotTimeCostMultiNode(cpu_gpu);
         return;
@@ -181,33 +196,35 @@ function updateFrame(gd, cpu_gpu) {
     var nodes = global_var[cpu_gpu].nodes;
     var performance = cpu_gpu+"_p";
     var data = [];
-    var trace_data = [];
-    var one_trace_offers = [];
     var last_prov = "";
     for (var j=0; j < offers.length; j++) {
         var prov = offers[j].provider.toLowerCase();
+        // One provider = one trace
         if (last_prov != prov) {
             last_prov = prov;
-            if (!jQuery.isEmptyObject(one_trace_offers)) {
-                trace_data = getData4offers(one_trace_offers, cpu_gpu);
-                if (trace_data[1].length > 0) {
-                    data.push({x:trace_data[0],y:trace_data[1],text:trace_data[2]});
-                }
-                trace_data = [];
-                one_trace_offers = [];
-            }
         }
-        one_trace_offers.push(offers[j]);
-    }
-    if (!jQuery.isEmptyObject(one_trace_offers)) {
-        trace_data = getData4offers(one_trace_offers, cpu_gpu);
-        if (trace_data[1].length > 0) {
-            data.push({x:trace_data[0],y:trace_data[1],text:trace_data[2]});
+        var point_data = getData4offer(offers[j], cpu_gpu);
+        data.push({x:point_data[0],y:point_data[1],text:point_data[2]});
+        var data_len = data.length;
+        var idx = data_len-1;
+        console.log("idx= "+idx);
+        console.log("trace:");
+        console.log(data[idx]);
+        // Loop through points of one trace.
+        console.log(data[idx].y[0]);
+        // Check 'y' element, which is cost.
+        if (data[idx].y[0] < 0) {
+            console.log("empty data ");
+            graph_data[idx].visible = false;
+        } else {
+            graph_data[idx].visible = true;
         }
-        trace_data = [];
-        one_trace_offers = [];
+        point_data = [];
+
     }
-    global_var[cpu_gpu].empty = false;
+    console.log("Graph:");
+    console.log(graph_data);
+    //global_var[cpu_gpu].empty = false;
     if (data.length == 0) {
         displayNoDataMessage(gd, cpu_gpu);
         return;
@@ -217,6 +234,7 @@ function updateFrame(gd, cpu_gpu) {
     var layout = {
         title: getPlotTitle(cpu_gpu, TFLOPs, nodes)
     };
+
     Plotly.animate(gd, {data:data, layout:layout}, anim_opts);
     resizeLegend(gd);
 }
