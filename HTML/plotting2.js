@@ -69,8 +69,9 @@ function makeTraces(offers, cpu_gpu,  marker) {
     var color = "";
     var last_nodes=0;
     var color_i = 0;
-    var max_x = 0;
-    var ys = [];
+    //var max_x = 0;
+    var ys = []; // array of y (cost) values
+    var xs = []; // array of x (time) values
     var c = 0;
     var new_trace  = {};
     var showlegend = false;
@@ -86,33 +87,41 @@ function makeTraces(offers, cpu_gpu,  marker) {
         }
         showlegend = false;
         var data = getData(offers[j],cpu_gpu);
-        var seconds = data[0];
+        var hours = data[0];
+        /*if (offers[j].shortname == "Tsub.S") {
+            console.log("data for "+ offers[j].shortname);
+            console.log(data);
+        }*/
         var cost = data[1];
         var text = data[2];
         var info = getOfferInfo(offers[j])
-        if (!inlegend && cost >= 0) {
+        if (!inlegend) {
             showlegend = true;
             inlegend = true;
         }
-        var new_trace = makeNewTrace(offers[j].provider, showlegend, [seconds], [cost], color, [text], [info], marker);
+        var new_trace = makeNewTrace(offers[j].provider, showlegend, [hours], [cost], color, [text], [info], marker);
         if (cost < 0) {
             new_trace.visible = false;
         }
-        if (max_x < seconds) {
-            max_x = seconds*axis_range_padding_koef;
-        }
-        new_trace.y.push(cost);
+        //if (max_x < hours) {
+        //    max_x = hours*axis_range_padding_koef;
+        //}
+        //new_trace.y.push(cost);
         ys.push(cost);
+        xs.push(hours);
         traces.push(new_trace);
     }
     var max_y = getMaxRange(ys);
+    var max_x = getMaxRange(xs);
     var trace_obj = [traces, max_x, max_y];
-    console.log(trace_obj);
+    //console.log("makeTraces. trace_obj :");
+    //console.log(trace_obj);
     return trace_obj;
 }
 
 // Returns a new trace object for scatter plot
 function makeNewTrace(name, showlegend, x, y, color, text, info, marker) {
+    //console.log("makeNewTrace " + name)
     var new_trace = {
         name: name,
         showlegend :showlegend,
@@ -132,31 +141,16 @@ function makeNewTrace(name, showlegend, x, y, color, text, info, marker) {
             }
         },
         hoverinfo: "text",
-        info: []
+        info: info
     };
     return new_trace;
 }
 
 
-// Return array of [time[], cost[]] for given offers.
-// cpu_gpu is one of "gpu"  and "cpu"
-function getData4offers(offers, cpu_gpu) {
-    var time = [];
-    var cost = [];
-    var text = [];
-    for (var j = 0; j < offers.length; j++) {
-        var offer = offers[j];
-        var data = getData(offer, cpu_gpu);
-        time.push(data[0]);
-        cost.push(data[1]);
-        text.push(data[2]);
-    }
-    return [time, cost, text];
-}
-
 // Return array of [time, cost, text] for given offers.
 // cpu_gpu is one of "gpu"  and "cpu"
 function getData4offer(offer, cpu_gpu) {
+    //console.log("getData for "+ offer.shortname);
     var data = getData(offer, cpu_gpu);
     return [[data[0]], [data[1]], [data[2]]];
 }
@@ -170,24 +164,28 @@ function getData(offer, cpu_gpu) {
     var TFLOPs = global_var[cpu_gpu].TFLOPs;
     var nodes = global_var[cpu_gpu].nodes;
     var time = Math.ceil(TFLOPs / offer[performance] / nodes); // time in seconds
+    if (offer.shortname == "Tsub.S") {
+        console.log(offer.shortname+" ("+offer[performance]+"TFlops): time for " + TFLOPs + "TFLOPs is "+ time + "("+ secondsToHuman(time, true)[1]+")");
+    }
     var hours = Math.ceil(time / 36) / 100; // time in hours
     var cost = getQuote4Seconds(offer, time, nodes);
-    var text = nodes + "nodes "+offer.provider + " "+offer.name + "<br>"+CurrencyFormat(cost, "USD")+"/"+secondsToHuman(time, true)[1];
+    var text = offer.provider + " "+offer.name + "<br>"+CurrencyFormat(cost, "USD")+"/"+secondsToHuman(time, true)[1];
     return [hours, cost, text];
 }
 
 
-var duration = 4000;
-var anim_opts = {frame: {duration: duration}, transition: {duration: duration * 0.5}};
+var duration = 1000;
+var anim_opts = {frame: {duration: duration}, transition: {duration: duration}};
+var anim_opts2 = { transition: {duration: duration, easing :'cubic-in-out'} };
 
 // Animate to a new frame.
 // performance is on of "gpu_p" and "cpu_p"
-function updateFrame(gd, cpu_gpu) {
-    console.log("\nupdateFrame "+cpu_gpu+" empty="+global_var[cpu_gpu].empty);
+async function updateFrame(gd, cpu_gpu) {
     var graph_div = document.getElementById(gd);
     var graph_data = graph_div.data;
-    console.log("Graph:");
-    console.log(graph_data);
+    var graph_layout = graph_div.layout;
+    //console.log("Graph:");
+    //console.log(graph_data);
     if (global_var[cpu_gpu].empty == true) {
         plotTimeCostMultiNode(cpu_gpu);
         return;
@@ -195,53 +193,94 @@ function updateFrame(gd, cpu_gpu) {
     var TFLOPs = global_var[cpu_gpu].TFLOPs;
     var nodes = global_var[cpu_gpu].nodes;
     var performance = cpu_gpu+"_p";
+    console.log("\nupdateFrame "+cpu_gpu+" TFLOPs ="+TFLOPs);
     var data = [];
+    var ys = [];
+    var xs = [];
     var last_prov = "";
+    var tsub_s_indx = 0;
     for (var j=0; j < offers.length; j++) {
-        var prov = offers[j].provider.toLowerCase();
+        //var prov = offers[j].provider.toLowerCase();
         // One provider = one trace
-        if (last_prov != prov) {
-            last_prov = prov;
-        }
+        //if (last_prov != prov) {
+        //    last_prov = prov;
+        //}
         var point_data = getData4offer(offers[j], cpu_gpu);
         data.push({x:point_data[0],y:point_data[1],text:point_data[2]});
         var data_len = data.length;
         var idx = data_len-1;
-        console.log("idx= "+idx);
-        console.log("trace:");
-        console.log(data[idx]);
+        if (offers[j].shortname == "Tsub.S") {
+            console.log(offers[j].shortname+": point_data for " + TFLOPs + "TFLOPs is " + point_data);
+        }
+        //console.log("idx= "+idx);
+        //console.log("trace:");
+        //console.log(graph_data[idx]);
         // Loop through points of one trace.
-        console.log(data[idx].y[0]);
+        //console.log(data[idx].y[0]);
         // Check 'y' element, which is cost.
         if (data[idx].y[0] < 0) {
-            console.log("empty data ");
-            graph_data[idx].visible = false;
+            console.log("hide");
+            data[idx].visible = false;
         } else {
             graph_data[idx].visible = true;
+            ys.push(data[idx].y[0]); // data for scaling graph
+            xs.push(data[idx].x[0]);
+            /*if (offers[j].shortname == "Tsub.S") {
+                console.log("show ");
+                console.log(graph_data[idx]);
+                console.log(data[idx]);
+                tsub_s_indx = idx;
+            }*/
         }
         point_data = [];
-
     }
-    console.log("Graph:");
-    console.log(graph_data);
+    //console.log("Graph:");
+    //console.log(graph_data);
     //global_var[cpu_gpu].empty = false;
-    if (data.length == 0) {
+
+
+    // Auto scaling graph
+    //console.log(ys);
+    if (ys.length < 1) {
         displayNoDataMessage(gd, cpu_gpu);
         return;
     }
+    var max_y = getMaxRange(ys);
+    var max_x = getMaxRange(xs);
 
-
+    var graph_x = graph_layout.xaxis.range[1];
+    var scale_factor = (max_x - graph_x) / (graph_x + max_x);
+    //console.log("Graph maxx = "+ graph_x);
+    //console.log("Scale factor = "+ scale_factor);
     var layout = {
-        title: getPlotTitle(cpu_gpu, TFLOPs, nodes)
+        xaxis: {range: [0,max_x]},
+        yaxis: {range: [0,max_y]}
     };
+    if (scale_factor > 0.2) {
+        //console.log("Scale graph to " + max_x+ " x "+ max_y);
+        await Plotly.animate(gd, {layout:layout}, anim_opts2);
+    }
+    var layout_t = {
+        title: getPlotTitle(cpu_gpu, TFLOPs, nodes),
+    };
+    //console.log("Updating data");
+    //console.log(data);
+    await Plotly.update(gd, graph_data);  // hidden elements do not get pdated with animation function!
+    await Plotly.animate(gd, {data:data, layout:layout_t}, anim_opts);
+    graph_div = document.getElementById(gd);
+    //console.log(graph_div.data[tsub_s_indx]);
 
-    Plotly.animate(gd, {data:data, layout:layout}, anim_opts);
+    if (scale_factor < -0.2) {
+        //console.log("Scale graph to " + max_x+ " x "+ max_y);
+        await Plotly.animate(gd, {layout: layout}, anim_opts2);
+    }
+
     resizeLegend(gd);
 }
 
 
 // Calculate standart deviation for the array,
-// remove elements outside mean + 1*σ,
+// remove elements outside mean + 2*σ,
 // return max of remaining elements.
 function getMaxRange(x) {
     var mean = 0;
@@ -252,12 +291,12 @@ function getMaxRange(x) {
     for (var i=0; i<x.length; i++) {
         sum += x[i];
         if (x_max < x[i]) {
-            x_max = x[i]*axis_range_padding_koef;
+            x_max = x[i];
         }
     }
     // For small arrays do not remove elements
     if (x.length < 12) {
-        return x_max;
+        return x_max * axis_range_padding_koef;
     }
     mean = sum / x.length;
     for (var i=0; i<x.length; i++) {
@@ -265,26 +304,27 @@ function getMaxRange(x) {
     }
     deviation = Math.sqrt(variance / x.length);
     //console.log("mean:"+mean+" max:"+x_max+" variance:"+variance+" deviation:"+deviation);
-    var upper_limit = mean + 1*deviation;
-    var y = [];
+    var upper_limit = mean + 2*deviation;
+    var x_reduced = [];
     for (var i=0; i<x.length; i++) {
         if (x[i] < upper_limit) {
-            y.push(x[i]);
+            x_reduced.push(x[i]);
         }
     }
     x_max = 0;
-    for (var i=0; i< y.length; i++) {
-        if (x_max < y[i]) {
-            x_max = y[i]*axis_range_padding_koef;
+    for (var i=0; i< x_reduced.length; i++) {
+        if (x_max < x_reduced[i]) {
+            x_max = x_reduced[i];
         }
     }
-    return x_max;
+    return x_max * axis_range_padding_koef;
 }
 
 
 
 // Plot time x cost graphs for multiple nodes
 function plotTimeCostMultiNode(cpu_gpu) {
+    console.log("plotTimeCostMultiNode "+ cpu_gpu);
     var TFLOPs = global_var.gpu.TFLOPs;
     var nodes = global_var.gpu.nodes;
     if (cpu_gpu == "cpu") {
@@ -298,7 +338,7 @@ function plotTimeCostMultiNode(cpu_gpu) {
     if (cpu_gpu == "gpu") {
         var layout = {
             title: getPlotTitle("GPU", TFLOPs, nodes),
-            hovermode: 'closest',
+            hovermode: 'y',
             showlegend: true,
             xaxis: {
                 title: 'Calculation time (h)',
@@ -341,12 +381,12 @@ function plotTimeCostMultiNode(cpu_gpu) {
 
         var traces_obj = makeTraces(offers, "gpu","circle");
         var traces = traces_obj[0];
-        if (traces.length == 0) {
+        var max_x = traces_obj[1];
+        var max_y = traces_obj[2];
+        if (traces.length == 0 || max_y <= 0) {
             displayNoDataMessage('GPUtime_x_cost', cpu_gpu);
             return;
         }
-        var max_x = traces_obj[1];
-        var max_y = traces_obj[2];
         layout.yaxis.range = [0, max_y];
         layout.xaxis.range = [0, max_x];
 
@@ -364,7 +404,7 @@ function plotTimeCostMultiNode(cpu_gpu) {
         // Resize legend
         var GPU_chart = d3.selectAll("#GPUtime_x_cost svg.main-svg").filter(function(d, i) { return i === 0 });
         var gpu_chart_width = GPU_chart.attr("width");
-        console.log(gpu_chart_width);
+        //console.log(gpu_chart_width);
         var legend_width = 190;
         var legend_shfit = 262;
         var gpu_legend_x = gpu_chart_width - legend_shfit;
@@ -377,7 +417,7 @@ function plotTimeCostMultiNode(cpu_gpu) {
         } else {
             global_var[cpu_gpu].empty = true;
         }
-        console.log("\nglobal "+ cpu_gpu + "="+global_var[cpu_gpu].empty);
+        //console.log("\nglobal "+ cpu_gpu + "="+global_var[cpu_gpu].empty);
     }
 
     if (cpu_gpu == "cpu") {
@@ -386,7 +426,7 @@ function plotTimeCostMultiNode(cpu_gpu) {
         nodes = global_var.cpu.nodes;
         var cpu_layout = {
             title: getPlotTitle("CPU", TFLOPs, nodes),
-            hovermode: 'closest',
+            hovermode: 'y',
             showlegend: true,
             xaxis: {
                 title: 'Calculation time (h)',

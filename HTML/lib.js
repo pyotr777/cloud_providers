@@ -562,7 +562,7 @@ var tsubame_border= [1, 24, 48, 96];
 
 // Return Cost for given number of seconds.
 function getQuote4Seconds(offer, sec, nodes) {
-    //console.log(sec);
+    //console.log(sec+"sec");
     var cost = 0;
     if (nodes == null || nodes == "") {
         nodes = 1;
