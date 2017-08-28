@@ -94,7 +94,7 @@ function makeTraces(offers, cpu_gpu,  marker) {
         }*/
         var cost = data[1];
         var text = data[2];
-        var info = getOfferInfo(offers[j])
+        var info = getOfferInfo(offers[j])+"<br/>";
         if (!inlegend) {
             showlegend = true;
             inlegend = true;
@@ -169,7 +169,7 @@ function getData(offer, cpu_gpu) {
     }
     var hours = Math.ceil(time / 36) / 100; // time in hours
     var cost = getQuote4Seconds(offer, time, nodes);
-    var text = offer.provider + " "+offer.name + "<br>"+CurrencyFormat(cost, "USD")+"/"+secondsToHuman(time, true)[1];
+    var text = offer.shortname + "<br>"+CurrencyFormat(cost, "USD")+"/"+secondsToHuman(time, true)[1];
     return [hours, cost, text];
 }
 
