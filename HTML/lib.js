@@ -9,8 +9,8 @@ var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
 var accumulated_months_days = [];
 var colors=[["#fa6d44", "#ff6a3f"],  // Amazon
            ["#f8a358", "#ffa85c"],  // IBM
-           ["#ffd879", "#fccd5f"],  // Nimbix
-           ["#eddbdb", "#efd5d5"],  // Cirrascale
+           ["#ffd879", "#fccd5f"],  // Cirrascale
+           ["#eddbdb", "#efd5d5"],  //
            ["#f5a1c0", "#f5a1c0"],  // Sakura
            ["#b9b7f4", "#b3b1fa"],  // LeaderTelecom
            ["#94c7ff", "#94c7ff"],  // Tokyo University
@@ -34,11 +34,8 @@ function getColor(prov) {
         case "ibm":
             c = 1;
             break;
-        case "nimbix":
-            c = 2;
-            break;
         case "cirrascale":
-            c = 3;
+            c = 2;
             break;
         case "sakura":
             c = 4;
