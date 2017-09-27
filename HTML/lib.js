@@ -557,7 +557,7 @@ function getMonths4Seconds(sec) {
 var tsubame_koeff = [0.9, 1, 2, 4, -1];
 var tsubame_border= [1, 24, 48, 96];
 
-// Return Cost for given number of seconds.
+// Return Cost for given number of seconds and nodes.
 function getQuote4Seconds(offer, sec, nodes) {
     //console.log(sec+"sec");
     var cost = 0;
@@ -1063,7 +1063,8 @@ var cost_periods = [
     ["hourly","h."],
     ["weekly", "w."],
     ["monthly", "m."],
-    ["yearly", "y."]
+    ["yearly", "y."],
+    ["setup", ""]
 ]
 
 // Split one offer by cost period.
