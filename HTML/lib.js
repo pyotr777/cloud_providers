@@ -2,7 +2,7 @@
 var CSV_file = "cost-performance.csv";
 //var CSV_file = "/cloudproviders/cost-performance.csv";
 
-var last_update = "Last update: 2017/09/26";
+var last_update = "Last update: 2017/09/27";
 var data_loaded = false;
 
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
@@ -669,7 +669,7 @@ function getQuote4Hours(offer, h) {
             var koeff3 = 1;
             var nodes = 1;
             var periods = Math.ceil(h * koeff3 * nodes / offer.time_limit);
-            console.log(offer.shortname+" periods="+periods+" for hours="+h);
+            //console.log(offer.shortname+" periods="+periods+" for hours="+h);
             cost += periods *  offer.yearly;
             return cost;
         }

@@ -148,7 +148,7 @@ function displayPerformanceScatter() {
         }
         new_trace.x.push(offers[j].cpu_p);
         new_trace.y.push(offers[j].gpu_p);
-        new_trace.text.push(offers[j].provider + " " +offers[j].shortname)
+        new_trace.text.push(offers[j].shortname)
         new_trace.marker.color.push(colors[c][0]);
         new_trace.info.push(getOfferInfo(offers[j]));
 
@@ -286,7 +286,6 @@ function plotPeriod(period, step, thin, thick) {
 
     var last_prov = ""
     for (j=0; j < offers.length; j++) {
-
         var prov = offers[j].provider.toLowerCase();
         var c = getColor(prov);
         if (last_prov != prov) {
@@ -563,7 +562,7 @@ function displaySlice(n) {
             }*/
             new_trace.x.push(cost/offer.cpu_p);
             new_trace.y.push(cost/offer.gpu_p);
-            new_trace.text.push(offer.provider + " " +offer.shortname)
+            new_trace.text.push(offer.shortname)
             new_trace.marker.color.push(color);
             new_trace.info.push(getOfferInfo(offer));
             //console.log(offer.shortname+" " + cost/offer.gpu_p + "x" + cost/offer.cpu_p);
