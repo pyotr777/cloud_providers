@@ -11,7 +11,7 @@ var quotes=[];
 var msg;
 
 
-var step = 24; // hours step
+var step = 12; // hours step
 var plot_period = 12; // months for plot "cost for rent period"
 
 
