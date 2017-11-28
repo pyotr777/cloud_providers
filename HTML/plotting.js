@@ -695,16 +695,16 @@ function shortFormat(s) {
     if (s.indexOf("x")>=0) {
         return s;
     }
-    num = Number(s).toLocaleString('en', { style: 'decimal', maximumFractionDigits: 1 });
+    num = Number(s).toLocaleString('en', { style: 'decimal', maximumFractionDigits: 2 });
     num = num.replace(",", " ");
-    return num;
+    return " x"+num;
 }
 
 
 function formatCPUs(offer) {
     var str = "";
     if (offer.cpu_model != "" ) {
-        str = offer.cpu_model + " x" + shortFormat(offer.cpus);
+        str = offer.cpu_model + shortFormat(offer.cpus);
     }
     return str;
 }
@@ -736,7 +736,7 @@ function plotTable() {
         }
         body += "<br><note>"+offers[j].shortname+"</note>";
         body += '</td> \
-        <td>'+offers[j].gpu_model+' x'+shortFormat(offers[j].gpus)+'</td>\
+        <td>'+offers[j].gpu_model+shortFormat(offers[j].gpus)+'</td>\
         <td>'+formatCPUs(offers[j])+'</td>\
         <td>'+NumberFormat(offers[j].memory)+'</td>\
         <td>'+offers[j].hdd1+'</td><td>'+NumberFormat(offers[j].hdd1_vol)+'</td>\
