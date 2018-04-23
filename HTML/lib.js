@@ -2,7 +2,7 @@
 var CSV_file = "cost-performance.csv";
 //var CSV_file = "/cloudproviders/cost-performance.csv";
 
-var last_update = "Last update: 2018/02/16";
+var last_update = "Last update: 2018/04/23";
 var data_loaded = false;
 
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
