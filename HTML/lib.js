@@ -86,7 +86,7 @@ function getArraySizeOfProviders() {
     return arr;
 }
 
-var base_currency="USD";
+window.rates = {};  // global var
 
 var offers_all=[];
 var offers=[];
@@ -97,15 +97,13 @@ var GPUgroup_global, optionslist_global;
 var processing = false; // prevent onchange event loop for providers filter.
 
 var setRates = function(data) {
-    fx.base = base_currency;
-    fx.settings = { to: base_currency };
-    fx.rates = data.rates
-
-    //alert("£1 = $" + rate.toFixed(4));
-    fx.rates[base_currency] = 1;
+    rates = data.rates;
+    rates.base = data.base
+    // alert(rates.USD);
+    // alert(rates.base);
+    //alert(data.timestamp);
 
     loadData(CSV_file);
-
 }
 
 
@@ -116,7 +114,7 @@ function getRates() {
     msg.innerHTML = "Loading data...";
     document.getElementById("updated").innerHTML = last_update;
 
-    $.getJSON("http://api.fixer.io/latest?base="+base_currency, setRates);
+    $.getJSON("http://data.fixer.io/api/latest?access_key=37e8af59f58a677af7e535d5284568ba&symbols = RUB,USD,JPY,EUR", setRates);
 }
 
 
@@ -761,12 +759,16 @@ function getHours4Quote(offer, sum) {
 }
 
 // Convert SUM in currency to base_currency
-function convert2BaseCurrency(sum, currency) {
+function convert2BaseCurrency(sum, from) {
+    to = "USD";
     if (sum == null || sum == "") return "";
-    if (currency != base_currency) {
+    // console.log("convert from "+from+" to "+to);
+    // console.log("SUM="+sum+", rate:"+rates[from]+"/"+rates[to])+" base:"+rates.base;
+    
+    if (from != to) {
         try {
-            var conv = round_curr(fx.convert(sum, { from: currency}));
-            //console.log(sum + " " +currency + " = " + conv + " " + base_currency );
+            var conv = round_curr(sum * rates[to] / rates[from]);
+            console.log(sum + " " +from + " = " + conv + " " + to );
             return conv;
         } catch(err) {
             console.log("Currency convertion exeption for "+sum+ currency+".");
@@ -795,15 +797,16 @@ function ButtonOver(button) {
 
 function printRates() {
     var div = document.getElementById("rates");
+    var to = "USD";
     var cur = "JPY";
-    var rate = fx.convert(1, {from: base_currency, to: cur});
-    div.innerHTML = base_currency + "/" + cur +" = 1/" +rate.toFixed(2)+ " &nbsp; ";
+    rate = rates[cur] / rates[to];
+    div.innerHTML = cur + "/" + to +" = " +rate.toFixed(2)+ " &nbsp; ";
     cur = "EUR";
-    rate = fx.convert(1, {from: base_currency,to: cur});
-    div.innerHTML += base_currency + "/" + cur+" = 1/"+rate.toFixed(2)+ " &nbsp; ";
+    rate = rates[cur] / rates[to];
+    div.innerHTML += cur + "/" + to+" = "+rate.toFixed(2)+ " &nbsp; ";
     cur = "RUB";
-    rate = fx.convert(1, {from: base_currency,to: cur});
-    div.innerHTML += base_currency + "/" + cur+" = 1/"+rate.toFixed(2);
+    rate = rates[cur] / rates[to];
+    div.innerHTML += cur + "/" + to+" = "+rate.toFixed(2);
 }
 
 // Transform Offer name to simplified form for comparison with other names
