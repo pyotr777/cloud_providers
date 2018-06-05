@@ -589,7 +589,7 @@ function getQuote4Seconds(offer, sec, nodes) {
             var periods = Math.ceil(h * nodes * koeff3 / hours);
             //console.log(" periods=ceil("+h+"x"+nodes+"x"+ koeff3+"/"+hours+")="+(periods));
             cost = periods * offer.yearly;
-            //console.log(" "+periods+" x "+offer.yearly+ " = "+cost);
+            //console.log("  getQuote4Seconds 2 cost: "+periods+" x "+offer.yearly+ " = "+cost);
             return cost;
         }
     }
@@ -638,8 +638,7 @@ function getQuote4Seconds(offer, sec, nodes) {
             more_than_a_month = 1;
         }
         cost +=  (months[0] + more_than_a_month)* offer.monthly * nodes;
-        //console.log("Monthly: "+ offer.shortname + " "+offer.monthly);
-        //console.log(months);
+        //console.log("Monthly: "+ offer.shortname + " "+offer.monthly+" cost="+cost);
     } else if ("yearly" in offer && offer.yearly != "" ) {
         // Year is counted as 365 days
         var period_y = Math.ceil(sec / (3600 * 24 * 365));
@@ -764,7 +763,7 @@ function convert2BaseCurrency(sum, from) {
     if (sum == null || sum == "") return "";
     // console.log("convert from "+from+" to "+to);
     // console.log("SUM="+sum+", rate:"+rates[from]+"/"+rates[to])+" base:"+rates.base;
-    
+
     if (from != to) {
         try {
             var conv = round_curr(sum * rates[to] / rates[from]);

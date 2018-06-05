@@ -78,7 +78,6 @@ function makeTraces(offers, cpu_gpu,  marker) {
     var inlegend = false; // This provider not shown in legend yet
     for (var j=0; j < offers.length; j++) {
         var prov = offers[j].provider.toLowerCase();
-        //console.log(j+" "+prov)
         if (last_prov != prov) {
             last_prov = prov;
             c = getColor(prov);
@@ -87,6 +86,10 @@ function makeTraces(offers, cpu_gpu,  marker) {
         }
         showlegend = false;
         var data = getData(offers[j],cpu_gpu);
+        if (data == -1) {
+            console.log(offers[j].shortname+" no data");
+            continue;
+        }
         var hours = data[0];
         /*if (offers[j].shortname == "Tsub.S") {
             console.log("data for "+ offers[j].shortname);
@@ -152,6 +155,7 @@ function makeNewTrace(name, showlegend, x, y, color, text, info, marker) {
 function getData4offer(offer, cpu_gpu) {
     //console.log("getData for "+ offer.shortname);
     var data = getData(offer, cpu_gpu);
+    if (data == -1) return -1;
     return [[data[0]], [data[1]], [data[2]]];
 }
 
@@ -163,12 +167,17 @@ function getData(offer, cpu_gpu) {
     var performance = cpu_gpu + "_p";
     var TFLOPs = global_var[cpu_gpu].TFLOPs;
     var nodes = global_var[cpu_gpu].nodes;
+    if (offer[performance] == "" || offer[performance]==0) {
+        console.log("  getData "+offer.shortname + " "+ cpu_gpu+" perf is 0 or unknown. "+offer[performance]);
+        return -1;
+    }
     var time = Math.ceil(TFLOPs / offer[performance] / nodes); // time in seconds
     if (offer.shortname == "Tsub.S") {
         console.log(offer.shortname+" ("+offer[performance]+"TFlops): time for " + TFLOPs + "TFLOPs is "+ time + "("+ secondsToHuman(time, true)[1]+")");
     }
     var hours = Math.ceil(time / 36) / 100; // time in hours
     var cost = getQuote4Seconds(offer, time, nodes);
+    if (cost == -1) return -1;
     var text = offer.shortname + "<br>"+CurrencyFormat(cost, "USD")+"/"+secondsToHuman(time, true)[1];
     return [hours, cost, text];
 }
