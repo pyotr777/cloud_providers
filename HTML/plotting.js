@@ -10,9 +10,21 @@ var dates =[];
 var quotes=[];
 var msg;
 
-
+// ! CHANGE ONLY WITH changeStepSize() function
 var step = 12; // hours step
 var plot_period = 12; // months for plot "cost for rent period"
+
+
+function changeStepSize(i) {
+    console.log("Changing step size to "+i);
+    step = i;
+    if (step < 24) {
+        plot_period = 1;
+    } else {
+        plot_period = 12;
+    }
+    plotFilterPlots()
+}
 
 
 function plotFilterPlots() {
@@ -426,7 +438,11 @@ function displayTime(s) {
     var parts = s.split(" ");
     var i = parseInt(parts[0]);
     var n = i;
-    switch (parts[1].toLowerCase()) {
+    switch (parts[1].toLowerCase()) { 
+        case "hour":
+        case "hours":
+            changeStepSize(i); 
+            break;  
         case "day":
         case "days":
             n = Math.floor(24/step) * i;
