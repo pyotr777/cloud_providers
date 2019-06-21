@@ -136,32 +136,35 @@ td note {
     color: #444;
 }
 
-table.wide_table {
-	font-size: 70%;
+table#the_table.wide_table {
+	font-size: 9pt  !important;
+	line-height:10pt;
 	table-layout: fixed;
 	border: 1px solid #ccc;
 	box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
     width: 1600px;
 }
 
-table.wide_table th {
+table#the_table.wide_table th {
     width: 60px;
+    font-size: 9pt  !important;
+    line-height: 12pt !important;
 }
 
 
-table.wide_table th.double {
+table#the_table.wide_table th.double {
 	width: 100px;
 }
 
-table.wide_table th.triple {
+table#the_table.wide_table th.triple {
 	width: 150px;
 }
 
-table.wide_table th.quadruple {
+table#the_table.wide_table th.quadruple {
 	width: 200px;
 }
 
-table.wide_table th.largest {
+table#the_table.wide_table th.largest {
     width: 420px;
 }
 

@@ -726,7 +726,7 @@ function formatCPUs(offer) {
 }
 
 function plotTable() {
-    var head = '<table class="wide_table">\
+    var head = '<table class="wide_table" id="the_table">\
     <thead><tr><th rowspan="2" class="double">Provider</th> \
     <th rowspan="2" class="quadruple">Offer</th><th class="double">GPU</th><th class="double">CPU</th> \
     <th>Memory</th><th colspan="4" class="quadruple">HDD</th> \
